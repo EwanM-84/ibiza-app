@@ -37,35 +37,35 @@ export default function Home() {
             <div className="order-1 space-y-8">
               <h1 className="space-y-0">
                 {/* Line 1: "Live the" - small, supporting */}
-                <span className="block font-sans text-lg md:text-xl font-medium text-sptc-gray-700 tracking-wide mb-2">
+                <span className="block font-sans text-sm sm:text-base md:text-xl font-medium text-sptc-gray-700 tracking-wide mb-2">
                   {getText("hero.liveThe", language)}
                 </span>
 
                 {/* Line 2: "stories" - BIG hero word */}
-                <span className="block font-display text-4xl md:text-5xl lg:text-6xl font-bold text-sptc-red-600 leading-none tracking-tight -mt-2">
-                  <span className="text-5xl md:text-6xl lg:text-7xl">{getText("hero.stories", language).charAt(0)}</span>{getText("hero.stories", language).slice(1)}
+                <span className="block font-display text-3xl sm:text-4xl md:text-5xl lg:text-6xl font-bold text-sptc-red-600 leading-none tracking-tight -mt-2">
+                  <span className="text-4xl sm:text-5xl md:text-6xl lg:text-7xl">{getText("hero.stories", language).charAt(0)}</span>{getText("hero.stories", language).slice(1)}
                 </span>
 
                 {/* Line 3: "of rural Colombia" - medium, grounded */}
-                <span className="block font-sans text-2xl md:text-3xl lg:text-4xl font-semibold text-sptc-gray-900 leading-tight mt-2">
+                <span className="block font-sans text-xl sm:text-2xl md:text-3xl lg:text-4xl font-semibold text-sptc-gray-900 leading-tight mt-2">
                   {getText("hero.ofRuralColombia", language).split("Colombia")[0]}<span className="text-sptc-yellow-500">Colombia</span>
                 </span>
               </h1>
 
-              <p className="text-lg md:text-xl max-w-xl text-sptc-gray-600 leading-relaxed font-sans mt-6">
+              <p className="text-base sm:text-lg md:text-xl max-w-xl text-sptc-gray-600 leading-relaxed font-sans mt-6">
                 {getText("hero.heroDescription", language)}
               </p>
 
               {/* Booking bar */}
               <div
-                className="bg-white rounded-3xl p-5 w-full max-w-[900px]"
+                className="bg-white rounded-2xl sm:rounded-3xl p-3 sm:p-5 w-full max-w-[900px]"
                 style={{
                   boxShadow: "0 24px 60px rgba(0,0,0,0.08)",
                   border: "1px solid rgba(0,0,0,0.04)",
                 }}
               >
-                <div className="flex items-end gap-6">
-                  <div className="flex-1 min-w-[160px]">
+                <div className="flex flex-col sm:flex-row items-stretch sm:items-end gap-3 sm:gap-6">
+                  <div className="flex-1 min-w-0 sm:min-w-[160px]">
                     <label
                       className="block text-[11px] font-semibold text-gray-500 uppercase tracking-wider mb-2"
                       style={{ fontFamily: '"Inter", sans-serif' }}
@@ -85,7 +85,7 @@ export default function Home() {
                     </div>
                   </div>
 
-                  <div className="flex-1 min-w-[160px]">
+                  <div className="flex-1 min-w-0 sm:min-w-[160px]">
                     <label
                       className="block text-[11px] font-semibold text-gray-500 uppercase tracking-wider mb-2"
                       style={{ fontFamily: '"Inter", sans-serif' }}
@@ -105,7 +105,7 @@ export default function Home() {
                     </div>
                   </div>
 
-                  <div className="flex-1 min-w-[180px] relative">
+                  <div className="flex-1 min-w-0 sm:min-w-[180px] relative">
                     <label
                       className="block text-[11px] font-semibold text-gray-500 uppercase tracking-wider mb-2"
                       style={{ fontFamily: '"Inter", sans-serif' }}
@@ -181,7 +181,7 @@ export default function Home() {
 
                   <Link
                     href={`/search?location=Fusagasugá&checkIn=${checkIn}&checkOut=${checkOut}&adults=${adults}&children=${children}`}
-                    className="whitespace-nowrap px-10 py-3 bg-gradient-to-br from-red-600 via-red-700 to-red-800 hover:from-red-700 hover:via-red-800 hover:to-red-900 text-white font-medium rounded-2xl transition-all shadow-[0_8px_30px_rgba(220,38,38,0.35)] hover:shadow-[0_12px_40px_rgba(220,38,38,0.45)] transform hover:scale-[1.02] flex items-center justify-center gap-2"
+                    className="w-full sm:w-auto whitespace-nowrap px-6 sm:px-10 py-3 bg-gradient-to-br from-red-600 via-red-700 to-red-800 hover:from-red-700 hover:via-red-800 hover:to-red-900 text-white font-medium rounded-xl sm:rounded-2xl transition-all shadow-[0_8px_30px_rgba(220,38,38,0.35)] hover:shadow-[0_12px_40px_rgba(220,38,38,0.45)] transform hover:scale-[1.02] flex items-center justify-center gap-2"
                     style={{
                       fontFamily: '"Inter", sans-serif',
                       letterSpacing: "0.02em",
@@ -208,9 +208,9 @@ export default function Home() {
 
             {/* Right side: image collage - staggered like Withlocals */}
             <div className="order-first lg:order-last">
-              <div className="grid grid-cols-3 gap-3 max-w-[600px] ml-auto lg:ml-0">
+              <div className="grid grid-cols-2 sm:grid-cols-3 gap-2 sm:gap-3 max-w-[600px] ml-auto lg:ml-0">
                 {/* Column 1: Image 1 alone */}
-                <div className="relative overflow-hidden rounded-2xl shadow-lg h-[325px] mt-[50%]">
+                <div className="relative overflow-hidden rounded-xl sm:rounded-2xl shadow-lg h-[200px] sm:h-[325px] mt-0 sm:mt-[50%]">
                   <img
                     src="/images/hero/image-1.png"
                     alt="image-1 placeholder"
@@ -219,15 +219,15 @@ export default function Home() {
                 </div>
 
                 {/* Column 2: Image 2 and Image 3 stacked */}
-                <div className="flex flex-col gap-3">
-                  <div className="relative overflow-hidden rounded-2xl shadow-lg h-[175px]">
+                <div className="flex flex-col gap-2 sm:gap-3">
+                  <div className="relative overflow-hidden rounded-xl sm:rounded-2xl shadow-lg h-[120px] sm:h-[175px]">
                     <img
                       src="/images/hero/image-2.png"
                       alt="image-2 placeholder"
                       className="w-full h-full object-cover"
                     />
                   </div>
-                  <div className="relative overflow-hidden rounded-2xl shadow-lg h-[300px]">
+                  <div className="relative overflow-hidden rounded-xl sm:rounded-2xl shadow-lg h-[200px] sm:h-[300px]">
                     <img
                       src="/images/hero/image-3.png"
                       alt="image-3 placeholder"
@@ -237,15 +237,15 @@ export default function Home() {
                 </div>
 
                 {/* Column 3: Image 4 and Image 5 stacked */}
-                <div className="flex flex-col gap-3">
-                  <div className="relative overflow-hidden rounded-2xl shadow-lg h-[250px]">
+                <div className="flex flex-col gap-2 sm:gap-3 col-span-2 sm:col-span-1">
+                  <div className="relative overflow-hidden rounded-xl sm:rounded-2xl shadow-lg h-[160px] sm:h-[250px]">
                     <img
                       src="/images/hero/image-4.png"
                       alt="image-4 placeholder"
                       className="w-full h-full object-cover"
                     />
                   </div>
-                  <div className="relative overflow-hidden rounded-2xl shadow-lg h-[250px]">
+                  <div className="relative overflow-hidden rounded-xl sm:rounded-2xl shadow-lg h-[160px] sm:h-[250px]">
                     <img
                       src="/images/hero/image-5.jpg"
                       alt="image-5 placeholder"
