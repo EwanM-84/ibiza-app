@@ -21,6 +21,10 @@ export const metadata: Metadata = {
   title: "sptc.rural - Stay local. Support the community.",
   description:
     "Book authentic stays in Colombia and nearby rural areas. Part of every booking supports local community projects.",
+  icons: {
+    icon: "/images/icons/sptc-logo.jpg",
+    apple: "/images/icons/sptc-logo.jpg",
+  },
 };
 
 export default function RootLayout({
