@@ -7,14 +7,11 @@
 
 [build.environment]
   NODE_VERSION = "18"
+  # Disable secrets scanning for NEXT_PUBLIC_* variables
+  # These are intentionally exposed to the browser and bundled into client-side JS
+  SECRETS_SCAN_SMART_DETECTION_ENABLED = "false"
 
 [[redirects]]
   from = "/*"
   to = "/index.html"
   status = 200
-
-[context.production.environment]
-  NEXT_PUBLIC_SUPABASE_URL = "https://mbipxghsdvksmelxutzo.supabase.co"
-
-[context.deploy-preview.environment]
-  NEXT_PUBLIC_SUPABASE_URL = "https://mbipxghsdvksmelxutzo.supabase.co"
