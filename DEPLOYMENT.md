@@ -8,7 +8,7 @@ Before deploying to Netlify, you **must** set these environment variables in you
 
 1. **NEXT_PUBLIC_SUPABASE_URL**
    - Your Supabase project URL
-   - Example: `https://ywfhrqgjiudngpdarfzy.supabase.co`
+   - Example: `https://your-project-id.supabase.co`
    - Get from: [Supabase Dashboard](https://supabase.com/dashboard) � Your Project � Settings � API
 
 2. **NEXT_PUBLIC_SUPABASE_ANON_KEY**

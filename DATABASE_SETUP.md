@@ -4,7 +4,7 @@
 
 1. **Go to your Supabase Dashboard**
    - Visit: https://supabase.com/dashboard
-   - Select your project: `ywfhrqgjiudngpdarfzy`
+   - Select your project
 
 2. **Open the SQL Editor**
    - Click on "SQL Editor" in the left sidebar
@@ -66,7 +66,7 @@ You can modify the RLS policies in the SQL Editor to match your specific securit
 Make sure these are set in Netlify:
 
 ```
-NEXT_PUBLIC_SUPABASE_URL=https://ywfhrqgjiudngpdarfzy.supabase.co
+NEXT_PUBLIC_SUPABASE_URL=<your-supabase-project-url>
 NEXT_PUBLIC_SUPABASE_ANON_KEY=<your-anon-key>
 SUPABASE_SERVICE_ROLE_KEY=<your-service-role-key>
 ```
