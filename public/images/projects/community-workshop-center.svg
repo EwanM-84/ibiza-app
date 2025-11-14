@@ -1,0 +1,44 @@
+<svg width="800" height="450" xmlns="http://www.w3.org/2000/svg">
+  <!-- Background gradient -->
+  <defs>
+    <linearGradient id="workshopGrad" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" style="stop-color:#f59e0b;stop-opacity:1" />
+      <stop offset="100%" style="stop-color:#d97706;stop-opacity:1" />
+    </linearGradient>
+  </defs>
+
+  <!-- Background -->
+  <rect width="800" height="450" fill="url(#workshopGrad)"/>
+  <rect width="800" height="450" fill="#000000" opacity="0.1"/>
+
+  <!-- Workshop building -->
+  <rect x="250" y="200" width="300" height="150" fill="#ffffff" opacity="0.2" rx="8"/>
+  <polygon points="400,160 230,210 570,210" fill="#ffffff" opacity="0.3"/>
+
+  <!-- Tools icons -->
+  <!-- Hammer -->
+  <rect x="310" y="250" width="15" height="60" fill="#78716c" opacity="0.9"/>
+  <rect x="300" y="240" width="35" height="20" fill="#78716c" opacity="0.9" rx="3"/>
+
+  <!-- Brush -->
+  <rect x="380" y="270" width="10" height="50" fill="#92400e" opacity="0.9"/>
+  <rect x="370" y="260" width="30" height="20" fill="#fbbf24" opacity="0.9" rx="5"/>
+
+  <!-- Wrench -->
+  <path d="M 450 260 L 460 270 L 470 260 L 475 265 L 465 280 L 455 275 Z" fill="#71717a" opacity="0.9"/>
+  <circle cx="465" cy="290" r="15" fill="#71717a" opacity="0.7"/>
+
+  <!-- People silhouettes -->
+  <circle cx="320" cy="315" r="12" fill="#ffffff" opacity="0.6"/>
+  <path d="M 320 327 L 310 350 L 330 350 Z" fill="#ffffff" opacity="0.6"/>
+
+  <circle cx="360" cy="315" r="12" fill="#ffffff" opacity="0.6"/>
+  <path d="M 360 327 L 350 350 L 370 350 Z" fill="#ffffff" opacity="0.6"/>
+
+  <circle cx="400" cy="315" r="12" fill="#ffffff" opacity="0.6"/>
+  <path d="M 400 327 L 390 350 L 410 350 Z" fill="#ffffff" opacity="0.6"/>
+
+  <!-- Text -->
+  <text x="400" y="405" font-family="Arial, sans-serif" font-size="28" font-weight="bold" fill="#ffffff" text-anchor="middle">Community Workshop Center</text>
+  <text x="400" y="430" font-family="Arial, sans-serif" font-size="18" fill="#ffffff" text-anchor="middle" opacity="0.9">Skills Development • Jardín</text>
+</svg>

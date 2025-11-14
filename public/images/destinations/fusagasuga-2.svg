@@ -1,0 +1,81 @@
+<svg width="400" height="300" viewBox="0 0 400 300" xmlns="http://www.w3.org/2000/svg">
+  <defs>
+    <linearGradient id="bgGrad" x1="0%" y1="0%" x2="0%" y2="100%">
+      <stop offset="0%" style="stop-color:#8BC34A;stop-opacity:1" />
+      <stop offset="100%" style="stop-color:#558B2F;stop-opacity:1" />
+    </linearGradient>
+    <radialGradient id="berryGrad">
+      <stop offset="0%" style="stop-color:#DC143C;stop-opacity:1" />
+      <stop offset="100%" style="stop-color:#8B0000;stop-opacity:1" />
+    </radialGradient>
+  </defs>
+
+  <!-- Background -->
+  <rect width="400" height="300" fill="url(#bgGrad)"/>
+
+  <!-- Coffee plant stems -->
+  <g>
+    <!-- Left branch -->
+    <path d="M 120 250 Q 100 200 90 150 Q 85 120 85 90" stroke="#3E2723" stroke-width="6" fill="none"/>
+
+    <!-- Center branch -->
+    <path d="M 200 270 Q 200 220 200 170 Q 200 130 200 80" stroke="#3E2723" stroke-width="8" fill="none"/>
+
+    <!-- Right branch -->
+    <path d="M 280 250 Q 300 200 310 150 Q 315 120 315 90" stroke="#3E2723" stroke-width="6" fill="none"/>
+  </g>
+
+  <!-- Coffee leaves -->
+  <g>
+    <!-- Left plant leaves -->
+    <ellipse cx="70" cy="140" rx="25" ry="12" fill="#2E7D32" transform="rotate(-30 70 140)"/>
+    <ellipse cx="95" cy="120" rx="28" ry="14" fill="#388E3C" transform="rotate(35 95 120)"/>
+    <ellipse cx="75" cy="170" rx="24" ry="11" fill="#2E7D32" transform="rotate(-40 75 170)"/>
+    <ellipse cx="105" cy="160" rx="26" ry="13" fill="#43A047" transform="rotate(25 105 160)"/>
+    <ellipse cx="80" cy="200" rx="23" ry="11" fill="#2E7D32" transform="rotate(-35 80 200)"/>
+
+    <!-- Center plant leaves -->
+    <ellipse cx="170" cy="150" rx="30" ry="15" fill="#2E7D32" transform="rotate(-25 170 150)"/>
+    <ellipse cx="230" cy="150" rx="30" ry="15" fill="#388E3C" transform="rotate(25 230 150)"/>
+    <ellipse cx="165" cy="110" rx="32" ry="16" fill="#43A047" transform="rotate(-30 165 110)"/>
+    <ellipse cx="235" cy="110" rx="32" ry="16" fill="#2E7D32" transform="rotate(30 235 110)"/>
+    <ellipse cx="175" cy="190" rx="28" ry="14" fill="#388E3C" transform="rotate(-20 175 190)"/>
+    <ellipse cx="225" cy="190" rx="28" ry="14" fill="#43A047" transform="rotate(20 225 190)"/>
+
+    <!-- Right plant leaves -->
+    <ellipse cx="295" cy="140" rx="25" ry="12" fill="#2E7D32" transform="rotate(30 295 140)"/>
+    <ellipse cx="325" cy="120" rx="28" ry="14" fill="#388E3C" transform="rotate(-35 325 120)"/>
+    <ellipse cx="305" cy="170" rx="24" ry="11" fill="#43A047" transform="rotate(40 305 170)"/>
+    <ellipse cx="330" cy="160" rx="26" ry="13" fill="#2E7D32" transform="rotate(-25 330 160)"/>
+  </g>
+
+  <!-- Coffee cherries -->
+  <g>
+    <!-- Left plant -->
+    <circle cx="85" cy="155" r="7" fill="url(#berryGrad)"/>
+    <circle cx="78" cy="163" r="7" fill="url(#berryGrad)"/>
+    <circle cx="92" cy="163" r="7" fill="url(#berryGrad)"/>
+
+    <!-- Center plant -->
+    <circle cx="185" cy="135" r="8" fill="url(#berryGrad)"/>
+    <circle cx="177" cy="144" r="8" fill="url(#berryGrad)"/>
+    <circle cx="193" cy="144" r="8" fill="url(#berryGrad)"/>
+    <circle cx="215" cy="135" r="8" fill="url(#berryGrad)"/>
+    <circle cx="207" cy="144" r="8" fill="url(#berryGrad)"/>
+    <circle cx="223" cy="144" r="8" fill="url(#berryGrad)"/>
+
+    <!-- Right plant -->
+    <circle cx="310" cy="155" r="7" fill="url(#berryGrad)"/>
+    <circle cx="303" cy="163" r="7" fill="url(#berryGrad)"/>
+    <circle cx="317" cy="163" r="7" fill="url(#berryGrad)"/>
+  </g>
+
+  <!-- Ground -->
+  <rect y="250" width="400" height="50" fill="#4E342E" opacity="0.7"/>
+
+  <!-- Label background -->
+  <rect y="270" width="400" height="30" fill="#000000" opacity="0.7"/>
+
+  <!-- Location text -->
+  <text x="200" y="290" font-family="Arial, sans-serif" font-size="18" font-weight="bold" fill="#FFFFFF" text-anchor="middle">Coffee Farm</text>
+</svg>

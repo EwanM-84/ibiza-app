@@ -1,0 +1,103 @@
+<svg width="400" height="300" viewBox="0 0 400 300" xmlns="http://www.w3.org/2000/svg">
+  <defs>
+    <linearGradient id="cableSkyGrad" x1="0%" y1="0%" x2="0%" y2="100%">
+      <stop offset="0%" style="stop-color:#64B5F6;stop-opacity:1" />
+      <stop offset="100%" style="stop-color:#BBDEFB;stop-opacity:1" />
+    </linearGradient>
+    <linearGradient id="hillGradCable" x1="0%" y1="0%" x2="0%" y2="100%">
+      <stop offset="0%" style="stop-color:#558B2F;stop-opacity:1" />
+      <stop offset="100%" style="stop-color:#33691E;stop-opacity:1" />
+    </linearGradient>
+    <linearGradient id="cableCarGrad" x1="0%" y1="0%" x2="100%" y2="0%">
+      <stop offset="0%" style="stop-color:#E53935;stop-opacity:1" />
+      <stop offset="100%" style="stop-color:#C62828;stop-opacity:1" />
+    </linearGradient>
+  </defs>
+
+  <!-- Sky background -->
+  <rect width="400" height="300" fill="url(#cableSkyGrad)"/>
+
+  <!-- Hills with houses -->
+  <g>
+    <!-- Far hill -->
+    <path d="M 0 200 Q 100 150 200 180 T 400 190 L 400 300 L 0 300 Z" fill="url(#hillGradCable)" opacity="0.6"/>
+
+    <!-- Middle hill -->
+    <path d="M 0 220 Q 150 170 300 200 T 400 210 L 400 300 L 0 300 Z" fill="url(#hillGradCable)" opacity="0.8"/>
+
+    <!-- Near hill -->
+    <path d="M 0 250 Q 100 210 200 230 T 400 240 L 400 300 L 0 300 Z" fill="url(#hillGradCable)"/>
+  </g>
+
+  <!-- Small houses on hills -->
+  <g opacity="0.7">
+    <rect x="80" y="185" width="12" height="10" fill="#FCD116"/>
+    <path d="M 74 185 L 86 178 L 98 185 Z" fill="#C62828"/>
+
+    <rect x="140" y="175" width="14" height="12" fill="#FFF59D"/>
+    <path d="M 133 175 L 147 167 L 161 175 Z" fill="#D32F2F"/>
+
+    <rect x="250" y="195" width="13" height="11" fill="#FFEB3B"/>
+    <path d="M 243 195 L 256.5 187 L 270 195 Z" fill="#B71C1C"/>
+
+    <rect x="320" y="207" width="15" height="13" fill="#FFF176"/>
+    <path d="M 312 207 L 327.5 198 L 343 207 Z" fill="#E53935"/>
+  </g>
+
+  <!-- Cable car support towers -->
+  <g>
+    <!-- Left tower -->
+    <rect x="45" y="180" width="8" height="70" fill="#424242"/>
+    <rect x="40" y="180" width="18" height="6" fill="#616161"/>
+    <circle cx="49" cy="180" r="5" fill="#757575"/>
+
+    <!-- Right tower -->
+    <rect x="347" y="140" width="8" height="110" fill="#424242"/>
+    <rect x="342" y="140" width="18" height="6" fill="#616161"/>
+    <circle cx="351" cy="140" r="5" fill="#757575"/>
+  </g>
+
+  <!-- Cable lines -->
+  <g stroke="#333333" stroke-width="2" fill="none">
+    <path d="M 49 180 Q 200 120 351 140"/>
+    <path d="M 49 183 Q 200 123 351 143"/>
+  </g>
+
+  <!-- Cable cars -->
+  <g>
+    <!-- Cable car 1 (red) -->
+    <g transform="translate(140, 135)">
+      <line x1="0" y1="-10" x2="0" y2="0" stroke="#333333" stroke-width="2"/>
+      <rect x="-20" y="0" width="40" height="30" rx="3" fill="url(#cableCarGrad)" stroke="#B71C1C" stroke-width="2"/>
+      <rect x="-16" y="5" width="15" height="12" fill="#90CAF9" opacity="0.9"/>
+      <rect x="1" y="5" width="15" height="12" fill="#90CAF9" opacity="0.9"/>
+      <circle cx="0" cy="-12" r="3" fill="#616161"/>
+    </g>
+
+    <!-- Cable car 2 (blue-red) -->
+    <g transform="translate(280, 125)">
+      <line x1="0" y1="-10" x2="0" y2="0" stroke="#333333" stroke-width="2"/>
+      <rect x="-20" y="0" width="40" height="30" rx="3" fill="url(#cableCarGrad)" stroke="#B71C1C" stroke-width="2"/>
+      <rect x="-16" y="5" width="15" height="12" fill="#90CAF9" opacity="0.9"/>
+      <rect x="1" y="5" width="15" height="12" fill="#90CAF9" opacity="0.9"/>
+      <circle cx="0" cy="-12" r="3" fill="#616161"/>
+    </g>
+  </g>
+
+  <!-- Clouds -->
+  <g opacity="0.7">
+    <ellipse cx="80" cy="50" rx="30" ry="15" fill="#FFFFFF"/>
+    <ellipse cx="100" cy="50" rx="25" ry="13" fill="#FFFFFF"/>
+    <ellipse cx="90" cy="43" rx="20" ry="12" fill="#FFFFFF"/>
+
+    <ellipse cx="300" cy="70" rx="35" ry="17" fill="#FFFFFF"/>
+    <ellipse cx="325" cy="70" rx="28" ry="14" fill="#FFFFFF"/>
+    <ellipse cx="312" cy="62" rx="22" ry="13" fill="#FFFFFF"/>
+  </g>
+
+  <!-- Label background -->
+  <rect y="270" width="400" height="30" fill="#000000" opacity="0.7"/>
+
+  <!-- Location text -->
+  <text x="200" y="290" font-family="Arial, sans-serif" font-size="18" font-weight="bold" fill="#FFFFFF" text-anchor="middle">Metro Cable</text>
+</svg>

@@ -1,0 +1,51 @@
+<svg width="800" height="450" xmlns="http://www.w3.org/2000/svg">
+  <!-- Background gradient -->
+  <defs>
+    <linearGradient id="houseGrad" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" style="stop-color:#0891b2;stop-opacity:1" />
+      <stop offset="100%" style="stop-color:#0e7490;stop-opacity:1" />
+    </linearGradient>
+  </defs>
+
+  <!-- Background -->
+  <rect width="800" height="450" fill="url(#houseGrad)"/>
+  <rect width="800" height="450" fill="#000000" opacity="0.1"/>
+
+  <!-- Mountains -->
+  <polygon points="100,300 200,200 300,300" fill="#0e7490" opacity="0.3"/>
+  <polygon points="500,300 600,180 700,300" fill="#0e7490" opacity="0.3"/>
+
+  <!-- House -->
+  <rect x="300" y="220" width="200" height="130" fill="#ffffff" opacity="0.9" rx="5"/>
+  <polygon points="400,170 280,230 520,230" fill="#ef4444" opacity="0.9"/>
+
+  <!-- Windows -->
+  <rect x="330" y="250" width="50" height="50" fill="#06b6d4" opacity="0.7"/>
+  <rect x="420" y="250" width="50" height="50" fill="#06b6d4" opacity="0.7"/>
+  <line x1="355" y1="250" x2="355" y2="300" stroke="#ffffff" stroke-width="3"/>
+  <line x1="330" y1="275" x2="380" y2="275" stroke="#ffffff" stroke-width="3"/>
+  <line x1="445" y1="250" x2="445" y2="300" stroke="#ffffff" stroke-width="3"/>
+  <line x1="420" y1="275" x2="470" y2="275" stroke="#ffffff" stroke-width="3"/>
+
+  <!-- Door -->
+  <rect x="370" y="290" width="60" height="60" fill="#92400e" opacity="0.9" rx="3"/>
+  <circle cx="415" cy="320" r="4" fill="#fbbf24" opacity="0.9"/>
+
+  <!-- Solar panel on roof -->
+  <rect x="350" y="200" width="100" height="25" fill="#1e3a8a" opacity="0.8" rx="3"/>
+  <line x1="360" y1="200" x2="360" y2="225" stroke="#3b82f6" stroke-width="2"/>
+  <line x1="380" y1="200" x2="380" y2="225" stroke="#3b82f6" stroke-width="2"/>
+  <line x1="400" y1="200" x2="400" y2="225" stroke="#3b82f6" stroke-width="2"/>
+  <line x1="420" y1="200" x2="420" y2="225" stroke="#3b82f6" stroke-width="2"/>
+  <line x1="440" y1="200" x2="440" y2="225" stroke="#3b82f6" stroke-width="2"/>
+
+  <!-- Trees beside house -->
+  <circle cx="260" cy="290" r="25" fill="#22c55e" opacity="0.7"/>
+  <rect x="255" y="290" width="10" height="40" fill="#92400e" opacity="0.7"/>
+  <circle cx="540" cy="300" r="30" fill="#4ade80" opacity="0.7"/>
+  <rect x="535" y="300" width="10" height="35" fill="#92400e" opacity="0.7"/>
+
+  <!-- Text -->
+  <text x="400" y="395" font-family="Arial, sans-serif" font-size="32" font-weight="bold" fill="#ffffff" text-anchor="middle">Sustainable Housing</text>
+  <text x="400" y="425" font-family="Arial, sans-serif" font-size="18" fill="#ffffff" text-anchor="middle" opacity="0.9">Housing • Salento</text>
+</svg>

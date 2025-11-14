@@ -1,0 +1,84 @@
+<svg width="400" height="300" viewBox="0 0 400 300" xmlns="http://www.w3.org/2000/svg">
+  <defs>
+    <linearGradient id="skyBg" x1="0%" y1="0%" x2="0%" y2="100%">
+      <stop offset="0%" style="stop-color:#87CEEB;stop-opacity:1" />
+      <stop offset="100%" style="stop-color:#B0E0E6;stop-opacity:1" />
+    </linearGradient>
+    <linearGradient id="wallGrad" x1="0%" y1="0%" x2="0%" y2="100%">
+      <stop offset="0%" style="stop-color:#FFFACD;stop-opacity:1" />
+      <stop offset="100%" style="stop-color:#F0E68C;stop-opacity:1" />
+    </linearGradient>
+    <linearGradient id="roofGrad" x1="0%" y1="0%" x2="0%" y2="100%">
+      <stop offset="0%" style="stop-color:#D2691E;stop-opacity:1" />
+      <stop offset="100%" style="stop-color:#8B4513;stop-opacity:1" />
+    </linearGradient>
+  </defs>
+
+  <!-- Sky -->
+  <rect width="400" height="300" fill="url(#skyBg)"/>
+
+  <!-- Ground -->
+  <rect y="220" width="400" height="80" fill="#7CB342"/>
+
+  <!-- Main house -->
+  <g>
+    <!-- Walls -->
+    <rect x="100" y="140" width="200" height="100" fill="url(#wallGrad)" stroke="#D4AF37" stroke-width="2"/>
+
+    <!-- Roof -->
+    <path d="M 80 140 L 200 80 L 320 140 Z" fill="url(#roofGrad)" stroke="#6B4423" stroke-width="2"/>
+
+    <!-- Door -->
+    <rect x="180" y="180" width="40" height="60" fill="#6B4423" stroke="#4E342E" stroke-width="2"/>
+    <circle cx="210" cy="210" r="3" fill="#FCD116"/>
+
+    <!-- Windows -->
+    <rect x="120" y="160" width="35" height="35" fill="#E3F2FD" stroke="#1565C0" stroke-width="2"/>
+    <line x1="137.5" y1="160" x2="137.5" y2="195" stroke="#1565C0" stroke-width="2"/>
+    <line x1="120" y1="177.5" x2="155" y2="177.5" stroke="#1565C0" stroke-width="2"/>
+
+    <rect x="245" y="160" width="35" height="35" fill="#E3F2FD" stroke="#1565C0" stroke-width="2"/>
+    <line x1="262.5" y1="160" x2="262.5" y2="195" stroke="#1565C0" stroke-width="2"/>
+    <line x1="245" y1="177.5" x2="280" y2="177.5" stroke="#1565C0" stroke-width="2"/>
+
+    <!-- Balcony/Porch -->
+    <rect x="90" y="230" width="220" height="10" fill="#8B4513"/>
+    <rect x="95" y="230" width="4" height="10" fill="#6B4423"/>
+    <rect x="145" y="230" width="4" height="10" fill="#6B4423"/>
+    <rect x="175" y="230" width="4" height="10" fill="#6B4423"/>
+    <rect x="225" y="230" width="4" height="10" fill="#6B4423"/>
+    <rect x="255" y="230" width="4" height="10" fill="#6B4423"/>
+    <rect x="301" y="230" width="4" height="10" fill="#6B4423"/>
+  </g>
+
+  <!-- Decorative plants -->
+  <g>
+    <!-- Left plant -->
+    <rect x="45" y="210" width="15" height="30" fill="#6B4423"/>
+    <ellipse cx="52.5" cy="205" rx="20" ry="25" fill="#43A047"/>
+    <ellipse cx="45" cy="200" rx="15" ry="20" fill="#4CAF50"/>
+    <ellipse cx="60" cy="200" rx="15" ry="20" fill="#66BB6A"/>
+
+    <!-- Right plant -->
+    <rect x="340" y="210" width="15" height="30" fill="#6B4423"/>
+    <ellipse cx="347.5" cy="205" rx="20" ry="25" fill="#43A047"/>
+    <ellipse cx="340" cy="200" rx="15" ry="20" fill="#4CAF50"/>
+    <ellipse cx="355" cy="200" rx="15" ry="20" fill="#66BB6A"/>
+  </g>
+
+  <!-- Flowers in front -->
+  <g>
+    <circle cx="130" cy="235" r="4" fill="#E91E63"/>
+    <circle cx="145" cy="237" r="4" fill="#FCD116"/>
+    <circle cx="160" cy="235" r="4" fill="#E91E63"/>
+    <circle cx="240" cy="235" r="4" fill="#FCD116"/>
+    <circle cx="255" cy="237" r="4" fill="#E91E63"/>
+    <circle cx="270" cy="235" r="4" fill="#FCD116"/>
+  </g>
+
+  <!-- Label background -->
+  <rect y="270" width="400" height="30" fill="#000000" opacity="0.7"/>
+
+  <!-- Location text -->
+  <text x="200" y="290" font-family="Arial, sans-serif" font-size="18" font-weight="bold" fill="#FFFFFF" text-anchor="middle">Colonial Architecture</text>
+</svg>

@@ -1,0 +1,136 @@
+<svg width="800" height="450" viewBox="0 0 800 450" xmlns="http://www.w3.org/2000/svg">
+  <defs>
+    <linearGradient id="salentoSkyGrad" x1="0%" y1="0%" x2="0%" y2="100%">
+      <stop offset="0%" style="stop-color:#4FC3F7;stop-opacity:1" />
+      <stop offset="100%" style="stop-color:#B3E5FC;stop-opacity:1" />
+    </linearGradient>
+    <linearGradient id="valleyGrad" x1="0%" y1="0%" x2="0%" y2="100%">
+      <stop offset="0%" style="stop-color:#66BB6A;stop-opacity:1" />
+      <stop offset="100%" style="stop-color:#2E7D32;stop-opacity:1" />
+    </linearGradient>
+    <linearGradient id="palmTrunkGrad" x1="0%" y1="0%" x2="100%" y2="0%">
+      <stop offset="0%" style="stop-color:#8D6E63;stop-opacity:1" />
+      <stop offset="50%" style="stop-color:#A1887F;stop-opacity:1" />
+      <stop offset="100%" style="stop-color:#8D6E63;stop-opacity:1" />
+    </linearGradient>
+  </defs>
+
+  <!-- Sky -->
+  <rect width="800" height="450" fill="url(#salentoSkyGrad)"/>
+
+  <!-- Sun -->
+  <circle cx="700" cy="90" r="45" fill="#FDD835" opacity="0.9"/>
+  <circle cx="700" cy="90" r="55" fill="#FDD835" opacity="0.4"/>
+
+  <!-- Far mountains -->
+  <path d="M 0 200 L 150 150 L 300 180 L 450 140 L 600 170 L 750 150 L 800 160 L 800 300 L 0 300 Z" fill="#4CAF50" opacity="0.4"/>
+
+  <!-- Middle mountains -->
+  <path d="M 0 240 L 200 190 L 400 220 L 600 200 L 800 230 L 800 300 L 0 300 Z" fill="#43A047" opacity="0.6"/>
+
+  <!-- Valley/foreground hills -->
+  <path d="M 0 280 Q 200 250 400 270 T 800 280 L 800 450 L 0 450 Z" fill="url(#valleyGrad)"/>
+
+  <!-- Wax Palm Trees (Palma de Cera) - National tree of Colombia -->
+  <g>
+    <!-- Palm 1 (left) -->
+    <g>
+      <rect x="130" y="180" width="12" height="140" fill="url(#palmTrunkGrad)"/>
+      <ellipse cx="136" cy="180" rx="30" ry="8" fill="#2E7D32" transform="rotate(-45 136 180)"/>
+      <ellipse cx="136" cy="180" rx="30" ry="8" fill="#388E3C" transform="rotate(-30 136 180)"/>
+      <ellipse cx="136" cy="180" rx="30" ry="8" fill="#43A047" transform="rotate(-15 136 180)"/>
+      <ellipse cx="136" cy="180" rx="30" ry="8" fill="#4CAF50" transform="rotate(0 136 180)"/>
+      <ellipse cx="136" cy="180" rx="30" ry="8" fill="#43A047" transform="rotate(15 136 180)"/>
+      <ellipse cx="136" cy="180" rx="30" ry="8" fill="#388E3C" transform="rotate(30 136 180)"/>
+      <ellipse cx="136" cy="180" rx="30" ry="8" fill="#2E7D32" transform="rotate(45 136 180)"/>
+      <!-- Fronds pointing up -->
+      <ellipse cx="136" cy="165" rx="28" ry="8" fill="#2E7D32" transform="rotate(-60 136 165)"/>
+      <ellipse cx="136" cy="165" rx="28" ry="8" fill="#388E3C" transform="rotate(60 136 165)"/>
+    </g>
+
+    <!-- Palm 2 (center-left, taller) -->
+    <g>
+      <rect x="280" y="120" width="14" height="200" fill="url(#palmTrunkGrad)"/>
+      <ellipse cx="287" cy="120" rx="35" ry="9" fill="#2E7D32" transform="rotate(-45 287 120)"/>
+      <ellipse cx="287" cy="120" rx="35" ry="9" fill="#388E3C" transform="rotate(-30 287 120)"/>
+      <ellipse cx="287" cy="120" rx="35" ry="9" fill="#43A047" transform="rotate(-15 287 120)"/>
+      <ellipse cx="287" cy="120" rx="35" ry="9" fill="#4CAF50" transform="rotate(0 287 120)"/>
+      <ellipse cx="287" cy="120" rx="35" ry="9" fill="#43A047" transform="rotate(15 287 120)"/>
+      <ellipse cx="287" cy="120" rx="35" ry="9" fill="#388E3C" transform="rotate(30 287 120)"/>
+      <ellipse cx="287" cy="120" rx="35" ry="9" fill="#2E7D32" transform="rotate(45 287 120)"/>
+      <ellipse cx="287" cy="103" rx="32" ry="9" fill="#2E7D32" transform="rotate(-60 287 103)"/>
+      <ellipse cx="287" cy="103" rx="32" ry="9" fill="#388E3C" transform="rotate(60 287 103)"/>
+    </g>
+
+    <!-- Palm 3 (center-right) -->
+    <g>
+      <rect x="450" y="150" width="13" height="170" fill="url(#palmTrunkGrad)"/>
+      <ellipse cx="456.5" cy="150" rx="32" ry="8" fill="#2E7D32" transform="rotate(-45 456.5 150)"/>
+      <ellipse cx="456.5" cy="150" rx="32" ry="8" fill="#388E3C" transform="rotate(-30 456.5 150)"/>
+      <ellipse cx="456.5" cy="150" rx="32" ry="8" fill="#43A047" transform="rotate(-15 456.5 150)"/>
+      <ellipse cx="456.5" cy="150" rx="32" ry="8" fill="#4CAF50" transform="rotate(0 456.5 150)"/>
+      <ellipse cx="456.5" cy="150" rx="32" ry="8" fill="#43A047" transform="rotate(15 456.5 150)"/>
+      <ellipse cx="456.5" cy="150" rx="32" ry="8" fill="#388E3C" transform="rotate(30 456.5 150)"/>
+      <ellipse cx="456.5" cy="150" rx="32" ry="8" fill="#2E7D32" transform="rotate(45 456.5 150)"/>
+      <ellipse cx="456.5" cy="134" rx="30" ry="8" fill="#2E7D32" transform="rotate(-60 456.5 134)"/>
+      <ellipse cx="456.5" cy="134" rx="30" ry="8" fill="#388E3C" transform="rotate(60 456.5 134)"/>
+    </g>
+
+    <!-- Palm 4 (right, tallest) -->
+    <g>
+      <rect x="620" y="100" width="15" height="220" fill="url(#palmTrunkGrad)"/>
+      <ellipse cx="627.5" cy="100" rx="38" ry="10" fill="#2E7D32" transform="rotate(-45 627.5 100)"/>
+      <ellipse cx="627.5" cy="100" rx="38" ry="10" fill="#388E3C" transform="rotate(-30 627.5 100)"/>
+      <ellipse cx="627.5" cy="100" rx="38" ry="10" fill="#43A047" transform="rotate(-15 627.5 100)"/>
+      <ellipse cx="627.5" cy="100" rx="38" ry="10" fill="#4CAF50" transform="rotate(0 627.5 100)"/>
+      <ellipse cx="627.5" cy="100" rx="38" ry="10" fill="#43A047" transform="rotate(15 627.5 100)"/>
+      <ellipse cx="627.5" cy="100" rx="38" ry="10" fill="#388E3C" transform="rotate(30 627.5 100)"/>
+      <ellipse cx="627.5" cy="100" rx="38" ry="10" fill="#2E7D32" transform="rotate(45 627.5 100)"/>
+      <ellipse cx="627.5" cy="82" rx="35" ry="10" fill="#2E7D32" transform="rotate(-60 627.5 82)"/>
+      <ellipse cx="627.5" cy="82" rx="35" ry="10" fill="#388E3C" transform="rotate(60 627.5 82)"/>
+    </g>
+
+    <!-- Palm 5 (far right) -->
+    <g>
+      <rect x="740" y="190" width="11" height="130" fill="url(#palmTrunkGrad)"/>
+      <ellipse cx="745.5" cy="190" rx="28" ry="8" fill="#2E7D32" transform="rotate(-45 745.5 190)"/>
+      <ellipse cx="745.5" cy="190" rx="28" ry="8" fill="#388E3C" transform="rotate(-30 745.5 190)"/>
+      <ellipse cx="745.5" cy="190" rx="28" ry="8" fill="#43A047" transform="rotate(-15 745.5 190)"/>
+      <ellipse cx="745.5" cy="190" rx="28" ry="8" fill="#4CAF50" transform="rotate(0 745.5 190)"/>
+      <ellipse cx="745.5" cy="190" rx="28" ry="8" fill="#43A047" transform="rotate(15 745.5 190)"/>
+      <ellipse cx="745.5" cy="190" rx="28" ry="8" fill="#388E3C" transform="rotate(30 745.5 190)"/>
+      <ellipse cx="745.5" cy="190" rx="28" ry="8" fill="#2E7D32" transform="rotate(45 745.5 190)"/>
+      <ellipse cx="745.5" cy="175" rx="26" ry="8" fill="#2E7D32" transform="rotate(-60 745.5 175)"/>
+      <ellipse cx="745.5" cy="175" rx="26" ry="8" fill="#388E3C" transform="rotate(60 745.5 175)"/>
+    </g>
+  </g>
+
+  <!-- Clouds -->
+  <g opacity="0.6">
+    <ellipse cx="100" cy="80" rx="40" ry="20" fill="#FFFFFF"/>
+    <ellipse cx="130" cy="80" rx="35" ry="18" fill="#FFFFFF"/>
+    <ellipse cx="115" cy="70" rx="30" ry="16" fill="#FFFFFF"/>
+
+    <ellipse cx="500" cy="100" rx="45" ry="22" fill="#FFFFFF"/>
+    <ellipse cx="535" cy="100" rx="38" ry="19" fill="#FFFFFF"/>
+    <ellipse cx="517" cy="88" rx="32" ry="17" fill="#FFFFFF"/>
+  </g>
+
+  <!-- Coffee plants at base -->
+  <g opacity="0.8">
+    <ellipse cx="50" cy="340" rx="25" ry="35" fill="#1B5E20"/>
+    <ellipse cx="180" cy="350" rx="30" ry="40" fill="#1B5E20"/>
+    <ellipse cx="380" cy="345" rx="28" ry="38" fill="#1B5E20"/>
+    <ellipse cx="550" cy="355" rx="32" ry="42" fill="#1B5E20"/>
+    <ellipse cx="720" cy="348" rx="27" ry="36" fill="#1B5E20"/>
+  </g>
+
+  <!-- Grass/field texture -->
+  <rect y="360" width="800" height="90" fill="#558B2F" opacity="0.3"/>
+
+  <!-- Label background -->
+  <rect y="410" width="800" height="40" fill="#000000" opacity="0.7"/>
+
+  <!-- Location text -->
+  <text x="400" y="435" font-family="Arial, sans-serif" font-size="28" font-weight="bold" fill="#FFFFFF" text-anchor="middle">SALENTO</text>
+</svg>

@@ -1,0 +1,129 @@
+<svg width="400" height="300" viewBox="0 0 400 300" xmlns="http://www.w3.org/2000/svg">
+  <defs>
+    <linearGradient id="colorBgGrad" x1="0%" y1="0%" x2="0%" y2="100%">
+      <stop offset="0%" style="stop-color:#4FC3F7;stop-opacity:1" />
+      <stop offset="100%" style="stop-color:#B3E5FC;stop-opacity:1" />
+    </linearGradient>
+    <linearGradient id="yellowBuilding" x1="0%" y1="0%" x2="0%" y2="100%">
+      <stop offset="0%" style="stop-color:#FFF176;stop-opacity:1" />
+      <stop offset="100%" style="stop-color:#FFEB3B;stop-opacity:1" />
+    </linearGradient>
+    <linearGradient id="blueBuilding" x1="0%" y1="0%" x2="0%" y2="100%">
+      <stop offset="0%" style="stop-color:#64B5F6;stop-opacity:1" />
+      <stop offset="100%" style="stop-color:#1976D2;stop-opacity:1" />
+    </linearGradient>
+    <linearGradient id="redBuilding" x1="0%" y1="0%" x2="0%" y2="100%">
+      <stop offset="0%" style="stop-color:#EF5350;stop-opacity:1" />
+      <stop offset="100%" style="stop-color:#D32F2F;stop-opacity:1" />
+    </linearGradient>
+    <linearGradient id="greenBuilding" x1="0%" y1="0%" x2="0%" y2="100%">
+      <stop offset="0%" style="stop-color:#81C784;stop-opacity:1" />
+      <stop offset="100%" style="stop-color:#388E3C;stop-opacity:1" />
+    </linearGradient>
+    <linearGradient id="orangeBuilding" x1="0%" y1="0%" x2="0%" y2="100%">
+      <stop offset="0%" style="stop-color:#FFB74D;stop-opacity:1" />
+      <stop offset="100%" style="stop-color:#F57C00;stop-opacity:1" />
+    </linearGradient>
+  </defs>
+
+  <!-- Sky -->
+  <rect width="400" height="300" fill="url(#colorBgGrad)"/>
+
+  <!-- Ground/Street -->
+  <rect y="240" width="400" height="60" fill="#616161"/>
+  <line x1="0" y1="270" x2="400" y2="270" stroke="#FCD116" stroke-width="3" stroke-dasharray="20 15"/>
+
+  <!-- Colorful buildings -->
+  <g>
+    <!-- Building 1 - Yellow -->
+    <rect x="20" y="120" width="55" height="120" fill="url(#yellowBuilding)" stroke="#F9A825" stroke-width="2"/>
+    <rect x="27" y="130" width="12" height="15" fill="#FFFFFF" opacity="0.8"/>
+    <rect x="48" y="130" width="12" height="15" fill="#FFFFFF" opacity="0.8"/>
+    <rect x="27" y="155" width="12" height="15" fill="#FFFFFF" opacity="0.8"/>
+    <rect x="48" y="155" width="12" height="15" fill="#FFFFFF" opacity="0.8"/>
+    <rect x="27" y="180" width="12" height="15" fill="#FFFFFF" opacity="0.8"/>
+    <rect x="48" y="180" width="12" height="15" fill="#FFFFFF" opacity="0.8"/>
+    <rect x="35" y="205" width="20" height="35" fill="#6D4C41"/>
+
+    <!-- Building 2 - Blue -->
+    <rect x="85" y="100" width="50" height="140" fill="url(#blueBuilding)" stroke="#1565C0" stroke-width="2"/>
+    <rect x="91" y="110" width="11" height="14" fill="#FFFFFF" opacity="0.8"/>
+    <rect x="108" y="110" width="11" height="14" fill="#FFFFFF" opacity="0.8"/>
+    <rect x="91" y="132" width="11" height="14" fill="#FFFFFF" opacity="0.8"/>
+    <rect x="108" y="132" width="11" height="14" fill="#FFFFFF" opacity="0.8"/>
+    <rect x="91" y="154" width="11" height="14" fill="#FFFFFF" opacity="0.8"/>
+    <rect x="108" y="154" width="11" height="14" fill="#FFFFFF" opacity="0.8"/>
+    <rect x="91" y="176" width="11" height="14" fill="#FFFFFF" opacity="0.8"/>
+    <rect x="108" y="176" width="11" height="14" fill="#FFFFFF" opacity="0.8"/>
+    <rect x="97" y="198" width="18" height="42" fill="#795548"/>
+
+    <!-- Building 3 - Red (tall) -->
+    <rect x="145" y="80" width="48" height="160" fill="url(#redBuilding)" stroke="#C62828" stroke-width="2"/>
+    <rect x="151" y="90" width="10" height="13" fill="#FFFFFF" opacity="0.8"/>
+    <rect x="167" y="90" width="10" height="13" fill="#FFFFFF" opacity="0.8"/>
+    <rect x="151" y="109" width="10" height="13" fill="#FFFFFF" opacity="0.8"/>
+    <rect x="167" y="109" width="10" height="13" fill="#FFFFFF" opacity="0.8"/>
+    <rect x="151" y="128" width="10" height="13" fill="#FFFFFF" opacity="0.8"/>
+    <rect x="167" y="128" width="10" height="13" fill="#FFFFFF" opacity="0.8"/>
+    <rect x="151" y="147" width="10" height="13" fill="#FFFFFF" opacity="0.8"/>
+    <rect x="167" y="147" width="10" height="13" fill="#FFFFFF" opacity="0.8"/>
+    <rect x="151" y="166" width="10" height="13" fill="#FFFFFF" opacity="0.8"/>
+    <rect x="167" y="166" width="10" height="13" fill="#FFFFFF" opacity="0.8"/>
+    <rect x="151" y="185" width="10" height="13" fill="#FFFFFF" opacity="0.8"/>
+    <rect x="167" y="185" width="10" height="13" fill="#FFFFFF" opacity="0.8"/>
+    <rect x="156" y="204" width="16" height="36" fill="#5D4037"/>
+
+    <!-- Building 4 - Green -->
+    <rect x="203" y="110" width="52" height="130" fill="url(#greenBuilding)" stroke="#2E7D32" stroke-width="2"/>
+    <rect x="210" y="120" width="11" height="14" fill="#FFFFFF" opacity="0.8"/>
+    <rect x="227" y="120" width="11" height="14" fill="#FFFFFF" opacity="0.8"/>
+    <rect x="210" y="141" width="11" height="14" fill="#FFFFFF" opacity="0.8"/>
+    <rect x="227" y="141" width="11" height="14" fill="#FFFFFF" opacity="0.8"/>
+    <rect x="210" y="162" width="11" height="14" fill="#FFFFFF" opacity="0.8"/>
+    <rect x="227" y="162" width="11" height="14" fill="#FFFFFF" opacity="0.8"/>
+    <rect x="210" y="183" width="11" height="14" fill="#FFFFFF" opacity="0.8"/>
+    <rect x="227" y="183" width="11" height="14" fill="#FFFFFF" opacity="0.8"/>
+    <rect x="216" y="204" width="19" height="36" fill="#4E342E"/>
+
+    <!-- Building 5 - Orange -->
+    <rect x="265" y="130" width="50" height="110" fill="url(#orangeBuilding)" stroke="#E65100" stroke-width="2"/>
+    <rect x="271" y="140" width="11" height="13" fill="#FFFFFF" opacity="0.8"/>
+    <rect x="288" y="140" width="11" height="13" fill="#FFFFFF" opacity="0.8"/>
+    <rect x="271" y="160" width="11" height="13" fill="#FFFFFF" opacity="0.8"/>
+    <rect x="288" y="160" width="11" height="13" fill="#FFFFFF" opacity="0.8"/>
+    <rect x="271" y="180" width="11" height="13" fill="#FFFFFF" opacity="0.8"/>
+    <rect x="288" y="180" width="11" height="13" fill="#FFFFFF" opacity="0.8"/>
+    <rect x="277" y="200" width="18" height="40" fill="#6D4C41"/>
+
+    <!-- Building 6 - Purple/Blue -->
+    <rect x="325" y="140" width="55" height="100" fill="url(#blueBuilding)" stroke="#1565C0" stroke-width="2"/>
+    <rect x="332" y="150" width="12" height="14" fill="#FFFFFF" opacity="0.8"/>
+    <rect x="350" y="150" width="12" height="14" fill="#FFFFFF" opacity="0.8"/>
+    <rect x="332" y="171" width="12" height="14" fill="#FFFFFF" opacity="0.8"/>
+    <rect x="350" y="171" width="12" height="14" fill="#FFFFFF" opacity="0.8"/>
+    <rect x="332" y="192" width="12" height="14" fill="#FFFFFF" opacity="0.8"/>
+    <rect x="350" y="192" width="12" height="14" fill="#FFFFFF" opacity="0.8"/>
+    <rect x="340" y="213" width="20" height="27" fill="#795548"/>
+  </g>
+
+  <!-- Balconies and details -->
+  <g>
+    <rect x="27" y="205" width="12" height="2" fill="#F9A825"/>
+    <rect x="48" y="205" width="12" height="2" fill="#F9A825"/>
+
+    <rect x="151" y="204" width="10" height="2" fill="#B71C1C"/>
+    <rect x="167" y="204" width="10" height="2" fill="#B71C1C"/>
+  </g>
+
+  <!-- Plants/vegetation in front -->
+  <g>
+    <ellipse cx="10" cy="245" rx="8" ry="12" fill="#66BB6A"/>
+    <ellipse cx="395" cy="248" rx="10" ry="14" fill="#66BB6A"/>
+  </g>
+
+  <!-- Label background -->
+  <rect y="270" width="400" height="30" fill="#000000" opacity="0.7"/>
+
+  <!-- Location text -->
+  <text x="200" y="290" font-family="Arial, sans-serif" font-size="18" font-weight="bold" fill="#FFFFFF" text-anchor="middle">Colorful Streets</text>
+</svg>

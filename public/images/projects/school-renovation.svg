@@ -1,0 +1,32 @@
+<svg width="800" height="450" xmlns="http://www.w3.org/2000/svg">
+  <!-- Background gradient -->
+  <defs>
+    <linearGradient id="eduGrad" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" style="stop-color:#4ade80;stop-opacity:1" />
+      <stop offset="100%" style="stop-color:#16a34a;stop-opacity:1" />
+    </linearGradient>
+  </defs>
+
+  <!-- Background -->
+  <rect width="800" height="450" fill="url(#eduGrad)"/>
+
+  <!-- Overlay pattern -->
+  <rect width="800" height="450" fill="#000000" opacity="0.1"/>
+
+  <!-- School building illustration -->
+  <rect x="250" y="180" width="300" height="180" fill="#ffffff" opacity="0.9" rx="8"/>
+  <rect x="280" y="210" width="60" height="60" fill="#4ade80" opacity="0.8"/>
+  <rect x="370" y="210" width="60" height="60" fill="#4ade80" opacity="0.8"/>
+  <rect x="460" y="210" width="60" height="60" fill="#4ade80" opacity="0.8"/>
+  <rect x="360" y="290" width="80" height="70" fill="#16a34a" opacity="0.9"/>
+  <polygon points="400,140 250,190 550,190" fill="#ffffff" opacity="0.9"/>
+
+  <!-- Books icon -->
+  <rect x="320" y="320" width="20" height="30" fill="#fbbf24" opacity="0.9"/>
+  <rect x="345" y="315" width="20" height="35" fill="#f59e0b" opacity="0.9"/>
+  <rect x="370" y="310" width="20" height="40" fill="#f97316" opacity="0.9"/>
+
+  <!-- Text -->
+  <text x="400" y="410" font-family="Arial, sans-serif" font-size="32" font-weight="bold" fill="#ffffff" text-anchor="middle">School Renovation</text>
+  <text x="400" y="435" font-family="Arial, sans-serif" font-size="18" fill="#ffffff" text-anchor="middle" opacity="0.9">Education • Fusagasugá</text>
+</svg>

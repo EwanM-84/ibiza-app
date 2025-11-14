@@ -1,0 +1,148 @@
+<svg width="400" height="300" viewBox="0 0 400 300" xmlns="http://www.w3.org/2000/svg">
+  <defs>
+    <linearGradient id="jeepBgGrad" x1="0%" y1="0%" x2="0%" y2="100%">
+      <stop offset="0%" style="stop-color:#81D4FA;stop-opacity:1" />
+      <stop offset="100%" style="stop-color:#4FC3F7;stop-opacity:1" />
+    </linearGradient>
+    <linearGradient id="jeepBodyGrad" x1="0%" y1="0%" x2="0%" y2="100%">
+      <stop offset="0%" style="stop-color:#4CAF50;stop-opacity:1" />
+      <stop offset="100%" style="stop-color:#2E7D32;stop-opacity:1" />
+    </linearGradient>
+    <linearGradient id="jeepRedGrad" x1="0%" y1="0%" x2="0%" y2="100%">
+      <stop offset="0%" style="stop-color:#EF5350;stop-opacity:1" />
+      <stop offset="100%" style="stop-color:#C62828;stop-opacity:1" />
+    </linearGradient>
+    <linearGradient id="jeepYellowGrad" x1="0%" y1="0%" x2="0%" y2="100%">
+      <stop offset="0%" style="stop-color:#FFF176;stop-opacity:1" />
+      <stop offset="100%" style="stop-color:#FDD835;stop-opacity:1" />
+    </linearGradient>
+    <radialGradient id="wheelGrad">
+      <stop offset="0%" style="stop-color:#424242;stop-opacity:1" />
+      <stop offset="70%" style="stop-color:#212121;stop-opacity:1" />
+      <stop offset="100%" style="stop-color:#424242;stop-opacity:1" />
+    </radialGradient>
+  </defs>
+
+  <!-- Sky background -->
+  <rect width="400" height="300" fill="url(#jeepBgGrad)"/>
+
+  <!-- Mountains in background -->
+  <path d="M 0 180 L 100 140 L 200 160 L 300 135 L 400 155 L 400 220 L 0 220 Z" fill="#66BB6A" opacity="0.6"/>
+
+  <!-- Road/ground -->
+  <rect y="200" width="400" height="100" fill="#8D6E63"/>
+  <rect y="195" width="400" height="5" fill="#6D4C41"/>
+
+  <!-- Road lines -->
+  <rect x="20" y="245" width="60" height="6" fill="#FCD116"/>
+  <rect x="100" y="245" width="60" height="6" fill="#FCD116"/>
+  <rect x="180" y="245" width="60" height="6" fill="#FCD116"/>
+  <rect x="260" y="245" width="60" height="6" fill="#FCD116"/>
+  <rect x="340" y="245" width="60" height="6" fill="#FCD116"/>
+
+  <!-- Jeep Willys (iconic coffee region vehicle) -->
+  <g transform="translate(200, 170)">
+    <!-- Cargo area with coffee bags -->
+    <rect x="-70" y="-45" width="60" height="45" fill="url(#jeepBodyGrad)" stroke="#1B5E20" stroke-width="2"/>
+
+    <!-- Coffee sacks in back -->
+    <g>
+      <rect x="-65" y="-40" width="18" height="25" fill="#8D6E63" stroke="#5D4037" stroke-width="1" rx="2"/>
+      <text x="-56" y="-22" font-family="Arial, sans-serif" font-size="10" font-weight="bold" fill="#3E2723" text-anchor="middle">CAFÉ</text>
+
+      <rect x="-42" y="-38" width="18" height="25" fill="#A1887F" stroke="#5D4037" stroke-width="1" rx="2"/>
+      <text x="-33" y="-20" font-family="Arial, sans-serif" font-size="10" font-weight="bold" fill="#3E2723" text-anchor="middle">CAFÉ</text>
+
+      <rect x="-60" y="-35" width="16" height="22" fill="#BCAAA4" stroke="#5D4037" stroke-width="1" rx="2"/>
+    </g>
+
+    <!-- Main body/cabin -->
+    <rect x="-10" y="-50" width="80" height="50" fill="url(#jeepRedGrad)" stroke="#B71C1C" stroke-width="2" rx="3"/>
+
+    <!-- Roof rack -->
+    <rect x="-15" y="-58" width="90" height="6" fill="#6D4C41" stroke="#4E342E" stroke-width="1"/>
+    <rect x="-10" y="-65" width="15" height="7" fill="#8D6E63"/>
+    <rect x="10" y="-65" width="15" height="7" fill="#8D6E63"/>
+    <rect x="40" y="-65" width="15" height="7" fill="#8D6E63"/>
+
+    <!-- Hood -->
+    <rect x="70" y="-42" width="30" height="42" fill="url(#jeepYellowGrad)" stroke="#F9A825" stroke-width="2" rx="2"/>
+
+    <!-- Grille -->
+    <rect x="95" y="-35" width="8" height="28" fill="#424242" stroke="#212121" stroke-width="1"/>
+    <line x1="97" y1="-35" x2="97" y2="-7" stroke="#616161" stroke-width="1"/>
+    <line x1="99" y1="-35" x2="99" y2="-7" stroke="#616161" stroke-width="1"/>
+    <line x1="101" y1="-35" x2="101" y2="-7" stroke="#616161" stroke-width="1"/>
+
+    <!-- Headlights -->
+    <circle cx="92" cy="-35" r="5" fill="#FFF176" stroke="#424242" stroke-width="1"/>
+    <circle cx="92" cy="-12" r="5" fill="#FFF176" stroke="#424242" stroke-width="1"/>
+
+    <!-- Windows -->
+    <rect x="-5" y="-45" width="25" height="20" fill="#90CAF9" opacity="0.7" stroke="#1565C0" stroke-width="1"/>
+    <rect x="25" y="-45" width="30" height="20" fill="#90CAF9" opacity="0.7" stroke="#1565C0" stroke-width="1"/>
+
+    <!-- Window frames -->
+    <line x1="20" y1="-50" x2="20" y2="-25" stroke="#B71C1C" stroke-width="3"/>
+    <line x1="55" y1="-50" x2="55" y2="-25" stroke="#B71C1C" stroke-width="2"/>
+
+    <!-- Door lines -->
+    <line x1="20" y1="-25" x2="20" y2="0" stroke="#B71C1C" stroke-width="2"/>
+    <line x1="55" y1="-25" x2="55" y2="0" stroke="#F9A825" stroke-width="2"/>
+
+    <!-- Door handles -->
+    <rect x="16" y="-15" width="2" height="6" fill="#424242"/>
+    <rect x="52" y="-15" width="2" height="6" fill="#424242"/>
+
+    <!-- Wheels -->
+    <g>
+      <!-- Front wheel -->
+      <circle cx="75" cy="5" r="20" fill="url(#wheelGrad)" stroke="#212121" stroke-width="2"/>
+      <circle cx="75" cy="5" r="10" fill="#616161" stroke="#424242" stroke-width="1"/>
+      <circle cx="75" cy="5" r="5" fill="#424242"/>
+
+      <!-- Rear wheel -->
+      <circle cx="-35" cy="5" r="20" fill="url(#wheelGrad)" stroke="#212121" stroke-width="2"/>
+      <circle cx="-35" cy="5" r="10" fill="#616161" stroke="#424242" stroke-width="1"/>
+      <circle cx="-35" cy="5" r="5" fill="#424242"/>
+    </g>
+
+    <!-- Wheel wells shadow -->
+    <ellipse cx="75" cy="0" rx="22" ry="8" fill="#000000" opacity="0.2"/>
+    <ellipse cx="-35" cy="0" rx="22" ry="8" fill="#000000" opacity="0.2"/>
+
+    <!-- Side mirror -->
+    <rect x="-8" y="-30" width="3" height="8" fill="#424242"/>
+    <circle cx="-6.5" cy="-24" r="4" fill="#90CAF9" opacity="0.6" stroke="#424242" stroke-width="1"/>
+
+    <!-- Bumper -->
+    <rect x="100" y="-8" width="5" height="8" fill="#424242" stroke="#212121" stroke-width="1"/>
+    <rect x="-72" y="-8" width="5" height="8" fill="#424242" stroke="#212121" stroke-width="1"/>
+
+    <!-- Decorative stripes -->
+    <rect x="-10" y="-20" width="80" height="3" fill="#FCD116" opacity="0.8"/>
+    <rect x="-10" y="-14" width="80" height="2" fill="#003893" opacity="0.8"/>
+    <rect x="-10" y="-10" width="80" height="2" fill="#CE1126" opacity="0.8"/>
+  </g>
+
+  <!-- Dust/motion effect -->
+  <g opacity="0.4">
+    <ellipse cx="100" cy="215" rx="30" ry="8" fill="#BCAAA4"/>
+    <ellipse cx="120" cy="218" rx="25" ry="6" fill="#A1887F"/>
+    <ellipse cx="80" cy="220" rx="20" ry="5" fill="#8D6E63"/>
+  </g>
+
+  <!-- Grass/vegetation on sides -->
+  <g>
+    <ellipse cx="30" cy="210" rx="15" ry="20" fill="#43A047"/>
+    <ellipse cx="50" cy="215" rx="12" ry="18" fill="#4CAF50"/>
+    <ellipse cx="370" cy="212" rx="14" ry="19" fill="#43A047"/>
+    <ellipse cx="350" cy="218" rx="16" ry="21" fill="#4CAF50"/>
+  </g>
+
+  <!-- Label background -->
+  <rect y="270" width="400" height="30" fill="#000000" opacity="0.7"/>
+
+  <!-- Location text -->
+  <text x="200" y="290" font-family="Arial, sans-serif" font-size="18" font-weight="bold" fill="#FFFFFF" text-anchor="middle">Jeep Willys</text>
+</svg>
