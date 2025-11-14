@@ -9,16 +9,16 @@ Before deploying to Netlify, you **must** set these environment variables in you
 1. **NEXT_PUBLIC_SUPABASE_URL**
    - Your Supabase project URL
    - Example: `https://ywfhrqgjiudngpdarfzy.supabase.co`
-   - Get from: [Supabase Dashboard](https://supabase.com/dashboard) ’ Your Project ’ Settings ’ API
+   - Get from: [Supabase Dashboard](https://supabase.com/dashboard) ï¿½ Your Project ï¿½ Settings ï¿½ API
 
 2. **NEXT_PUBLIC_SUPABASE_ANON_KEY**
    - Your Supabase anonymous key (public, safe to expose)
-   - Get from: Supabase Dashboard ’ Your Project ’ Settings ’ API ’ Project API keys ’ `anon` `public`
+   - Get from: Supabase Dashboard ï¿½ Your Project ï¿½ Settings ï¿½ API ï¿½ Project API keys ï¿½ `anon` `public`
 
 3. **SUPABASE_SERVICE_ROLE_KEY**
    - Your Supabase service role key (private, server-side only)
-   -   **IMPORTANT**: This is a secret key, never expose it client-side
-   - Get from: Supabase Dashboard ’ Your Project ’ Settings ’ API ’ Project API keys ’ `service_role` `secret`
+   - ï¿½ **IMPORTANT**: This is a secret key, never expose it client-side
+   - Get from: Supabase Dashboard ï¿½ Your Project ï¿½ Settings ï¿½ API ï¿½ Project API keys ï¿½ `service_role` `secret`
 
 4. **NEXT_PUBLIC_GOOGLE_MAPS_API_KEY**
    - Your Google Maps JavaScript API key
@@ -29,7 +29,7 @@ Before deploying to Netlify, you **must** set these environment variables in you
 
 1. Log in to [Netlify](https://app.netlify.com)
 2. Go to your site
-3. Navigate to: **Site settings** ’ **Environment variables**
+3. Navigate to: **Site settings** ï¿½ **Environment variables**
 4. Click **Add a variable** or **Add environment variables**
 5. Add each variable with its name and value
 6. **Important**: Set the scope to **All scopes** or **Production**
@@ -39,7 +39,7 @@ Before deploying to Netlify, you **must** set these environment variables in you
 
 1. Trigger a new deployment:
    - Go to **Deploys** tab
-   - Click **Trigger deploy** ’ **Deploy site**
+   - Click **Trigger deploy** ï¿½ **Deploy site**
 
 2. Or push a new commit to trigger automatic deployment
 
@@ -69,10 +69,11 @@ To prevent unauthorized use and unexpected charges:
 This means Netlify detected API keys in your build output or repository.
 
 **Solution:**
-1. Ensure `.env.local` is in `.gitignore` (already done)
+1. Ensure `.env.local` is in `.gitignore` (already done âœ…)
 2. Never commit actual API keys to git
 3. Make sure all secrets are stored in Netlify environment variables
-4. If you accidentally committed secrets:
+4. **Note**: `NEXT_PUBLIC_*` variables are intentionally exposed in the browser bundle - this is normal Next.js behavior. The `netlify.toml` is configured to allow this with `SECRETS_SCAN_SMART_DETECTION_ENABLED = "false"`
+5. If you accidentally committed secrets:
    ```bash
    # Remove from git history
    git rm --cached .env.local
