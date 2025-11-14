@@ -1,199 +1,106 @@
-# Deployment Guide - Netlify
+# Deployment Guide for SPTC Rural Platform
 
-## Prerequisites
+## Environment Variables Required
 
-- GitHub account
-- Netlify account (free tier works great)
-- Your Supabase credentials (already configured in `.env.local`)
+Before deploying to Netlify, you **must** set these environment variables in your Netlify site settings:
 
-## Step-by-Step Deployment
+### Required Variables
 
-### Option 1: Deploy via Netlify Dashboard (Recommended)
+1. **NEXT_PUBLIC_SUPABASE_URL**
+   - Your Supabase project URL
+   - Example: `https://ywfhrqgjiudngpdarfzy.supabase.co`
+   - Get from: [Supabase Dashboard](https://supabase.com/dashboard) ’ Your Project ’ Settings ’ API
 
-1. **Push to GitHub**
-   ```bash
-   git init
-   git add .
-   git commit -m "Initial commit - sptc.rural platform"
-   git branch -M main
-   git remote add origin https://github.com/YOUR_USERNAME/sptc-rural.git
-   git push -u origin main
-   ```
+2. **NEXT_PUBLIC_SUPABASE_ANON_KEY**
+   - Your Supabase anonymous key (public, safe to expose)
+   - Get from: Supabase Dashboard ’ Your Project ’ Settings ’ API ’ Project API keys ’ `anon` `public`
 
-2. **Connect to Netlify**
-   - Go to https://app.netlify.com
-   - Click "Add new site" > "Import an existing project"
-   - Choose "GitHub" and authorize Netlify
-   - Select your `sptc-rural` repository
+3. **SUPABASE_SERVICE_ROLE_KEY**
+   - Your Supabase service role key (private, server-side only)
+   -   **IMPORTANT**: This is a secret key, never expose it client-side
+   - Get from: Supabase Dashboard ’ Your Project ’ Settings ’ API ’ Project API keys ’ `service_role` `secret`
 
-3. **Configure Build Settings**
-   - Build command: `npm run build` (auto-detected)
-   - Publish directory: `.next` (auto-detected)
-   - Click "Show advanced" > "New variable" to add environment variables
+4. **NEXT_PUBLIC_GOOGLE_MAPS_API_KEY**
+   - Your Google Maps JavaScript API key
+   - Get from: [Google Cloud Console](https://console.cloud.google.com/google/maps-apis)
+   - **Security**: Restrict this key to your production domain
 
-4. **Add Environment Variables**
-   Add these in Netlify dashboard under Site settings > Environment variables:
+### How to Set Environment Variables in Netlify
 
-   ```
-   NEXT_PUBLIC_SUPABASE_URL=your_supabase_url_here
-   NEXT_PUBLIC_SUPABASE_ANON_KEY=your_supabase_anon_key_here
-   SUPABASE_SERVICE_ROLE_KEY=your_supabase_service_role_key_here
-   ```
+1. Log in to [Netlify](https://app.netlify.com)
+2. Go to your site
+3. Navigate to: **Site settings** ’ **Environment variables**
+4. Click **Add a variable** or **Add environment variables**
+5. Add each variable with its name and value
+6. **Important**: Set the scope to **All scopes** or **Production**
+7. Click **Save**
 
-   **IMPORTANT**: Get these values from your Supabase project dashboard (Settings > API). NEVER commit actual keys to the repository!
+### After Setting Variables
 
-5. **Deploy**
-   - Click "Deploy site"
-   - Wait for the build to complete (usually 2-3 minutes)
-   - Your site will be live at a random URL like `random-name-123456.netlify.app`
+1. Trigger a new deployment:
+   - Go to **Deploys** tab
+   - Click **Trigger deploy** ’ **Deploy site**
 
-6. **Custom Domain (Optional)**
-   - Go to Site settings > Domain management
-   - Click "Add custom domain"
-   - Add `sptc.rural` or your preferred domain
-   - Follow DNS configuration instructions
+2. Or push a new commit to trigger automatic deployment
 
-### Option 2: Deploy via Netlify CLI
+## Google Maps API Key Security
 
-```bash
-# Install Netlify CLI globally
-npm install -g netlify-cli
+To prevent unauthorized use and unexpected charges:
 
-# Login to Netlify
-netlify login
-
-# Initialize Netlify site
-netlify init
-
-# Follow the prompts:
-# - Create & configure a new site
-# - Choose your team
-# - Site name: sptc-rural (or your preference)
-
-# Deploy to production
-netlify deploy --prod
-
-# Set environment variables via CLI
-netlify env:set NEXT_PUBLIC_SUPABASE_URL "https://mbipxghsdvksmelxutzo.supabase.co"
-netlify env:set NEXT_PUBLIC_SUPABASE_ANON_KEY "your-anon-key"
-netlify env:set SUPABASE_SERVICE_ROLE_KEY "your-service-role-key"
-```
-
-### Option 3: Drag and Drop Deploy
-
-```bash
-# Build locally
-npm run build
-
-# The build output is in .next folder
-# Go to https://app.netlify.com/drop
-# Drag and drop the entire project folder
-```
-
-## Post-Deployment Checklist
-
-- [ ] Site is live and accessible
-- [ ] Navigation works correctly
-- [ ] Hero search form displays properly
-- [ ] Admin dashboard is accessible at `/admin`
-- [ ] Host onboarding is accessible at `/host/onboarding`
-- [ ] All styling looks correct (iOS-style design)
-- [ ] Supabase connection is working (check browser console)
-- [ ] Mobile responsive design works on different devices
-
-## Netlify Configuration
-
-The `netlify.toml` file includes:
-
-- Build command: `npm run build`
-- Publish directory: `.next`
-- Next.js plugin for proper SSR support
-- Node.js version: 18
-- Redirects for SPA routing
-- Environment variable references
-
-## Continuous Deployment
-
-Once connected to GitHub:
-- Every push to `main` branch triggers automatic deployment
-- Pull requests create deploy previews
-- Rollback to previous deployments anytime from Netlify dashboard
-
-## Custom Domain Setup
-
-1. **Purchase Domain** (if needed)
-   - Namecheap, GoDaddy, or Google Domains
-   - Recommended: `sptc.rural` or `sptcrural.com`
-
-2. **Add to Netlify**
-   - Site settings > Domain management > Add custom domain
-   - Enter your domain name
-
-3. **Configure DNS**
-   - Add Netlify nameservers to your domain registrar:
-     ```
-     dns1.p08.nsone.net
-     dns2.p08.nsone.net
-     dns3.p08.nsone.net
-     dns4.p08.nsone.net
-     ```
-   - Or add an A record pointing to Netlify's load balancer
-
-4. **Enable HTTPS**
-   - Netlify automatically provisions SSL certificate
-   - Usually takes 1-2 minutes after DNS propagation
-
-## Monitoring and Analytics
-
-Enable in Netlify dashboard:
-- Analytics: Track page views and performance
-- Forms: If you add contact forms later
-- Functions: For serverless API routes
-- Build hooks: For automated deployments
+1. Go to [Google Cloud Console](https://console.cloud.google.com/google/maps-apis)
+2. Select your project
+3. Go to **Credentials**
+4. Click on your API key
+5. Under **Application restrictions**:
+   - Select **HTTP referrers (web sites)**
+   - Add your domains:
+     - `https://yourdomain.com/*`
+     - `https://www.yourdomain.com/*`
+     - `https://*.netlify.app/*` (for preview deployments)
+6. Under **API restrictions**:
+   - Select **Restrict key**
+   - Enable only: **Maps JavaScript API**
+7. Click **Save**
 
 ## Troubleshooting
 
-### Build Fails
-- Check build logs in Netlify dashboard
-- Ensure all environment variables are set
-- Verify Node.js version compatibility
+### Build fails with "Secrets scanning detected secrets"
 
-### Site Not Loading
-- Check if build completed successfully
-- Verify environment variables are correct
-- Check browser console for errors
+This means Netlify detected API keys in your build output or repository.
 
-### Supabase Connection Issues
-- Verify environment variables in Netlify
-- Check Supabase project is active
-- Ensure anon key has correct permissions
+**Solution:**
+1. Ensure `.env.local` is in `.gitignore` (already done)
+2. Never commit actual API keys to git
+3. Make sure all secrets are stored in Netlify environment variables
+4. If you accidentally committed secrets:
+   ```bash
+   # Remove from git history
+   git rm --cached .env.local
+   git commit -m "Remove .env.local from git"
+   git push
+   ```
 
-## Performance Optimization
+### Map not showing in production
 
-Netlify automatically provides:
-- Global CDN distribution
-- Automatic image optimization
-- Brotli compression
-- HTTP/2 support
-- Edge handlers for faster response times
+1. Check that `NEXT_PUBLIC_GOOGLE_MAPS_API_KEY` is set in Netlify
+2. Verify the API key is not restricted to localhost only
+3. Check browser console for errors
+4. Ensure billing is enabled for your Google Cloud project
 
-## Cost Estimate
+### Database not connecting
 
-**Netlify Free Tier includes:**
-- 100 GB bandwidth/month
-- 300 build minutes/month
-- Automatic HTTPS
-- Continuous deployment
-- Perfect for MVP and early growth
+1. Verify `NEXT_PUBLIC_SUPABASE_URL` and `NEXT_PUBLIC_SUPABASE_ANON_KEY` are set correctly
+2. Check that your Supabase project is not paused
+3. Verify RLS (Row Level Security) policies are configured
 
-**When to upgrade:**
-- More than 100 GB bandwidth needed
-- Advanced analytics required
-- Priority support needed
-- Enterprise features required
+## Local Development
 
-## Support
+For local development, copy `.env.local.example` to `.env.local` and fill in your actual values:
 
-- Netlify Docs: https://docs.netlify.com
-- Next.js on Netlify: https://docs.netlify.com/frameworks/next-js/
-- Community Forum: https://answers.netlify.com
+```bash
+cp .env.local.example .env.local
+```
+
+Then edit `.env.local` with your real API keys.
+
+**Never commit `.env.local` to git!**
