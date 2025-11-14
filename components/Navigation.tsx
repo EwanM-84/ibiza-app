@@ -35,10 +35,10 @@ export default function Navigation() {
                 />
               </div>
               <div className="flex flex-col leading-none">
-                <span className="font-display text-2xl lg:text-3xl font-bold text-sptc-red-600 tracking-tight">
+                <span className="font-display text-xl lg:text-2xl font-bold text-sptc-red-600 tracking-tight">
                   SPTC
                 </span>
-                <span className="font-sans text-sm lg:text-base font-semibold text-sptc-gray-700 tracking-widest uppercase mt-0.5">
+                <span className="font-sans text-xs lg:text-sm font-semibold text-sptc-gray-700 tracking-widest uppercase mt-0.5">
                   Rural
                 </span>
               </div>

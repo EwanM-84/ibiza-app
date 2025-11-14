@@ -37,17 +37,17 @@ export default function Home() {
             <div className="order-1 space-y-8">
               <h1 className="space-y-0">
                 {/* Line 1: "Live the" - small, supporting */}
-                <span className="block font-sans text-2xl md:text-3xl font-medium text-sptc-gray-700 tracking-wide mb-2">
+                <span className="block font-sans text-lg md:text-xl font-medium text-sptc-gray-700 tracking-wide mb-2">
                   {getText("hero.liveThe", language)}
                 </span>
 
                 {/* Line 2: "stories" - BIG hero word */}
-                <span className="block font-display text-6xl md:text-7xl lg:text-8xl font-bold text-sptc-red-600 leading-none tracking-tight -mt-2">
-                  <span className="text-7xl md:text-8xl lg:text-9xl">{getText("hero.stories", language).charAt(0)}</span>{getText("hero.stories", language).slice(1)}
+                <span className="block font-display text-4xl md:text-5xl lg:text-6xl font-bold text-sptc-red-600 leading-none tracking-tight -mt-2">
+                  <span className="text-5xl md:text-6xl lg:text-7xl">{getText("hero.stories", language).charAt(0)}</span>{getText("hero.stories", language).slice(1)}
                 </span>
 
                 {/* Line 3: "of rural Colombia" - medium, grounded */}
-                <span className="block font-sans text-3xl md:text-4xl lg:text-5xl font-semibold text-sptc-gray-900 leading-tight mt-2">
+                <span className="block font-sans text-2xl md:text-3xl lg:text-4xl font-semibold text-sptc-gray-900 leading-tight mt-2">
                   {getText("hero.ofRuralColombia", language).split("Colombia")[0]}<span className="text-sptc-yellow-500">Colombia</span>
                 </span>
               </h1>
