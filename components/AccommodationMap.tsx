@@ -96,31 +96,34 @@ export default function AccommodationMap() {
       try {
         // Check if Google Maps is already loaded
         if ((window as any).google?.maps) {
-          console.log("Google Maps already loaded");
           renderMap();
           return;
         }
 
-        // Load the Google Maps script dynamically
+        // Check if script is already being loaded
+        const existingScript = document.querySelector(`script[src*="maps.googleapis.com"]`);
+        if (existingScript) {
+          existingScript.addEventListener('load', renderMap);
+          return;
+        }
+
+        // Load the Google Maps script dynamically with async
         const script = document.createElement('script');
-        script.src = `https://maps.googleapis.com/maps/api/js?key=${apiKey}`;
+        script.src = `https://maps.googleapis.com/maps/api/js?key=${apiKey}&loading=async`;
         script.async = true;
         script.defer = true;
 
         script.onload = () => {
-          console.log("Google Maps script loaded successfully");
           renderMap();
         };
 
-        script.onerror = (err) => {
-          console.error("Error loading Google Maps script:", err);
+        script.onerror = () => {
           setError("Failed to load Google Maps. Please check your API key and network connection.");
         };
 
         document.head.appendChild(script);
 
       } catch (error) {
-        console.error("Error initializing Google Maps:", error);
         setError("Failed to load Google Maps");
       }
     };
@@ -182,10 +185,7 @@ export default function AccommodationMap() {
             mapInstance.panTo({ lat: property.lat, lng: property.lng });
           });
         });
-
-        console.log("Map rendered successfully with", properties.length, "markers");
       } catch (error) {
-        console.error("Error rendering map:", error);
         setError("Failed to render map");
       }
     };

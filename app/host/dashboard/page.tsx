@@ -44,7 +44,6 @@ export default function HostDashboard() {
   const { language } = useLanguage();
   const [activeTab, setActiveTab] = useState<Tab>("pricing");
 
-  console.log("Host Dashboard loaded - Active tab:", activeTab);
 
   return (
     <div className="min-h-screen bg-gradient-to-br from-gray-50 via-white to-gray-100 py-12 px-4">
@@ -74,7 +73,6 @@ export default function HostDashboard() {
           <div className="flex space-x-1 overflow-x-auto">
             <button
               onClick={() => {
-                console.log("Switching to pricing tab");
                 setActiveTab("pricing");
               }}
               className={`flex items-center space-x-2 px-6 py-3.5 rounded-xl font-semibold transition-all whitespace-nowrap ${
@@ -89,7 +87,6 @@ export default function HostDashboard() {
 
             <button
               onClick={() => {
-                console.log("Switching to photos tab");
                 setActiveTab("photos");
               }}
               className={`flex items-center space-x-2 px-6 py-3.5 rounded-xl font-semibold transition-all whitespace-nowrap ${
@@ -124,7 +121,6 @@ function PricingTab() {
   const [showDatePriceForm, setShowDatePriceForm] = useState(false);
   const [editingRule, setEditingRule] = useState<PricingRule | null>(null);
 
-  console.log("Pricing Tab rendered - Base price:", basePrice, "Rules:", pricingRules.length);
 
   const months = [
     "January", "February", "March", "April", "May", "June",
@@ -142,7 +138,6 @@ function PricingTab() {
     // Check for custom price first
     const customPrice = customPrices.find(cp => cp.date === date);
     if (customPrice) {
-      console.log("Custom price found for", date, ":", customPrice.price);
       return customPrice.price;
     }
 
@@ -201,7 +196,6 @@ function PricingTab() {
         setSelectedMonth(selectedMonth + 1);
       }
     }
-    console.log("Month navigation:", direction, "New month:", selectedMonth);
   };
 
   const formatDate = (day: number): string => {
@@ -210,7 +204,6 @@ function PricingTab() {
   };
 
   const handleDateClick = (date: string) => {
-    console.log("Date clicked:", date);
     setSelectedDate(date);
     setShowDatePriceForm(true);
   };
@@ -225,14 +218,12 @@ function PricingTab() {
     } else {
       setCustomPrices([...customPrices, { date: selectedDate, price, reason }]);
     }
-    console.log("Custom price saved for", selectedDate, ":", price);
     setShowDatePriceForm(false);
     setSelectedDate(null);
   };
 
   const handleDeleteCustomPrice = (date: string) => {
     setCustomPrices(customPrices.filter(cp => cp.date !== date));
-    console.log("Custom price deleted for", date);
   };
 
   const handleSaveRule = (rule: Omit<PricingRule, "id">) => {
@@ -242,13 +233,11 @@ function PricingTab() {
     } else {
       setPricingRules([...pricingRules, { ...rule, id: Date.now().toString() }]);
     }
-    console.log("Pricing rule saved:", rule);
     setShowRuleForm(false);
   };
 
   const handleDeleteRule = (id: string) => {
     setPricingRules(pricingRules.filter(r => r.id !== id));
-    console.log("Pricing rule deleted:", id);
   };
 
   return (
@@ -276,7 +265,6 @@ function PricingTab() {
                 value={basePrice}
                 onChange={(e) => {
                   const val = parseFloat(e.target.value);
-                  console.log("Base price changed:", val);
                   setBasePrice(isNaN(val) ? 0 : val);
                 }}
                 className="w-full pl-10 pr-4 py-3 border-2 border-gray-200 rounded-xl focus:border-sptc-red-600 focus:ring-2 focus:ring-red-200 outline-none font-bold text-lg"
@@ -381,7 +369,6 @@ function PricingTab() {
             </h3>
             <button
               onClick={() => {
-                console.log("Add new rule clicked");
                 setEditingRule(null);
                 setShowRuleForm(true);
               }}
@@ -435,7 +422,6 @@ function PricingTab() {
                     <div className="flex items-center gap-1">
                       <button
                         onClick={() => {
-                          console.log("Edit rule:", rule.id);
                           setEditingRule(rule);
                           setShowRuleForm(true);
                         }}
@@ -495,7 +481,6 @@ function PricingTab() {
           editingRule={editingRule}
           onSave={handleSaveRule}
           onClose={() => {
-            console.log("Closing rule form");
             setShowRuleForm(false);
             setEditingRule(null);
           }}
@@ -510,7 +495,6 @@ function PricingTab() {
           basePrice={basePrice}
           onSave={handleSaveCustomPrice}
           onClose={() => {
-            console.log("Closing date price form");
             setShowDatePriceForm(false);
             setSelectedDate(null);
           }}
@@ -542,11 +526,9 @@ function RuleFormModal({
     editingRule?.appliesTo || "all"
   );
 
-  console.log("Rule Form Modal rendered - Editing:", editingRule?.id);
 
   const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault();
-    console.log("Submitting rule form:", { name, type, value, startDate, endDate, appliesTo });
     onSave({ name, type, value, startDate, endDate, appliesTo });
   };
 
@@ -707,11 +689,9 @@ function DatePriceFormModal({
   const [price, setPrice] = useState(currentPrice);
   const [reason, setReason] = useState("");
 
-  console.log("Date Price Form Modal rendered - Date:", date, "Current price:", currentPrice);
 
   const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault();
-    console.log("Saving custom price:", price, "Reason:", reason);
     onSave(price, reason || undefined);
   };
 
@@ -796,7 +776,6 @@ function PhotosTab() {
   const [currentPhotoIndex, setCurrentPhotoIndex] = useState(0);
   const [previewMode, setPreviewMode] = useState<"carousel" | "advert">("carousel");
 
-  console.log("Photos Tab rendered - Photos:", photos.length, "Preview mode:", previewMode);
 
   const handleFileUpload = (e: React.ChangeEvent<HTMLInputElement>) => {
     const files = e.target.files;
@@ -806,7 +785,6 @@ function PhotosTab() {
       if (file.type.startsWith("image/")) {
         const id = Date.now().toString() + Math.random().toString(36).substr(2, 9);
         const url = URL.createObjectURL(file);
-        console.log("Photo uploaded:", file.name, "ID:", id);
         setPhotos(prev => [...prev, { id, file, url }]);
       }
     });
@@ -821,7 +799,6 @@ function PhotosTab() {
     if (currentPhotoIndex >= photos.length - 1 && currentPhotoIndex > 0) {
       setCurrentPhotoIndex(currentPhotoIndex - 1);
     }
-    console.log("Photo deleted:", id);
   };
 
   const navigatePhoto = (direction: "prev" | "next") => {
@@ -830,7 +807,6 @@ function PhotosTab() {
     } else {
       setCurrentPhotoIndex(currentPhotoIndex < photos.length - 1 ? currentPhotoIndex + 1 : 0);
     }
-    console.log("Photo navigation:", direction, "New index:", currentPhotoIndex);
   };
 
   return (
@@ -875,7 +851,6 @@ function PhotosTab() {
           <div className="flex items-center gap-2">
             <button
               onClick={() => {
-                console.log("Switching to carousel view");
                 setPreviewMode("carousel");
               }}
               className={`px-4 py-2 rounded-xl font-semibold transition-all ${
@@ -891,7 +866,6 @@ function PhotosTab() {
             </button>
             <button
               onClick={() => {
-                console.log("Switching to advert preview");
                 setPreviewMode("advert");
               }}
               className={`px-4 py-2 rounded-xl font-semibold transition-all ${
@@ -963,7 +937,6 @@ function PhotosTab() {
                 <button
                   key={photo.id}
                   onClick={() => {
-                    console.log("Thumbnail clicked:", index);
                     setCurrentPhotoIndex(index);
                   }}
                   className={`relative aspect-square rounded-xl overflow-hidden border-2 transition-all ${
