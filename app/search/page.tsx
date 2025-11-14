@@ -1,6 +1,6 @@
 "use client";
 
-import React, { useState } from "react";
+import React, { useState, Suspense } from "react";
 import {
   MapPin,
   Calendar,
@@ -44,7 +44,7 @@ type Accommodation = {
   freeCancellation?: boolean;
 };
 
-export default function SearchResults() {
+function SearchResultsContent() {
   const { language } = useLanguage();
   const searchParams = useSearchParams();
   const location = searchParams?.get("location") || "Fusagasugá";
@@ -432,5 +432,20 @@ function AccommodationCard({
         </div>
       </div>
     </div>
+  );
+}
+
+export default function SearchResults() {
+  return (
+    <Suspense fallback={
+      <div className="min-h-screen flex items-center justify-center">
+        <div className="text-center">
+          <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-sptc-red-600 mx-auto mb-4"></div>
+          <p className="text-gray-600">Loading search results...</p>
+        </div>
+      </div>
+    }>
+      <SearchResultsContent />
+    </Suspense>
   );
 }

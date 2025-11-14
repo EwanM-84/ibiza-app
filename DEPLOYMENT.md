@@ -35,10 +35,12 @@
    Add these in Netlify dashboard under Site settings > Environment variables:
 
    ```
-   NEXT_PUBLIC_SUPABASE_URL=https://mbipxghsdvksmelxutzo.supabase.co
-   NEXT_PUBLIC_SUPABASE_ANON_KEY=eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6Im1iaXB4Z2hzZHZrc21lbHh1dHpvIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NjIzMzIwMTcsImV4cCI6MjA3NzkwODAxN30.F2ay2t_qA3qgd54KnBgjkR8UzBpbW8jo03xbmNH0uNE
-   SUPABASE_SERVICE_ROLE_KEY=eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6Im1iaXB4Z2hzZHZrc21lbHh1dHpvIiwicm9sZSI6InNlcnZpY2Vfcm9sZSIsImlhdCI6MTc2MjMzMjAxNywiZXhwIjoyMDc3OTA4MDE3fQ.2f6IbrL6kxvI0HYeuT2gtwOXEeb2jcU4pXjJYRWGKhU
+   NEXT_PUBLIC_SUPABASE_URL=your_supabase_url_here
+   NEXT_PUBLIC_SUPABASE_ANON_KEY=your_supabase_anon_key_here
+   SUPABASE_SERVICE_ROLE_KEY=your_supabase_service_role_key_here
    ```
+
+   **IMPORTANT**: Get these values from your Supabase project dashboard (Settings > API). NEVER commit actual keys to the repository!
 
 5. **Deploy**
    - Click "Deploy site"
