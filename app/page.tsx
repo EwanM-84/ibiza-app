@@ -25,16 +25,16 @@ export default function Home() {
     >
       {/* HERO */}
       <section
-        className="relative overflow-visible pt-8 lg:pt-12"
+        className="relative overflow-visible pt-2 sm:pt-4 lg:pt-12"
         style={{
           background:
             "radial-gradient(circle at top left, #F5EBE0 0%, #E8DDD0 40%, #DED0BD 100%)",
         }}
       >
-        <div className="max-w-[1400px] mx-auto px-4 sm:px-6 lg:px-8 py-12 lg:py-20">
-          <div className="grid lg:grid-cols-[45fr_55fr] gap-12 items-center">
+        <div className="max-w-[1400px] mx-auto px-4 sm:px-6 lg:px-8 py-6 sm:py-8 lg:py-20">
+          <div className="grid lg:grid-cols-[45fr_55fr] gap-6 sm:gap-8 lg:gap-12 items-center">
             {/* Left side: heading + booking bar */}
-            <div className="order-1 space-y-8">
+            <div className="order-1 space-y-4 sm:space-y-6 lg:space-y-8">
               <h1 className="space-y-0">
                 {/* Line 1: "Live the" - small, supporting */}
                 <span className="block font-sans text-sm sm:text-base md:text-xl font-medium text-sptc-gray-700 tracking-wide mb-2">
@@ -210,7 +210,7 @@ export default function Home() {
             <div className="order-first lg:order-last">
               <div className="grid grid-cols-2 sm:grid-cols-3 gap-2 sm:gap-3 max-w-[600px] ml-auto lg:ml-0">
                 {/* Column 1: Image 1 alone */}
-                <div className="relative overflow-hidden rounded-xl sm:rounded-2xl shadow-lg h-[200px] sm:h-[325px] mt-0 sm:mt-[50%]">
+                <div className="relative overflow-hidden rounded-xl sm:rounded-2xl shadow-lg h-[140px] sm:h-[200px] md:h-[325px] mt-0 sm:mt-[50%]">
                   <img
                     src="/images/hero/image-1.png"
                     alt="image-1 placeholder"
@@ -220,14 +220,14 @@ export default function Home() {
 
                 {/* Column 2: Image 2 and Image 3 stacked */}
                 <div className="flex flex-col gap-2 sm:gap-3">
-                  <div className="relative overflow-hidden rounded-xl sm:rounded-2xl shadow-lg h-[120px] sm:h-[175px]">
+                  <div className="relative overflow-hidden rounded-xl sm:rounded-2xl shadow-lg h-[80px] sm:h-[120px] md:h-[175px]">
                     <img
                       src="/images/hero/image-2.png"
                       alt="image-2 placeholder"
                       className="w-full h-full object-cover"
                     />
                   </div>
-                  <div className="relative overflow-hidden rounded-xl sm:rounded-2xl shadow-lg h-[200px] sm:h-[300px]">
+                  <div className="relative overflow-hidden rounded-xl sm:rounded-2xl shadow-lg h-[140px] sm:h-[200px] md:h-[300px]">
                     <img
                       src="/images/hero/image-3.png"
                       alt="image-3 placeholder"
@@ -238,18 +238,18 @@ export default function Home() {
 
                 {/* Column 3: Image 4 and Image 5 stacked */}
                 <div className="flex flex-col gap-2 sm:gap-3 col-span-2 sm:col-span-1">
-                  <div className="relative overflow-hidden rounded-xl sm:rounded-2xl shadow-lg h-[160px] sm:h-[250px]">
+                  <div className="relative overflow-hidden rounded-xl sm:rounded-2xl shadow-lg h-[110px] sm:h-[160px] md:h-[250px]">
                     <img
                       src="/images/hero/image-4.png"
                       alt="image-4 placeholder"
-                      className="w-full h-full object-cover"
+                      className="w-full h-full object-cover object-top"
                     />
                   </div>
-                  <div className="relative overflow-hidden rounded-xl sm:rounded-2xl shadow-lg h-[160px] sm:h-[250px]">
+                  <div className="relative overflow-hidden rounded-xl sm:rounded-2xl shadow-lg h-[110px] sm:h-[160px] md:h-[250px]">
                     <img
                       src="/images/hero/image-5.jpg"
                       alt="image-5 placeholder"
-                      className="w-full h-full object-cover"
+                      className="w-full h-full object-cover object-top"
                     />
                   </div>
                 </div>
@@ -308,29 +308,29 @@ export default function Home() {
           </div>
 
           {/* Impact Statistics Grid */}
-          <div className="grid grid-cols-2 md:grid-cols-4 gap-6 mt-12">
-            <div className="bg-white rounded-3xl p-6 shadow-xl hover:shadow-2xl transition-all hover:-translate-y-2 border border-gray-100">
-              <TrendingUp className="w-8 h-8 text-sptc-red-600 mx-auto mb-3" />
-              <div className="text-4xl font-bold text-gray-900 mb-2">$60,600</div>
-              <div className="text-gray-600 text-sm font-semibold">{getText("community.totalRaised", language)}</div>
+          <div className="grid grid-cols-2 md:grid-cols-4 gap-3 sm:gap-4 md:gap-6 mt-8 sm:mt-12">
+            <div className="bg-white rounded-2xl sm:rounded-3xl p-4 sm:p-5 md:p-6 shadow-xl hover:shadow-2xl transition-all hover:-translate-y-2 border border-gray-100">
+              <TrendingUp className="w-6 h-6 sm:w-7 sm:h-7 md:w-8 md:h-8 text-sptc-red-600 mx-auto mb-2 sm:mb-3" />
+              <div className="text-2xl sm:text-3xl md:text-4xl font-bold text-gray-900 mb-1 sm:mb-2">$60,600</div>
+              <div className="text-gray-600 text-xs sm:text-sm font-semibold">{getText("community.totalRaised", language)}</div>
             </div>
 
-            <div className="bg-white rounded-3xl p-6 shadow-xl hover:shadow-2xl transition-all hover:-translate-y-2 border border-gray-100">
-              <TreePine className="w-8 h-8 text-sptc-red-600 mx-auto mb-3" />
-              <div className="text-4xl font-bold text-gray-900 mb-2">3,750</div>
-              <div className="text-gray-600 text-sm font-semibold">{getText("community.treesPlanted", language)}</div>
+            <div className="bg-white rounded-2xl sm:rounded-3xl p-4 sm:p-5 md:p-6 shadow-xl hover:shadow-2xl transition-all hover:-translate-y-2 border border-gray-100">
+              <TreePine className="w-6 h-6 sm:w-7 sm:h-7 md:w-8 md:h-8 text-sptc-red-600 mx-auto mb-2 sm:mb-3" />
+              <div className="text-2xl sm:text-3xl md:text-4xl font-bold text-gray-900 mb-1 sm:mb-2">3,750</div>
+              <div className="text-gray-600 text-xs sm:text-sm font-semibold">{getText("community.treesPlanted", language)}</div>
             </div>
 
-            <div className="bg-white rounded-3xl p-6 shadow-xl hover:shadow-2xl transition-all hover:-translate-y-2 border border-gray-100">
-              <Users className="w-8 h-8 text-sptc-red-600 mx-auto mb-3" />
-              <div className="text-4xl font-bold text-gray-900 mb-2">12</div>
-              <div className="text-gray-600 text-sm font-semibold">{getText("community.communitiesServed", language)}</div>
+            <div className="bg-white rounded-2xl sm:rounded-3xl p-4 sm:p-5 md:p-6 shadow-xl hover:shadow-2xl transition-all hover:-translate-y-2 border border-gray-100">
+              <Users className="w-6 h-6 sm:w-7 sm:h-7 md:w-8 md:h-8 text-sptc-red-600 mx-auto mb-2 sm:mb-3" />
+              <div className="text-2xl sm:text-3xl md:text-4xl font-bold text-gray-900 mb-1 sm:mb-2">12</div>
+              <div className="text-gray-600 text-xs sm:text-sm font-semibold">{getText("community.communitiesServed", language)}</div>
             </div>
 
-            <div className="bg-white rounded-3xl p-6 shadow-xl hover:shadow-2xl transition-all hover:-translate-y-2 border border-gray-100">
-              <CheckCircle className="w-8 h-8 text-sptc-red-600 mx-auto mb-3" />
-              <div className="text-4xl font-bold text-gray-900 mb-2">8</div>
-              <div className="text-gray-600 text-sm font-semibold">{getText("community.projectsCompleted", language)}</div>
+            <div className="bg-white rounded-2xl sm:rounded-3xl p-4 sm:p-5 md:p-6 shadow-xl hover:shadow-2xl transition-all hover:-translate-y-2 border border-gray-100">
+              <CheckCircle className="w-6 h-6 sm:w-7 sm:h-7 md:w-8 md:h-8 text-sptc-red-600 mx-auto mb-2 sm:mb-3" />
+              <div className="text-2xl sm:text-3xl md:text-4xl font-bold text-gray-900 mb-1 sm:mb-2">8</div>
+              <div className="text-gray-600 text-xs sm:text-sm font-semibold">{getText("community.projectsCompleted", language)}</div>
             </div>
           </div>
 
@@ -423,9 +423,9 @@ export default function Home() {
                     <span className="text-sm font-bold text-green-600">{getText("projects.project1Category", language)}</span>
                   </div>
                 </div>
-                <div className="p-6">
-                  <h4 className="text-xl font-bold text-gray-900 mb-3">{getText("projects.project1Title", language)}</h4>
-                  <p className="text-gray-600 mb-4 leading-relaxed">
+                <div className="p-4 sm:p-6">
+                  <h4 className="text-lg sm:text-xl font-bold text-gray-900 mb-2 sm:mb-3 break-words">{getText("projects.project1Title", language)}</h4>
+                  <p className="text-sm sm:text-base text-gray-600 mb-4 leading-relaxed">
                     {getText("projects.project1Description", language)}
                   </p>
                   <div className="mb-4">
@@ -437,9 +437,9 @@ export default function Home() {
                       <div className="bg-gradient-to-r from-green-500 to-green-600 h-3 rounded-full shadow-md" style={{ width: '70%' }}></div>
                     </div>
                   </div>
-                  <div className="flex items-center justify-between pt-4 border-t border-gray-100">
-                    <span className="text-sm text-gray-600">{getText("projects.project1Complete", language)}</span>
-                    <button className="px-4 py-2 bg-green-600 text-white rounded-lg font-semibold text-sm hover:bg-green-700 transition-colors">
+                  <div className="flex items-center justify-between pt-4 border-t border-gray-100 gap-2">
+                    <span className="text-xs sm:text-sm text-gray-600 flex-shrink">{getText("projects.project1Complete", language)}</span>
+                    <button className="px-3 py-2 sm:px-4 bg-green-600 text-white rounded-lg font-semibold text-xs sm:text-sm hover:bg-green-700 transition-colors whitespace-nowrap">
                       {getText("projects.project1Button", language)}
                     </button>
                   </div>
@@ -458,9 +458,9 @@ export default function Home() {
                     <span className="text-sm font-bold text-blue-600">{getText("projects.project2Category", language)}</span>
                   </div>
                 </div>
-                <div className="p-6">
-                  <h4 className="text-xl font-bold text-gray-900 mb-3">{getText("projects.project2Title", language)}</h4>
-                  <p className="text-gray-600 mb-4 leading-relaxed">
+                <div className="p-4 sm:p-6">
+                  <h4 className="text-lg sm:text-xl font-bold text-gray-900 mb-2 sm:mb-3 break-words">{getText("projects.project2Title", language)}</h4>
+                  <p className="text-sm sm:text-base text-gray-600 mb-4 leading-relaxed">
                     {getText("projects.project2Description", language)}
                   </p>
                   <div className="mb-4">
@@ -472,9 +472,9 @@ export default function Home() {
                       <div className="bg-gradient-to-r from-blue-500 to-blue-600 h-3 rounded-full shadow-md" style={{ width: '41%' }}></div>
                     </div>
                   </div>
-                  <div className="flex items-center justify-between pt-4 border-t border-gray-100">
-                    <span className="text-sm text-gray-600">{getText("projects.project2Complete", language)}</span>
-                    <button className="px-4 py-2 bg-blue-600 text-white rounded-lg font-semibold text-sm hover:bg-blue-700 transition-colors">
+                  <div className="flex items-center justify-between pt-4 border-t border-gray-100 gap-2">
+                    <span className="text-xs sm:text-sm text-gray-600 flex-shrink">{getText("projects.project2Complete", language)}</span>
+                    <button className="px-3 py-2 sm:px-4 bg-blue-600 text-white rounded-lg font-semibold text-xs sm:text-sm hover:bg-blue-700 transition-colors whitespace-nowrap">
                       {getText("projects.project2Button", language)}
                     </button>
                   </div>
@@ -493,9 +493,9 @@ export default function Home() {
                     <span className="text-sm font-bold text-green-600">{getText("projects.project3Category", language)}</span>
                   </div>
                 </div>
-                <div className="p-6">
-                  <h4 className="text-xl font-bold text-gray-900 mb-3">{getText("projects.project3Title", language)}</h4>
-                  <p className="text-gray-600 mb-4 leading-relaxed">
+                <div className="p-4 sm:p-6">
+                  <h4 className="text-lg sm:text-xl font-bold text-gray-900 mb-2 sm:mb-3 break-words">{getText("projects.project3Title", language)}</h4>
+                  <p className="text-sm sm:text-base text-gray-600 mb-4 leading-relaxed">
                     {getText("projects.project3Description", language)}
                   </p>
                   <div className="mb-4">
@@ -507,9 +507,9 @@ export default function Home() {
                       <div className="bg-gradient-to-r from-green-500 to-green-600 h-3 rounded-full shadow-md" style={{ width: '100%' }}></div>
                     </div>
                   </div>
-                  <div className="flex items-center justify-between pt-4 border-t border-gray-100">
-                    <span className="text-sm font-bold text-green-600">{getText("projects.project3Complete", language)}</span>
-                    <button className="px-4 py-2 bg-gray-100 text-gray-700 rounded-lg font-semibold text-sm hover:bg-gray-200 transition-colors">
+                  <div className="flex items-center justify-between pt-4 border-t border-gray-100 gap-2">
+                    <span className="text-xs sm:text-sm font-bold text-green-600 flex-shrink">{getText("projects.project3Complete", language)}</span>
+                    <button className="px-3 py-2 sm:px-4 bg-gray-100 text-gray-700 rounded-lg font-semibold text-xs sm:text-sm hover:bg-gray-200 transition-colors whitespace-nowrap">
                       {getText("projects.project3Button", language)}
                     </button>
                   </div>
