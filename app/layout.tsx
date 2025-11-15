@@ -25,6 +25,19 @@ export const metadata: Metadata = {
     icon: "/images/icons/sptc-logo.jpg",
     apple: "/images/icons/sptc-logo.jpg",
   },
+  viewport: {
+    width: "device-width",
+    initialScale: 1,
+    maximumScale: 5,
+    userScalable: true,
+    viewportFit: "cover", // iOS Safari safe area for notched devices
+  },
+  themeColor: "#DC2626", // sptc-red-600
+  appleWebApp: {
+    capable: true,
+    statusBarStyle: "default",
+    title: "SPTC Rural",
+  },
 };
 
 export default function RootLayout({

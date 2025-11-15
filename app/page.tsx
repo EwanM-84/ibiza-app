@@ -25,16 +25,16 @@ export default function Home() {
     >
       {/* HERO */}
       <section
-        className="relative overflow-visible pt-2 sm:pt-4 lg:pt-12"
+        className="relative overflow-visible pt-4 md:pt-8 lg:pt-12"
         style={{
           background:
             "radial-gradient(circle at top left, #F5EBE0 0%, #E8DDD0 40%, #DED0BD 100%)",
         }}
       >
-        <div className="max-w-[1400px] mx-auto px-4 sm:px-6 lg:px-8 py-6 sm:py-8 lg:py-20">
-          <div className="grid lg:grid-cols-[45fr_55fr] gap-6 sm:gap-8 lg:gap-12 items-center">
+        <div className="max-w-[1400px] mx-auto px-4 sm:px-6 lg:px-8 py-8 md:py-12 lg:py-20">
+          <div className="grid lg:grid-cols-[45fr_55fr] gap-8 lg:gap-12 items-center">
             {/* Left side: heading + booking bar */}
-            <div className="order-1 space-y-4 sm:space-y-6 lg:space-y-8">
+            <div className="order-1 space-y-6 md:space-y-8">
               <h1 className="space-y-0">
                 {/* Line 1: "Live the" - small, supporting */}
                 <span className="block font-sans text-sm sm:text-base md:text-xl font-medium text-sptc-gray-700 tracking-wide mb-2">
@@ -206,11 +206,11 @@ export default function Home() {
               </div>
             </div>
 
-            {/* Right side: image collage - staggered like Withlocals */}
-            <div className="order-first lg:order-last">
-              <div className="grid grid-cols-2 sm:grid-cols-3 gap-2 sm:gap-3 max-w-[600px] ml-auto lg:ml-0">
+            {/* Right side: image collage - HIDDEN on mobile, shows on md+ */}
+            <div className="hidden md:block order-first lg:order-last">
+              <div className="grid grid-cols-3 gap-3 max-w-[600px] ml-auto lg:ml-0">
                 {/* Column 1: Image 1 alone */}
-                <div className="relative overflow-hidden rounded-xl sm:rounded-2xl shadow-lg h-[140px] sm:h-[200px] md:h-[325px] mt-0 sm:mt-[50%]">
+                <div className="relative overflow-hidden rounded-2xl shadow-lg h-[325px] mt-[50%]">
                   <img
                     src="/images/hero/image-1.png"
                     alt="image-1 placeholder"
@@ -219,15 +219,15 @@ export default function Home() {
                 </div>
 
                 {/* Column 2: Image 2 and Image 3 stacked */}
-                <div className="flex flex-col gap-2 sm:gap-3">
-                  <div className="relative overflow-hidden rounded-xl sm:rounded-2xl shadow-lg h-[80px] sm:h-[120px] md:h-[175px]">
+                <div className="flex flex-col gap-3">
+                  <div className="relative overflow-hidden rounded-2xl shadow-lg h-[175px]">
                     <img
                       src="/images/hero/image-2.png"
                       alt="image-2 placeholder"
                       className="w-full h-full object-cover"
                     />
                   </div>
-                  <div className="relative overflow-hidden rounded-xl sm:rounded-2xl shadow-lg h-[140px] sm:h-[200px] md:h-[300px]">
+                  <div className="relative overflow-hidden rounded-2xl shadow-lg h-[300px]">
                     <img
                       src="/images/hero/image-3.png"
                       alt="image-3 placeholder"
@@ -237,15 +237,15 @@ export default function Home() {
                 </div>
 
                 {/* Column 3: Image 4 and Image 5 stacked */}
-                <div className="flex flex-col gap-2 sm:gap-3 col-span-2 sm:col-span-1">
-                  <div className="relative overflow-hidden rounded-xl sm:rounded-2xl shadow-lg h-[110px] sm:h-[160px] md:h-[250px]">
+                <div className="flex flex-col gap-3">
+                  <div className="relative overflow-hidden rounded-2xl shadow-lg h-[250px]">
                     <img
                       src="/images/hero/image-4.png"
                       alt="image-4 placeholder"
                       className="w-full h-full object-cover object-top"
                     />
                   </div>
-                  <div className="relative overflow-hidden rounded-xl sm:rounded-2xl shadow-lg h-[110px] sm:h-[160px] md:h-[250px]">
+                  <div className="relative overflow-hidden rounded-2xl shadow-lg h-[250px]">
                     <img
                       src="/images/hero/image-5.jpg"
                       alt="image-5 placeholder"
@@ -260,17 +260,17 @@ export default function Home() {
       </section>
 
       {/* MAP SECTION */}
-      <section className="py-20 px-4" style={{ backgroundColor: "#E8DDD0" }}>
+      <section className="py-12 md:py-16 lg:py-20 px-4" style={{ backgroundColor: "#E8DDD0" }}>
         <div className="max-w-[1400px] mx-auto">
-          <div className="mb-12">
+          <div className="mb-8 md:mb-12">
             <h2
-              className="text-4xl lg:text-5xl font-light text-gray-900 mb-4"
+              className="text-2xl sm:text-3xl md:text-4xl lg:text-5xl font-light text-gray-900 mb-3 md:mb-4"
               style={{ fontFamily: '"Playfair Display", serif' }}
             >
               {getText("map.title", language).split(" ").slice(0, -2).join(" ")} <span className="font-semibold">{getText("map.title", language).split(" ").slice(-2).join(" ")}</span>
             </h2>
             <p
-              className="text-lg text-gray-600"
+              className="text-base md:text-lg text-gray-600"
               style={{ fontFamily: '"Inter", sans-serif' }}
             >
               {getText("map.subtitle", language)}
@@ -281,29 +281,29 @@ export default function Home() {
       </section>
 
       {/* COMMUNITY PROJECTS SECTION */}
-      <section className="py-24 px-4" style={{ background: "radial-gradient(circle at top left, #F5EBE0 0%, #E8DDD0 40%, #DED0BD 100%)" }}>
+      <section className="py-12 md:py-16 lg:py-24 px-4" style={{ background: "radial-gradient(circle at top left, #F5EBE0 0%, #E8DDD0 40%, #DED0BD 100%)" }}>
         <div className="max-w-[1400px] mx-auto">
           {/* Header */}
-          <div className="text-center mb-20 relative">
-            <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[600px] h-[300px] bg-sptc-red/5 blur-3xl rounded-full -z-10"></div>
-            <div className="inline-block mb-6">
-              <div className="flex items-center gap-3 px-6 py-3 bg-white rounded-full shadow-md border border-gray-100">
+          <div className="text-center mb-12 md:mb-16 lg:mb-20 relative">
+            <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[300px] md:w-[600px] h-[150px] md:h-[300px] bg-sptc-red/5 blur-3xl rounded-full -z-10"></div>
+            <div className="inline-block mb-4 md:mb-6">
+              <div className="flex items-center gap-2 md:gap-3 px-4 md:px-6 py-2 md:py-3 bg-white rounded-full shadow-md border border-gray-100">
                 <div className="w-2 h-2 bg-sptc-red rounded-full animate-pulse"></div>
-                <span className="text-sm font-semibold text-gray-700 tracking-wide uppercase" style={{ fontFamily: '"Inter", sans-serif' }}>
+                <span className="text-xs md:text-sm font-semibold text-gray-700 tracking-wide uppercase" style={{ fontFamily: '"Inter", sans-serif' }}>
                   {getText("community.ourImpact", language)}
                 </span>
               </div>
             </div>
-            <h2 className="text-5xl lg:text-7xl font-light text-gray-900 mb-6 leading-tight" style={{ fontFamily: '"Playfair Display", serif' }}>
+            <h2 className="text-3xl sm:text-4xl md:text-5xl lg:text-7xl font-light text-gray-900 mb-4 md:mb-6 leading-tight px-4" style={{ fontFamily: '"Playfair Display", serif' }}>
               {getText("community.travelWithPurpose", language).split(" ").slice(0, -1).join(" ")} <span className="font-semibold text-sptc-red">{getText("community.travelWithPurpose", language).split(" ").slice(-1)}</span>
             </h2>
-            <p className="text-xl lg:text-2xl text-gray-600 max-w-4xl mx-auto leading-relaxed font-light" style={{ fontFamily: '"Inter", sans-serif' }}>
+            <p className="text-base md:text-xl lg:text-2xl text-gray-600 max-w-4xl mx-auto leading-relaxed font-light px-4" style={{ fontFamily: '"Inter", sans-serif' }}>
               {getText("community.impactDescription", language)}
             </p>
-            <div className="mt-8 flex items-center justify-center gap-2">
-              <div className="h-1 w-12 bg-sptc-red rounded-full"></div>
-              <div className="h-1 w-8 bg-sptc-red/40 rounded-full"></div>
-              <div className="h-1 w-4 bg-sptc-red/20 rounded-full"></div>
+            <div className="mt-6 md:mt-8 flex items-center justify-center gap-2">
+              <div className="h-1 w-8 md:w-12 bg-sptc-red rounded-full"></div>
+              <div className="h-1 w-6 md:w-8 bg-sptc-red/40 rounded-full"></div>
+              <div className="h-1 w-3 md:w-4 bg-sptc-red/20 rounded-full"></div>
             </div>
           </div>
 
@@ -335,14 +335,14 @@ export default function Home() {
           </div>
 
           {/* How Your Stay Makes an Impact */}
-          <div className="mb-24 mt-32">
-            <h3 className="text-4xl lg:text-5xl font-light text-gray-900 text-center mb-4" style={{ fontFamily: '"Playfair Display", serif' }}>
+          <div className="mb-12 md:mb-16 lg:mb-24 mt-16 md:mt-24 lg:mt-32">
+            <h3 className="text-2xl sm:text-3xl md:text-4xl lg:text-5xl font-light text-gray-900 text-center mb-3 md:mb-4 px-4" style={{ fontFamily: '"Playfair Display", serif' }}>
               {getText("community.howItWorksTitle", language).split(" ").slice(0, -1).join(" ")} <span className="font-semibold text-sptc-red">{getText("community.howItWorksTitle", language).split(" ").slice(-1)}</span>
             </h3>
-            <p className="text-lg text-gray-600 text-center mb-12 max-w-2xl mx-auto" style={{ fontFamily: '"Inter", sans-serif' }}>
+            <p className="text-base md:text-lg text-gray-600 text-center mb-8 md:mb-12 max-w-2xl mx-auto px-4" style={{ fontFamily: '"Inter", sans-serif' }}>
               {getText("community.howItWorksSubtitle", language)}
             </p>
-            <div className="grid md:grid-cols-4 gap-8">
+            <div className="grid sm:grid-cols-2 md:grid-cols-4 gap-6 md:gap-8">
               {/* Step 1 */}
               <div className="text-center">
                 <div className="relative mb-6">
@@ -402,15 +402,15 @@ export default function Home() {
           </div>
 
           {/* Current Community Projects */}
-          <div className="mb-20">
-            <h3 className="text-3xl lg:text-4xl font-bold text-gray-900 text-center mb-4">
+          <div className="mb-12 md:mb-16 lg:mb-20">
+            <h3 className="text-2xl sm:text-3xl lg:text-4xl font-bold text-gray-900 text-center mb-3 md:mb-4 px-4">
               {getText("projects.title", language)} <span className="text-sptc-red">{getText("projects.titleHighlight", language)}</span>
             </h3>
-            <p className="text-lg text-gray-600 text-center mb-12 max-w-2xl mx-auto">
+            <p className="text-base md:text-lg text-gray-600 text-center mb-8 md:mb-12 max-w-2xl mx-auto px-4">
               {getText("projects.subtitle", language)}
             </p>
 
-            <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-8">
+            <div className="grid sm:grid-cols-2 lg:grid-cols-3 gap-6 md:gap-8">
               {/* Project 1 */}
               <div className="bg-white rounded-2xl shadow-lg border border-gray-100 overflow-hidden group hover:shadow-2xl transition-all duration-300">
                 <div className="h-48 bg-gradient-to-br from-green-500 to-green-600 relative overflow-hidden">

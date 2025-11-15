@@ -17,11 +17,38 @@
     background: #F8F9FA;
     min-height: 100vh;
     font-feature-settings: "ss01", "ss02", "cv01", "cv03";
+    /* Mobile optimizations */
+    -webkit-font-smoothing: antialiased;
+    -moz-osx-font-smoothing: grayscale;
+    /* Prevent horizontal scroll on mobile */
+    overflow-x: hidden;
+    /* iOS Safari safe area for notched devices */
+    padding-top: env(safe-area-inset-top);
+    padding-bottom: env(safe-area-inset-bottom);
   }
 
   h1, h2, h3, h4, h5, h6 {
     font-family: "SF Pro Display", -apple-system, BlinkMacSystemFont, system-ui, sans-serif;
     font-feature-settings: "ss01", "ss02";
+  }
+
+  /* iOS Safari tap highlight removal */
+  * {
+    -webkit-tap-highlight-color: transparent;
+    -webkit-touch-callout: none;
+  }
+
+  /* Android Chrome tap highlight */
+  a, button, input, select, textarea {
+    -webkit-tap-highlight-color: rgba(220, 38, 38, 0.1);
+  }
+
+  /* Prevent text size adjustment on mobile */
+  html {
+    -webkit-text-size-adjust: 100%;
+    -moz-text-size-adjust: 100%;
+    -ms-text-size-adjust: 100%;
+    text-size-adjust: 100%;
   }
 }
 
@@ -41,6 +68,9 @@
            shadow-ios-md hover:shadow-ios-lg hover:scale-[1.02]
            active:scale-[0.98] transition-all duration-200
            border border-sptc-red-600/20;
+    /* Mobile touch optimization */
+    min-height: 44px;
+    touch-action: manipulation;
   }
 
   .btn-secondary {
@@ -48,6 +78,9 @@
            shadow-ios hover:shadow-ios-md hover:scale-[1.02]
            active:scale-[0.98] transition-all duration-200
            border border-sptc-gray-200;
+    /* Mobile touch optimization */
+    min-height: 44px;
+    touch-action: manipulation;
   }
 
   .input-premium {
@@ -57,6 +90,8 @@
            focus:ring-4 focus:ring-sptc-red-100
            transition-all duration-200
            text-base font-medium placeholder:text-sptc-gray-400;
+    /* Mobile input optimization */
+    min-height: 48px;
   }
 }
 
