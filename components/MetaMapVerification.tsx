@@ -1,6 +1,7 @@
 "use client";
 
 import { useEffect, useState } from 'react';
+import Script from 'next/script';
 import { Shield, CheckCircle, AlertCircle, Loader2 } from 'lucide-react';
 
 interface MetaMapVerificationProps {
@@ -27,37 +28,18 @@ export default function MetaMapVerification({
 
   const clientId = process.env.NEXT_PUBLIC_METAMAP_CLIENT_ID || '691cb738ee8edbd7fd224757';
 
-  useEffect(() => {
-    // Client ID is hardcoded for free tier testing
-    // if (!clientId) {
-    //   setError('MetaMap Client ID not configured');
-    //   setIsLoading(false);
-    //   return;
-    // }
+  const handleScriptLoad = () => {
+    console.log('✓ MetaMap SDK loaded successfully');
+    setScriptLoaded(true);
+    setIsLoading(false);
+  };
 
-    // Load MetaMap SDK script
-    const script = document.createElement('script');
-    script.src = 'https://cdn.metamap.com/sdk/v2.0/metamap.js';
-    script.async = true;
-    script.onload = () => {
-      setScriptLoaded(true);
-      setIsLoading(false);
-    };
-    script.onerror = () => {
-      setError('Failed to load MetaMap SDK');
-      setIsLoading(false);
-      onError?.({ message: 'Failed to load MetaMap SDK' });
-    };
-
-    document.body.appendChild(script);
-
-    return () => {
-      // Cleanup script on unmount
-      if (document.body.contains(script)) {
-        document.body.removeChild(script);
-      }
-    };
-  }, [clientId, onError]);
+  const handleScriptError = () => {
+    console.error('✗ Failed to load MetaMap SDK');
+    setError('Failed to load MetaMap SDK - please check your internet connection');
+    setIsLoading(false);
+    onError?.({ message: 'Failed to load MetaMap SDK' });
+  };
 
   useEffect(() => {
     if (!scriptLoaded || !window.MetamapButton) return;
@@ -195,72 +177,82 @@ export default function MetaMapVerification({
   }
 
   return (
-    <div className="space-y-6">
-      {/* Information Card */}
-      <div className="bg-blue-50 border border-blue-200 rounded-2xl p-6">
-        <div className="flex gap-4">
-          <Shield className="w-6 h-6 text-blue-600 flex-shrink-0 mt-1" />
-          <div>
-            <h4 className="font-bold text-blue-900 mb-2">Secure Identity Verification</h4>
-            <ul className="text-sm text-blue-800 space-y-1">
-              <li>✓ Upload your government-issued ID (Cédula, Passport, or Driver's License)</li>
-              <li>✓ Take a selfie for face verification</li>
-              <li>✓ Liveness detection to prevent fraud</li>
-              <li>✓ Bank-level encryption for your data</li>
-            </ul>
-          </div>
-        </div>
-      </div>
-
-      {/* MetaMap Button Container */}
-      <div
-        id="metamap-button-container"
-        className="flex justify-center"
-        style={{ minHeight: '60px' }}
+    <>
+      {/* Load MetaMap SDK from CDN */}
+      <Script
+        src="https://cdn.metamap.com/sdk/v2.0/metamap.js"
+        strategy="afterInteractive"
+        onLoad={handleScriptLoad}
+        onError={handleScriptError}
       />
 
-      {/* Trust Indicators */}
-      <div className="flex items-center justify-center gap-6 text-sm text-gray-500 pt-4">
-        <div className="flex items-center gap-2">
-          <Shield className="w-4 h-4" />
-          <span>256-bit encryption</span>
+      <div className="space-y-6">
+        {/* Information Card */}
+        <div className="bg-blue-50 border border-blue-200 rounded-2xl p-6">
+          <div className="flex gap-4">
+            <Shield className="w-6 h-6 text-blue-600 flex-shrink-0 mt-1" />
+            <div>
+              <h4 className="font-bold text-blue-900 mb-2">Secure Identity Verification</h4>
+              <ul className="text-sm text-blue-800 space-y-1">
+                <li>✓ Upload your government-issued ID (Cédula, Passport, or Driver's License)</li>
+                <li>✓ Take a selfie for face verification</li>
+                <li>✓ Liveness detection to prevent fraud</li>
+                <li>✓ Bank-level encryption for your data</li>
+              </ul>
+            </div>
+          </div>
         </div>
-        <div className="flex items-center gap-2">
-          <CheckCircle className="w-4 h-4" />
-          <span>GDPR compliant</span>
-        </div>
-        <div className="flex items-center gap-2">
-          <CheckCircle className="w-4 h-4" />
-          <span>Colombia approved</span>
-        </div>
-      </div>
 
-      {/* What happens next */}
-      <div className="bg-gray-50 border border-gray-200 rounded-2xl p-6">
-        <h4 className="font-bold text-gray-900 mb-3">What happens next?</h4>
-        <ol className="space-y-2 text-sm text-gray-700">
-          <li className="flex gap-3">
-            <span className="font-bold text-sptc-red-600">1.</span>
-            <span>Click "Start Verification" and follow the prompts</span>
-          </li>
-          <li className="flex gap-3">
-            <span className="font-bold text-sptc-red-600">2.</span>
-            <span>Upload a clear photo of your ID document</span>
-          </li>
-          <li className="flex gap-3">
-            <span className="font-bold text-sptc-red-600">3.</span>
-            <span>Take a selfie (liveness check will be performed)</span>
-          </li>
-          <li className="flex gap-3">
-            <span className="font-bold text-sptc-red-600">4.</span>
-            <span>Verification typically completes in 2-3 minutes</span>
-          </li>
-          <li className="flex gap-3">
-            <span className="font-bold text-sptc-red-600">5.</span>
-            <span>You'll be notified once your identity is verified</span>
-          </li>
-        </ol>
+        {/* MetaMap Button Container */}
+        <div
+          id="metamap-button-container"
+          className="flex justify-center"
+          style={{ minHeight: '60px' }}
+        />
+
+        {/* Trust Indicators */}
+        <div className="flex items-center justify-center gap-6 text-sm text-gray-500 pt-4">
+          <div className="flex items-center gap-2">
+            <Shield className="w-4 h-4" />
+            <span>256-bit encryption</span>
+          </div>
+          <div className="flex items-center gap-2">
+            <CheckCircle className="w-4 h-4" />
+            <span>GDPR compliant</span>
+          </div>
+          <div className="flex items-center gap-2">
+            <CheckCircle className="w-4 h-4" />
+            <span>Colombia approved</span>
+          </div>
+        </div>
+
+        {/* What happens next */}
+        <div className="bg-gray-50 border border-gray-200 rounded-2xl p-6">
+          <h4 className="font-bold text-gray-900 mb-3">What happens next?</h4>
+          <ol className="space-y-2 text-sm text-gray-700">
+            <li className="flex gap-3">
+              <span className="font-bold text-sptc-red-600">1.</span>
+              <span>Click "Start Verification" and follow the prompts</span>
+            </li>
+            <li className="flex gap-3">
+              <span className="font-bold text-sptc-red-600">2.</span>
+              <span>Upload a clear photo of your ID document</span>
+            </li>
+            <li className="flex gap-3">
+              <span className="font-bold text-sptc-red-600">3.</span>
+              <span>Take a selfie (liveness check will be performed)</span>
+            </li>
+            <li className="flex gap-3">
+              <span className="font-bold text-sptc-red-600">4.</span>
+              <span>Verification typically completes in 2-3 minutes</span>
+            </li>
+            <li className="flex gap-3">
+              <span className="font-bold text-sptc-red-600">5.</span>
+              <span>You'll be notified once your identity is verified</span>
+            </li>
+          </ol>
+        </div>
       </div>
-    </div>
+    </>
   );
 }
