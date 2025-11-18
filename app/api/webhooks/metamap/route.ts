@@ -15,7 +15,7 @@ export async function POST(request: NextRequest) {
     const supabase = createRouteHandlerClient({ cookies });
     const body = await request.json();
 
-    // Verify webhook signature (if configured)
+    // Verify webhook signature (only in production with API key)
     const signature = request.headers.get('x-webhook-signature');
     if (process.env.METAMAP_WEBHOOK_SECRET && signature) {
       const expectedSignature = crypto
@@ -31,6 +31,9 @@ export async function POST(request: NextRequest) {
         );
       }
     }
+
+    console.log('⚠️  Running in FREE TIER mode - webhook signature verification disabled');
+    console.log('   Add METAMAP_WEBHOOK_SECRET to enable signature verification');
 
     console.log('MetaMap webhook received:', {
       eventName: body.eventName,

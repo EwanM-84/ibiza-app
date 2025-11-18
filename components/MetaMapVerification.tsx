@@ -25,14 +25,15 @@ export default function MetaMapVerification({
   const [error, setError] = useState<string | null>(null);
   const [scriptLoaded, setScriptLoaded] = useState(false);
 
-  const clientId = process.env.NEXT_PUBLIC_METAMAP_CLIENT_ID;
+  const clientId = process.env.NEXT_PUBLIC_METAMAP_CLIENT_ID || '691cb738ee8edbd7fd224757';
 
   useEffect(() => {
-    if (!clientId) {
-      setError('MetaMap Client ID not configured');
-      setIsLoading(false);
-      return;
-    }
+    // Client ID is hardcoded for free tier testing
+    // if (!clientId) {
+    //   setError('MetaMap Client ID not configured');
+    //   setIsLoading(false);
+    //   return;
+    // }
 
     // Load MetaMap SDK script
     const script = document.createElement('script');
