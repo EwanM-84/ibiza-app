@@ -263,7 +263,7 @@ export default function HostRegister() {
                         name="firstName"
                         value={formData.firstName}
                         onChange={handleChange}
-                        className={`w-full pl-11 pr-4 py-3 border-2 rounded-xl focus:outline-none focus:ring-2 focus:ring-sptc-red-500 transition-all ${
+                        className={`w-full pl-12 pr-4 py-3 border-2 rounded-xl focus:outline-none focus:ring-2 focus:ring-sptc-red-500 transition-all ${
                           errors.firstName ? 'border-red-500' : 'border-gray-200'
                         }`}
                         placeholder="John"
@@ -288,7 +288,7 @@ export default function HostRegister() {
                         name="lastName"
                         value={formData.lastName}
                         onChange={handleChange}
-                        className={`w-full pl-11 pr-4 py-3 border-2 rounded-xl focus:outline-none focus:ring-2 focus:ring-sptc-red-500 transition-all ${
+                        className={`w-full pl-12 pr-4 py-3 border-2 rounded-xl focus:outline-none focus:ring-2 focus:ring-sptc-red-500 transition-all ${
                           errors.lastName ? 'border-red-500' : 'border-gray-200'
                         }`}
                         placeholder="Doe"
@@ -314,7 +314,7 @@ export default function HostRegister() {
                       name="email"
                       value={formData.email}
                       onChange={handleChange}
-                      className={`w-full pl-11 pr-4 py-3 border-2 rounded-xl focus:outline-none focus:ring-2 focus:ring-sptc-red-500 transition-all ${
+                      className={`w-full pl-12 pr-4 py-3 border-2 rounded-xl focus:outline-none focus:ring-2 focus:ring-sptc-red-500 transition-all ${
                         errors.email ? 'border-red-500' : 'border-gray-200'
                       }`}
                       placeholder="john.doe@example.com"
@@ -339,7 +339,7 @@ export default function HostRegister() {
                       name="password"
                       value={formData.password}
                       onChange={handleChange}
-                      className={`w-full pl-11 pr-12 py-3 border-2 rounded-xl focus:outline-none focus:ring-2 focus:ring-sptc-red-500 transition-all ${
+                      className={`w-full pl-12 pr-12 py-3 border-2 rounded-xl focus:outline-none focus:ring-2 focus:ring-sptc-red-500 transition-all ${
                         errors.password ? 'border-red-500' : 'border-gray-200'
                       }`}
                       placeholder="••••••••"
@@ -390,7 +390,7 @@ export default function HostRegister() {
                       name="confirmPassword"
                       value={formData.confirmPassword}
                       onChange={handleChange}
-                      className={`w-full pl-11 pr-12 py-3 border-2 rounded-xl focus:outline-none focus:ring-2 focus:ring-sptc-red-500 transition-all ${
+                      className={`w-full pl-12 pr-12 py-3 border-2 rounded-xl focus:outline-none focus:ring-2 focus:ring-sptc-red-500 transition-all ${
                         errors.confirmPassword ? 'border-red-500' : 'border-gray-200'
                       }`}
                       placeholder="••••••••"
@@ -441,7 +441,7 @@ export default function HostRegister() {
                       name="phone"
                       value={formData.phone}
                       onChange={handleChange}
-                      className={`w-full pl-11 pr-4 py-3 border-2 rounded-xl focus:outline-none focus:ring-2 focus:ring-sptc-red-500 transition-all ${
+                      className={`w-full pl-12 pr-4 py-3 border-2 rounded-xl focus:outline-none focus:ring-2 focus:ring-sptc-red-500 transition-all ${
                         errors.phone ? 'border-red-500' : 'border-gray-200'
                       }`}
                       placeholder="+57 300 123 4567"
@@ -466,7 +466,7 @@ export default function HostRegister() {
                         name="country"
                         value={formData.country}
                         onChange={handleChange}
-                        className="w-full pl-11 pr-4 py-3 border-2 border-gray-200 rounded-xl focus:outline-none focus:ring-2 focus:ring-sptc-red-500 transition-all appearance-none bg-white"
+                        className="w-full pl-12 pr-4 py-3 border-2 border-gray-200 rounded-xl focus:outline-none focus:ring-2 focus:ring-sptc-red-500 transition-all appearance-none bg-white"
                       >
                         <option value="Colombia">Colombia</option>
                         <option value="Other">Other</option>
