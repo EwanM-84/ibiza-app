@@ -284,12 +284,25 @@ export default function LoginModal({ isOpen, onClose, initialMode = "client" }: 
           {mode !== "admin" && (
             <div className="mt-8 pt-6 border-t border-sptc-gray-200 text-center text-sm text-sptc-red-500">
               {isSignup ? "Already have an account?" : "New to SPTC.Rural?"}{" "}
-              <button
-                onClick={() => setIsSignup(!isSignup)}
-                className="text-sptc-red-600 hover:text-sptc-red-700 font-bold transition-colors uppercase tracking-wider text-xs"
-              >
-                {isSignup ? "Sign in" : "Create account"}
-              </button>
+              {/* For hosts, redirect to full registration page */}
+              {mode === "host" && !isSignup ? (
+                <button
+                  onClick={() => {
+                    onClose();
+                    router.push('/host/register');
+                  }}
+                  className="text-sptc-red-600 hover:text-sptc-red-700 font-bold transition-colors uppercase tracking-wider text-xs"
+                >
+                  Become a Host →
+                </button>
+              ) : (
+                <button
+                  onClick={() => setIsSignup(!isSignup)}
+                  className="text-sptc-red-600 hover:text-sptc-red-700 font-bold transition-colors uppercase tracking-wider text-xs"
+                >
+                  {isSignup ? "Sign in" : "Create account"}
+                </button>
+              )}
             </div>
           )}
         </div>
