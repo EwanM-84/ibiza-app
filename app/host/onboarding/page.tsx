@@ -8,6 +8,7 @@ import {
   Shield, FileCheck, Home as HomeIcon, ArrowRight, ArrowLeft
 } from "lucide-react";
 import { useRouter } from "next/navigation";
+import MetaMapVerification from "@/components/MetaMapVerification";
 
 export default function HostOnboarding() {
   const { language } = useLanguage();
@@ -20,6 +21,10 @@ export default function HostOnboarding() {
   const videoRef = useRef<HTMLVideoElement>(null);
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [submitted, setSubmitted] = useState(false);
+
+  // MetaMap verification state
+  const [metamapVerified, setMetamapVerified] = useState(false);
+  const [metamapData, setMetamapData] = useState<any>(null);
 
   const handleIDUpload = (e: React.ChangeEvent<HTMLInputElement>) => {
     if (e.target.files && e.target.files[0]) {
@@ -79,6 +84,20 @@ export default function HostOnboarding() {
     }
   };
 
+  const handleMetaMapComplete = (verificationData: any) => {
+    console.log('MetaMap verification complete:', verificationData);
+    setMetamapVerified(true);
+    setMetamapData(verificationData);
+    // Automatically set as verified
+    setIdDocument({ name: 'MetaMap Verified ID' } as any);
+    setFacePhoto('metamap-verified');
+  };
+
+  const handleMetaMapError = (error: any) => {
+    console.error('MetaMap verification error:', error);
+    alert('Verification failed. Please try again or contact support.');
+  };
+
   const handleSubmit = async () => {
     setIsSubmitting(true);
     // Simulate API call
@@ -88,10 +107,9 @@ export default function HostOnboarding() {
   };
 
   const steps = [
-    { number: 1, title: getText("hostOnboarding.step1Title", language), subtitle: getText("hostOnboarding.step1Subtitle", language), icon: FileCheck },
-    { number: 2, title: getText("hostOnboarding.step2Title", language), subtitle: getText("hostOnboarding.step2Subtitle", language), icon: Shield },
-    { number: 3, title: getText("hostOnboarding.step3Title", language), subtitle: getText("hostOnboarding.step3Subtitle", language), icon: HomeIcon },
-    { number: 4, title: getText("hostOnboarding.step4Title", language), subtitle: getText("hostOnboarding.step4Subtitle", language), icon: CheckCircle },
+    { number: 1, title: "Identity Verification", subtitle: "Verify with MetaMap", icon: Shield },
+    { number: 2, title: getText("hostOnboarding.step3Title", language), subtitle: getText("hostOnboarding.step3Subtitle", language), icon: HomeIcon },
+    { number: 3, title: getText("hostOnboarding.step4Title", language), subtitle: getText("hostOnboarding.step4Subtitle", language), icon: CheckCircle },
   ];
 
   if (submitted) {
@@ -173,134 +191,66 @@ export default function HostOnboarding() {
 
         {/* Step Content */}
         <div className="bg-white rounded-3xl shadow-2xl p-8 md:p-12 border border-gray-100">
-          {/* Step 1: ID Upload */}
+          {/* Step 1: MetaMap Identity Verification */}
           {currentStep === 1 && (
             <div className="space-y-8">
               <div>
                 <h2 className="text-4xl font-bold text-gray-900 mb-3" style={{ fontFamily: '"DM Serif Display", serif' }}>
-                  {getText("hostOnboarding.uploadID", language)}
+                  Identity Verification
                 </h2>
-                <p className="text-lg text-gray-600">{getText("hostOnboarding.uploadIDDescription", language)}</p>
+                <p className="text-lg text-gray-600">
+                  Verify your identity with MetaMap - fast, secure, and designed for Colombia
+                </p>
               </div>
 
-              <div className="border-3 border-dashed border-gray-300 rounded-3xl p-16 text-center hover:border-sptc-red-600 hover:bg-red-50/30 transition-all duration-300 cursor-pointer">
-                <input
-                  type="file"
-                  id="id-upload"
-                  accept="image/*,.pdf"
-                  onChange={handleIDUpload}
-                  className="hidden"
+              {metamapVerified ? (
+                <div className="space-y-6 animate-in fade-in duration-500">
+                  <div className="flex flex-col items-center gap-4 py-12">
+                    <div className="w-24 h-24 bg-green-500 rounded-full flex items-center justify-center shadow-xl">
+                      <CheckCircle className="w-14 h-14 text-white" strokeWidth={3} />
+                    </div>
+                    <h3 className="text-3xl font-bold text-gray-900">Verification Complete!</h3>
+                    <p className="text-lg text-gray-600 max-w-md text-center">
+                      Your identity has been successfully verified. You can now proceed to the next step.
+                    </p>
+                  </div>
+
+                  <div className="bg-green-50 border border-green-200 rounded-2xl p-6">
+                    <h4 className="font-bold text-green-900 mb-3 flex items-center gap-2">
+                      <CheckCircle className="w-5 h-5" />
+                      Verification Details
+                    </h4>
+                    <div className="space-y-2 text-sm text-green-800">
+                      <div className="flex items-center justify-between">
+                        <span>Verification ID:</span>
+                        <span className="font-mono font-semibold">{metamapData?.verificationId?.substring(0, 12)}...</span>
+                      </div>
+                      <div className="flex items-center justify-between">
+                        <span>Status:</span>
+                        <span className="font-semibold capitalize">{metamapData?.status || 'Verified'}</span>
+                      </div>
+                      <div className="flex items-center justify-between">
+                        <span>Identity Status:</span>
+                        <span className="font-semibold capitalize">{metamapData?.identityStatus || 'Verified'}</span>
+                      </div>
+                      <div className="flex items-center justify-between">
+                        <span>Selfie Status:</span>
+                        <span className="font-semibold capitalize">{metamapData?.selfieStatus || 'Verified'}</span>
+                      </div>
+                    </div>
+                  </div>
+                </div>
+              ) : (
+                <MetaMapVerification
+                  onComplete={handleMetaMapComplete}
+                  onError={handleMetaMapError}
                 />
-                <label htmlFor="id-upload" className="cursor-pointer block">
-                  {idDocument ? (
-                    <div className="flex flex-col items-center gap-4 animate-in fade-in duration-500">
-                      <div className="w-20 h-20 bg-green-500 rounded-full flex items-center justify-center shadow-xl">
-                        <CheckCircle className="w-12 h-12 text-white" strokeWidth={3} />
-                      </div>
-                      <p className="text-2xl font-bold text-gray-900">{idDocument.name}</p>
-                      <p className="text-lg text-gray-500">{(idDocument.size / 1024 / 1024).toFixed(2)} MB</p>
-                      <button
-                        onClick={(e) => { e.preventDefault(); setIdDocument(null); }}
-                        className="text-sptc-red-600 hover:text-sptc-red-700 font-semibold underline"
-                      >
-                        Remove & Upload Different File
-                      </button>
-                    </div>
-                  ) : (
-                    <div className="flex flex-col items-center gap-5">
-                      <div className="w-24 h-24 bg-gray-100 rounded-full flex items-center justify-center">
-                        <Upload className="w-14 h-14 text-gray-400" />
-                      </div>
-                      <p className="text-2xl font-bold text-gray-900">{getText("hostOnboarding.dragDrop", language)}</p>
-                      <p className="text-base text-gray-500">{getText("hostOnboarding.supportedFormats", language)}</p>
-                    </div>
-                  )}
-                </label>
-              </div>
-
-              <div className="bg-blue-50 border border-blue-200 rounded-2xl p-6 flex gap-4">
-                <Shield className="w-6 h-6 text-blue-600 flex-shrink-0 mt-1" />
-                <div>
-                  <h4 className="font-bold text-blue-900 mb-1">Your data is secure</h4>
-                  <p className="text-sm text-blue-800">We use bank-level encryption to protect your personal information. Your ID will only be used for verification purposes.</p>
-                </div>
-              </div>
+              )}
             </div>
           )}
 
-          {/* Step 2: Face Verification */}
+          {/* Step 2: Property Photos */}
           {currentStep === 2 && (
-            <div className="space-y-8">
-              <div>
-                <h2 className="text-4xl font-bold text-gray-900 mb-3" style={{ fontFamily: '"DM Serif Display", serif' }}>
-                  {getText("hostOnboarding.faceVerification", language)}
-                </h2>
-                <p className="text-lg text-gray-600">{getText("hostOnboarding.faceVerificationDescription", language)}</p>
-              </div>
-
-              <div className="max-w-lg mx-auto">
-                {!facePhoto ? (
-                  <div className="space-y-6">
-                    {cameraActive ? (
-                      <div className="space-y-6">
-                        <div className="relative rounded-3xl overflow-hidden shadow-2xl border-4 border-sptc-red-600">
-                          <video ref={videoRef} autoPlay playsInline className="w-full" style={{ transform: "scaleX(-1)" }} />
-                          <div className="absolute inset-0 border-4 border-dashed border-white/50 m-12 rounded-3xl pointer-events-none" />
-                        </div>
-                        <button
-                          onClick={capturePhoto}
-                          className="w-full bg-gradient-to-r from-sptc-red-600 to-sptc-red-700 text-white font-bold text-xl py-6 rounded-2xl hover:from-sptc-red-700 hover:to-sptc-red-800 transition-all flex items-center justify-center gap-3 shadow-2xl"
-                        >
-                          <Camera className="w-7 h-7" />
-                          Capture Photo
-                        </button>
-                      </div>
-                    ) : (
-                      <button
-                        onClick={startCamera}
-                        className="w-full bg-gradient-to-r from-sptc-red-600 to-sptc-red-700 text-white font-bold text-xl py-8 rounded-3xl hover:from-sptc-red-700 hover:to-sptc-red-800 transition-all flex items-center justify-center gap-4 shadow-2xl transform hover:scale-105"
-                      >
-                        <Camera className="w-8 h-8" />
-                        {getText("hostOnboarding.startCamera", language)}
-                      </button>
-                    )}
-                  </div>
-                ) : (
-                  <div className="space-y-6 animate-in fade-in duration-500">
-                    <div className="relative rounded-3xl overflow-hidden shadow-2xl border-4 border-green-500">
-                      <img src={facePhoto} alt="Face verification" className="w-full" style={{ transform: "scaleX(-1)" }} />
-                    </div>
-                    <div className="flex items-center justify-center gap-3 p-4 bg-green-50 border border-green-200 rounded-2xl">
-                      <CheckCircle className="w-7 h-7 text-green-600" />
-                      <span className="text-lg font-bold text-green-700">{getText("hostOnboarding.photoLooksGood", language)}</span>
-                    </div>
-                    <button
-                      onClick={() => setFacePhoto(null)}
-                      className="w-full border-3 border-gray-300 text-gray-700 font-bold text-lg py-4 rounded-2xl hover:border-gray-400 hover:bg-gray-50 transition-all"
-                    >
-                      {getText("hostOnboarding.retakePhoto", language)}
-                    </button>
-                  </div>
-                )}
-              </div>
-
-              <div className="bg-amber-50 border border-amber-200 rounded-2xl p-6 flex gap-4">
-                <AlertCircle className="w-6 h-6 text-amber-600 flex-shrink-0 mt-1" />
-                <div>
-                  <h4 className="font-bold text-amber-900 mb-1">Tips for a good photo</h4>
-                  <ul className="text-sm text-amber-800 space-y-1">
-                    <li>• Ensure good lighting on your face</li>
-                    <li>• Remove glasses if possible</li>
-                    <li>• Look directly at the camera</li>
-                    <li>• Keep a neutral expression</li>
-                  </ul>
-                </div>
-              </div>
-            </div>
-          )}
-
-          {/* Step 3: Property Photos */}
-          {currentStep === 3 && (
             <div className="space-y-8">
               <div>
                 <h2 className="text-4xl font-bold text-gray-900 mb-3" style={{ fontFamily: '"DM Serif Display", serif' }}>
@@ -372,8 +322,8 @@ export default function HostOnboarding() {
             </div>
           )}
 
-          {/* Step 4: Review & Submit */}
-          {currentStep === 4 && (
+          {/* Step 3: Review & Submit */}
+          {currentStep === 3 && (
             <div className="space-y-8">
               <div>
                 <h2 className="text-4xl font-bold text-gray-900 mb-3" style={{ fontFamily: '"DM Serif Display", serif' }}>
@@ -455,18 +405,14 @@ export default function HostOnboarding() {
               {getText("hostOnboarding.back", language)}
             </button>
 
-            {currentStep < 4 ? (
+            {currentStep < 3 ? (
               <button
                 onClick={() => {
-                  if (currentStep === 1 && !idDocument) {
-                    alert("Please upload your ID document");
+                  if (currentStep === 1 && !metamapVerified) {
+                    alert("Please complete your identity verification with MetaMap");
                     return;
                   }
-                  if (currentStep === 2 && !facePhoto) {
-                    alert("Please take your face verification photo");
-                    return;
-                  }
-                  if (currentStep === 3 && propertyPhotos.filter(p => p && p.location).length < 5) {
+                  if (currentStep === 2 && propertyPhotos.filter(p => p && p.location).length < 5) {
                     alert(getText("hostOnboarding.allPhotosRequired", language));
                     return;
                   }
