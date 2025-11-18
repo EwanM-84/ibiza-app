@@ -263,7 +263,7 @@ export default function HostRegister() {
                         name="firstName"
                         value={formData.firstName}
                         onChange={handleChange}
-                        className={`w-full pl-[4rem] pr-4 py-3 border-2 rounded-xl focus:outline-none focus:ring-2 focus:ring-sptc-red-500 transition-all ${
+                        className={`w-full pl-[4rem] pr-4 py-3 border-2 rounded-xl focus:outline-none focus:ring-2 focus:ring-sptc-red-500 transition-all text-right ${
                           errors.firstName ? 'border-red-500' : 'border-gray-200'
                         }`}
                         placeholder="John"
@@ -288,7 +288,7 @@ export default function HostRegister() {
                         name="lastName"
                         value={formData.lastName}
                         onChange={handleChange}
-                        className={`w-full pl-[4rem] pr-4 py-3 border-2 rounded-xl focus:outline-none focus:ring-2 focus:ring-sptc-red-500 transition-all ${
+                        className={`w-full pl-[4rem] pr-4 py-3 border-2 rounded-xl focus:outline-none focus:ring-2 focus:ring-sptc-red-500 transition-all text-right ${
                           errors.lastName ? 'border-red-500' : 'border-gray-200'
                         }`}
                         placeholder="Doe"
@@ -314,7 +314,7 @@ export default function HostRegister() {
                       name="email"
                       value={formData.email}
                       onChange={handleChange}
-                      className={`w-full pl-[4rem] pr-4 py-3 border-2 rounded-xl focus:outline-none focus:ring-2 focus:ring-sptc-red-500 transition-all ${
+                      className={`w-full pl-[4rem] pr-4 py-3 border-2 rounded-xl focus:outline-none focus:ring-2 focus:ring-sptc-red-500 transition-all text-right ${
                         errors.email ? 'border-red-500' : 'border-gray-200'
                       }`}
                       placeholder="john.doe@example.com"
