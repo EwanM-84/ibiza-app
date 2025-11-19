@@ -54,37 +54,52 @@ export async function POST(request: NextRequest) {
     });
 
     if (authError) {
-      console.error('Auth error:', authError);
+      console.error('❌ Auth user creation error:', JSON.stringify(authError, null, 2));
       return NextResponse.json(
-        { error: authError.message },
+        { error: `Auth error: ${authError.message}` },
         { status: 400 }
       );
     }
 
+    console.log('✅ Auth user created successfully:', authData.user.id);
+
     // 2. Create host profile (bypassing RLS with service role)
+    console.log('📝 Creating host profile for user:', authData.user.id);
+    const profileData = {
+      user_id: authData.user.id,
+      first_name: firstName,
+      last_name: lastName,
+      phone: phone,
+      country: country,
+      city: city,
+      date_of_birth: dateOfBirth,
+      verification_status: 'pending',
+      agreed_to_terms: true,
+      agreed_to_background_check: true,
+      agreed_to_data_processing: true,
+    };
+    console.log('📝 Profile data:', JSON.stringify(profileData, null, 2));
+
     const { error: profileError } = await supabaseAdmin
       .from('host_profiles')
-      .insert({
-        user_id: authData.user.id,
-        first_name: firstName,
-        last_name: lastName,
-        email: email,
-        phone: phone,
-        country: country,
-        city: city,
-        date_of_birth: dateOfBirth,
-        verification_status: 'pending',
-        agreed_to_terms: true,
-        agreed_to_background_check: true,
-        agreed_to_data_processing: true,
-      });
+      .insert(profileData);
 
     if (profileError) {
-      console.error('Profile creation error:', profileError);
+      console.error('❌ Profile creation error FULL DETAILS:', JSON.stringify(profileError, null, 2));
+      console.error('  Error code:', profileError.code);
+      console.error('  Error message:', profileError.message);
+      console.error('  Error details:', profileError.details);
+      console.error('  Error hint:', profileError.hint);
+
       // If profile creation fails, delete the auth user
       await supabaseAdmin.auth.admin.deleteUser(authData.user.id);
       return NextResponse.json(
-        { error: profileError.message },
+        {
+          error: `Database error: ${profileError.message}`,
+          code: profileError.code,
+          details: profileError.details,
+          hint: profileError.hint
+        },
         { status: 400 }
       );
     }
