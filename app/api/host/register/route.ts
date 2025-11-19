@@ -17,8 +17,20 @@ export async function POST(request: NextRequest) {
     } = body;
 
     // Create Supabase client with service role
-    const supabaseUrl = process.env.NEXT_PUBLIC_SUPABASE_URL!;
-    const supabaseServiceKey = process.env.SUPABASE_SERVICE_ROLE_KEY!;
+    const supabaseUrl = process.env.NEXT_PUBLIC_SUPABASE_URL;
+    const supabaseServiceKey = process.env.SUPABASE_SERVICE_ROLE_KEY;
+
+    console.log('🔍 API Route - Checking Supabase env vars:');
+    console.log('  NEXT_PUBLIC_SUPABASE_URL:', supabaseUrl ? '✓ Set' : '✗ Missing');
+    console.log('  SUPABASE_SERVICE_ROLE_KEY:', supabaseServiceKey ? '✓ Set' : '✗ Missing');
+
+    if (!supabaseUrl || !supabaseServiceKey) {
+      console.error('❌ Supabase environment variables missing in API route!');
+      return NextResponse.json(
+        { error: 'Server configuration error. Please contact support.' },
+        { status: 500 }
+      );
+    }
 
     const { createClient } = require('@supabase/supabase-js');
     const supabaseAdmin = createClient(supabaseUrl, supabaseServiceKey, {
