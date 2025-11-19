@@ -41,6 +41,7 @@ export async function POST(request: NextRequest) {
     });
 
     // 1. Create auth user
+    console.log('🔐 Creating auth user with email:', email);
     const { data: authData, error: authError } = await supabaseAdmin.auth.admin.createUser({
       email,
       password,
@@ -52,6 +53,9 @@ export async function POST(request: NextRequest) {
         phone: phone,
       }
     });
+
+    console.log('🔐 Auth response data:', authData);
+    console.log('🔐 Auth response error:', authError);
 
     if (authError) {
       console.error('❌ Auth user creation error:', JSON.stringify(authError, null, 2));
