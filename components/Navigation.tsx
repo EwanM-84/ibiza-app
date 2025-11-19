@@ -55,21 +55,20 @@ export default function Navigation() {
 
             {/* Right Actions */}
             <div className="flex items-center space-x-1 sm:space-x-2 lg:space-x-3">
-              <button
-                onClick={() => {
-                  setLoginMode("host");
-                  setShowLoginModal(true);
-                }}
+              <Link
+                href="/host/register"
                 className="hidden sm:flex items-center space-x-2 btn-primary text-sm lg:text-base"
               >
                 <Sparkles className="w-4 h-4" />
                 <span>{getText("nav.becomeHost", language)}</span>
-              </button>
+              </Link>
 
               <div className="relative">
                 <button
                   onClick={() => setShowLangMenu(!showLangMenu)}
                   className="p-3 hover:bg-sptc-gray-100 rounded-2xl transition-all duration-200 hover:scale-105 active:scale-95"
+                  aria-label="Change language"
+                  title="Change language"
                 >
                   <Globe className="w-5 h-5 text-sptc-gray-600" />
                 </button>
@@ -108,6 +107,8 @@ export default function Navigation() {
                   setShowLoginModal(true);
                 }}
                 className="p-3 hover:bg-sptc-gray-100 rounded-2xl transition-all duration-200 hover:scale-105 active:scale-95"
+                aria-label="Login"
+                title="Login"
               >
                 <User className="w-5 h-5 text-sptc-gray-600" />
               </button>
@@ -143,19 +144,14 @@ export default function Navigation() {
             <Link href="/volunteering" className="block px-4 py-3 rounded-xl text-base font-semibold text-sptc-gray-700 hover:bg-sptc-gray-50" onClick={() => setShowMobileMenu(false)}>
               {getText("nav.volunteeringAbroad", language)}
             </Link>
-            <button
-              onClick={() => {
-                setLoginMode("host");
-                setShowLoginModal(true);
-                setShowMobileMenu(false);
-              }}
-              className="w-full text-left px-4 py-3 rounded-xl text-base font-semibold text-sptc-red-600 hover:bg-sptc-red-50"
+            <Link
+              href="/host/register"
+              className="w-full text-left px-4 py-3 rounded-xl text-base font-semibold text-sptc-red-600 hover:bg-sptc-red-50 flex items-center gap-2"
+              onClick={() => setShowMobileMenu(false)}
             >
-              <div className="flex items-center gap-2">
-                <Sparkles className="w-4 h-4" />
-                <span>{getText("nav.becomeHost", language)}</span>
-              </div>
-            </button>
+              <Sparkles className="w-4 h-4" />
+              <span>{getText("nav.becomeHost", language)}</span>
+            </Link>
           </div>
         </div>
       )}

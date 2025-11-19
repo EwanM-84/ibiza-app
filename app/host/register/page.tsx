@@ -134,44 +134,31 @@ export default function HostRegister() {
     setIsSubmitting(true);
 
     try {
-      // 1. Create auth user in Supabase
-      const { data: authData, error: authError } = await supabase.auth.signUp({
-        email: formData.email,
-        password: formData.password,
-        options: {
-          data: {
-            first_name: formData.firstName,
-            last_name: formData.lastName,
-            role: 'host',
-            phone: formData.phone,
-          }
-        }
-      });
-
-      if (authError) throw authError;
-
-      // 2. Create host profile in database
-      const { error: profileError } = await supabase
-        .from('host_profiles')
-        .insert({
-          user_id: authData.user?.id,
-          first_name: formData.firstName,
-          last_name: formData.lastName,
+      // Call API route to create user and profile
+      const response = await fetch('/api/host/register', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify({
           email: formData.email,
+          password: formData.password,
+          firstName: formData.firstName,
+          lastName: formData.lastName,
           phone: formData.phone,
           country: formData.country,
           city: formData.city,
-          date_of_birth: formData.dateOfBirth,
-          verification_status: 'pending',
-          agreed_to_terms: true,
-          agreed_to_background_check: true,
-          agreed_to_data_processing: true,
-          created_at: new Date().toISOString(),
-        });
+          dateOfBirth: formData.dateOfBirth,
+        }),
+      });
 
-      if (profileError) throw profileError;
+      const data = await response.json();
 
-      // 3. Redirect to onboarding for identity verification
+      if (!response.ok) {
+        throw new Error(data.error || 'Registration failed');
+      }
+
+      // Redirect to onboarding for identity verification
       router.push('/host/onboarding');
 
     } catch (error: any) {

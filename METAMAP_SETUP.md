@@ -244,8 +244,9 @@ MetaMap sends these webhook events:
 ### Issue: "Failed to load MetaMap SDK"
 **Solution:**
 - Check internet connection
-- Verify CDN is accessible: https://cdn.metamap.com/sdk/v2.0/metamap.js
+- Verify CDN is accessible: https://web-button.metamap.com/button.js
 - Check browser console for CORS errors
+- Ensure browser is not blocking third-party scripts
 
 ### Issue: Webhook not receiving events
 **Solution:**

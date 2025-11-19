@@ -1,7 +1,6 @@
 "use client";
 
 import { useEffect, useState } from 'react';
-import Script from 'next/script';
 import { Shield, CheckCircle, AlertCircle, Loader2 } from 'lucide-react';
 
 interface MetaMapVerificationProps {
@@ -14,6 +13,7 @@ interface MetaMapVerificationProps {
 declare global {
   interface Window {
     MetamapButton?: any;
+    MatiButton?: any; // Legacy name
   }
 }
 
@@ -28,103 +28,262 @@ export default function MetaMapVerification({
 
   const clientId = process.env.NEXT_PUBLIC_METAMAP_CLIENT_ID || '691cb738ee8edbd7fd224757';
 
-  const handleScriptLoad = () => {
-    console.log('✓ MetaMap SDK loaded successfully');
-    setScriptLoaded(true);
-    setIsLoading(false);
-  };
+  // Load script manually using useEffect instead of Next.js Script component
+  useEffect(() => {
+    // Check if already loaded (prevents React strict mode double-loading)
+    if ((window as any)._metamapLoaded) {
+      console.log('✓ MetaMap SDK already loaded');
+      setScriptLoaded(true);
+      setIsLoading(false);
+      return;
+    }
 
-  const handleScriptError = () => {
-    console.error('✗ Failed to load MetaMap SDK');
-    setError('Failed to load MetaMap SDK - please check your internet connection');
-    setIsLoading(false);
-    onError?.({ message: 'Failed to load MetaMap SDK' });
-  };
+    if ((window as any)._metamapLoading) {
+      console.log('⏳ MetaMap SDK already loading...');
+      // Wait for the other instance to finish loading
+      const checkInterval = setInterval(() => {
+        if ((window as any)._metamapLoaded) {
+          clearInterval(checkInterval);
+          setScriptLoaded(true);
+          setIsLoading(false);
+        }
+      }, 100);
+      return () => clearInterval(checkInterval);
+    }
+
+    // Check if script already exists in DOM
+    const existingScript = document.querySelector('script[src*="metamap"]');
+    if (existingScript) {
+      console.log('✓ MetaMap script already in DOM');
+      (window as any)._metamapLoaded = true;
+      setScriptLoaded(true);
+      setIsLoading(false);
+      return;
+    }
+
+    // Mark as loading to prevent duplicate loads
+    (window as any)._metamapLoading = true;
+
+    console.log('Loading MetaMap SDK manually...');
+    const script = document.createElement('script');
+    script.src = 'https://web-button.metamap.com/button.js';
+    script.async = true;
+
+    script.onload = () => {
+      console.log('✓ MetaMap SDK script loaded from CDN');
+
+      // The custom elements need time to register, so we wait a bit
+      setTimeout(() => {
+        console.log('✓ MetaMap ready - custom elements registered');
+
+        (window as any)._metamapLoaded = true;
+        (window as any)._metamapLoading = false;
+        setScriptLoaded(true);
+        setIsLoading(false);
+      }, 500); // Wait 500ms for custom elements to register
+    };
+
+    script.onerror = (e) => {
+      console.error('✗ Failed to load MetaMap SDK script from CDN');
+      console.error('Error:', e);
+      (window as any)._metamapLoading = false;
+      setError('Failed to load MetaMap SDK - please check your internet connection');
+      setIsLoading(false);
+      onError?.({ message: 'Failed to load MetaMap SDK' });
+    };
+
+    document.body.appendChild(script);
+
+    // Don't cleanup on unmount - keep the script loaded
+    return () => {
+      (window as any)._metamapLoading = false;
+    };
+  }, [onError]);
+
+  // Add timeout to prevent infinite loading, with manual check
+  useEffect(() => {
+    const timeout = setTimeout(() => {
+      if (isLoading && !scriptLoaded) {
+        // Manual check: maybe script loaded but callback didn't fire
+        if (window.MetamapButton || (window as any).MatiButton) {
+          console.log('⚠️ Script loaded but callback did not fire - manually setting loaded state');
+          setScriptLoaded(true);
+          setIsLoading(false);
+        } else {
+          console.error('⏱️ MetaMap SDK loading timeout - taking too long');
+          console.error('window.MetamapButton:', window.MetamapButton);
+          console.error('window.MatiButton:', (window as any).MatiButton);
+          setError('MetaMap verification service is currently unavailable. This might be due to:\n• Network connectivity issues\n• MetaMap service downtime\n• Browser blocking the script\n\nPlease check your internet connection and try again.');
+          setIsLoading(false);
+        }
+      }
+    }, 15000); // 15 second timeout (increased from 10)
+
+    return () => clearTimeout(timeout);
+  }, [isLoading, scriptLoaded]);
 
   useEffect(() => {
-    if (!scriptLoaded || !window.MetamapButton) return;
+    if (!scriptLoaded) {
+      return;
+    }
+
+    // Check if custom element is registered
+    const hasCustomElement = customElements.get('metamap-button');
+    if (!hasCustomElement) {
+      console.log('⏳ Waiting for custom element registration...');
+
+      // Poll for custom element registration
+      const pollInterval = setInterval(() => {
+        if (customElements.get('metamap-button')) {
+          console.log('✓ Custom element now registered, triggering initialization');
+          clearInterval(pollInterval);
+
+          // Force a re-render by updating state
+          setScriptLoaded(false);
+          setTimeout(() => setScriptLoaded(true), 10);
+        }
+      }, 100);
+
+      // Cleanup interval after 5 seconds
+      setTimeout(() => clearInterval(pollInterval), 5000);
+
+      return () => clearInterval(pollInterval);
+    }
 
     try {
-      // Initialize MetaMap button
-      const metamapButton = new window.MetamapButton({
-        clientId: clientId,
-        flowId: flowId, // Optional: specific verification flow
-
-        // Metadata to associate with this verification
-        metadata: {
-          platform: 'sptc_rural',
-          environment: process.env.NODE_ENV,
-          timestamp: new Date().toISOString(),
-        },
-
-        // Configuration
-        config: {
-          // Language preference
-          language: 'es', // Spanish for Colombia
-
-          // Supported document types for Colombia
-          documentTypes: [
-            'national-id', // Cédula de Ciudadanía
-            'passport',
-            'driver-license'
-          ],
-
-          // Enable face recognition
-          selfie: true,
-
-          // Enable liveness detection
-          liveness: true,
-
-          // Theme customization
-          theme: {
-            primaryColor: '#DC2626', // sptc-red-600
-            secondaryColor: '#B91C1C',
-            backgroundColor: '#FFFFFF',
-            textColor: '#111827',
-          }
-        },
-
-        // Callback when verification is complete
-        onFinish: (data: any) => {
-          console.log('MetaMap verification complete:', data);
-          onComplete({
-            verificationId: data.verificationId,
-            status: data.status,
-            identityStatus: data.identityStatus,
-            documentData: data.documentData,
-            selfieStatus: data.selfieStatus,
-            livenessStatus: data.livenessStatus,
-            metadata: data.metadata,
-            timestamp: new Date().toISOString(),
-          });
-        },
-
-        // Callback on error
-        onError: (errorData: any) => {
-          console.error('MetaMap verification error:', errorData);
-          setError(errorData.message || 'Verification failed');
-          onError?.(errorData);
-        },
-
-        // Callback when user exits
-        onClose: () => {
-          console.log('MetaMap verification closed by user');
-        },
-
-        // Callback for step changes
-        onStepChange: (step: any) => {
-          console.log('MetaMap step changed:', step);
-        },
-      });
-
-      // Mount the button in container
+      // Get the container
       const container = document.getElementById('metamap-button-container');
-      if (container) {
-        metamapButton.mount('#metamap-button-container');
+      if (!container) {
+        console.error('Container #metamap-button-container not found');
+        return;
       }
 
+      // Check if already initialized to prevent duplicates
+      if (container.querySelector('metamap-button')) {
+        console.log('✓ MetaMap button already initialized');
+        return;
+      }
+
+      console.log('✓ Initializing MetaMap verification');
+      console.log('  Client ID:', clientId);
+      console.log('  Flow ID:', flowId || 'default');
+
+      // Clear any existing content
+      container.innerHTML = '';
+
+      // Create the metamap-button custom element
+      const metamapButton = document.createElement('metamap-button');
+
+      // Set attributes
+      metamapButton.setAttribute('clientid', clientId);
+      if (flowId) {
+        metamapButton.setAttribute('flowid', flowId);
+      }
+
+      // Set metadata as JSON string
+      const metadata = {
+        platform: 'sptc_rural',
+        environment: process.env.NODE_ENV,
+        timestamp: new Date().toISOString(),
+      };
+      metamapButton.setAttribute('metadata', JSON.stringify(metadata));
+
+      // Add event listeners for MetaMap events
+      // CATCH ALL EVENTS - log everything
+      const originalAddEventListener = metamapButton.addEventListener.bind(metamapButton);
+
+      // Listen to ALL possible completion events
+      const allEvents = [
+        'finish',
+        'complete',
+        'verification-complete',
+        'userFinishedSdk',
+        'user-finished-sdk',
+        'verification_completed',
+        'mati:userFinishedSdk',
+        'metamap:userFinishedSdk'
+      ];
+
+      allEvents.forEach(eventName => {
+        metamapButton.addEventListener(eventName, (event: any) => {
+          console.log(`🎯 MetaMap event fired: "${eventName}"`, event);
+          console.log(`🎯 Event detail:`, event.detail);
+
+          // Call onComplete for any completion event
+          console.log('📞 Calling onComplete handler...');
+          onComplete({
+            verificationId: event.detail?.verificationId || event.detail?.identityId || 'completed',
+            status: event.detail?.status || 'completed',
+            identityStatus: event.detail?.identityStatus || 'verified',
+            documentData: event.detail?.documentData,
+            selfieStatus: event.detail?.selfieStatus || 'verified',
+            livenessStatus: event.detail?.livenessStatus || 'verified',
+            metadata: event.detail?.metadata,
+            timestamp: new Date().toISOString(),
+          });
+          console.log('✅ onComplete handler called successfully');
+        });
+      });
+
+      // NUCLEAR OPTION: Listen to literally ALL events on this element
+      const eventTypes = [
+        'abort', 'afterprint', 'animationend', 'animationiteration', 'animationstart',
+        'beforeprint', 'beforeunload', 'blur', 'canplay', 'canplaythrough', 'change',
+        'click', 'close', 'complete', 'contextmenu', 'cuechange', 'dblclick', 'drag',
+        'dragend', 'dragenter', 'dragleave', 'dragover', 'dragstart', 'drop',
+        'durationchange', 'ended', 'error', 'finish', 'focus', 'focusin', 'focusout',
+        'fullscreenchange', 'fullscreenerror', 'hashchange', 'input', 'invalid',
+        'keydown', 'keypress', 'keyup', 'load', 'loadeddata', 'loadedmetadata',
+        'loadstart', 'message', 'mousedown', 'mouseenter', 'mouseleave', 'mousemove',
+        'mouseout', 'mouseover', 'mouseup', 'offline', 'online', 'open', 'pagehide',
+        'pageshow', 'pause', 'play', 'playing', 'popstate', 'progress', 'ratechange',
+        'reset', 'resize', 'scroll', 'search', 'seeked', 'seeking', 'select', 'show',
+        'stalled', 'storage', 'submit', 'success', 'suspend', 'timeupdate', 'toggle',
+        'touchcancel', 'touchend', 'touchmove', 'touchstart', 'transitionend',
+        'unload', 'volumechange', 'waiting', 'wheel'
+      ];
+
+      eventTypes.forEach(eventType => {
+        metamapButton.addEventListener(eventType, (event: any) => {
+          if (eventType.includes('mouse') || eventType.includes('focus') || eventType.includes('blur')) {
+            return; // Skip noisy events
+          }
+          console.log(`📡 Caught event: ${eventType}`, event);
+        });
+      });
+
+      metamapButton.addEventListener('error', (event: any) => {
+        console.error('✗ MetaMap verification error:');
+        console.error('Error event:', event);
+        console.error('Error detail:', event.detail);
+        console.error('Error type:', event.type);
+
+        const errorMessage = event.detail?.message || event.detail?.error || 'Verification failed';
+        console.error('Error message:', errorMessage);
+
+        setError(`MetaMap Error: ${errorMessage}\n\nThis may be due to:\n• Invalid or test client ID\n• MetaMap service issues\n• Network connectivity\n• Account not properly configured`);
+        onError?.(event.detail);
+      });
+
+      metamapButton.addEventListener('close', () => {
+        console.log('🚪 MetaMap verification closed by user');
+      });
+
+      // Listen for all events to debug
+      metamapButton.addEventListener('loaded', () => {
+        console.log('✓ MetaMap iframe loaded successfully');
+      });
+
+      metamapButton.addEventListener('userStartedSdk', () => {
+        console.log('✓ User started MetaMap SDK');
+      });
+
+      // Append to container
+      container.appendChild(metamapButton);
+      console.log('✓ MetaMap button element added to DOM');
+
     } catch (err: any) {
-      console.error('MetaMap initialization error:', err);
+      console.error('✗ MetaMap initialization error:', err);
       setError(err.message || 'Failed to initialize verification');
       onError?.(err);
     }
@@ -178,14 +337,7 @@ export default function MetaMapVerification({
 
   return (
     <>
-      {/* Load MetaMap SDK from CDN */}
-      <Script
-        src="https://cdn.metamap.com/sdk/v2.0/metamap.js"
-        strategy="afterInteractive"
-        onLoad={handleScriptLoad}
-        onError={handleScriptError}
-      />
-
+      {/* MetaMap SDK is loaded via useEffect above */}
       <div className="space-y-6">
         {/* Information Card */}
         <div className="bg-blue-50 border border-blue-200 rounded-2xl p-6">

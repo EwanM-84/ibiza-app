@@ -1,14 +1,15 @@
 "use client";
 
-import { useState, useRef } from "react";
+import { useState, useRef, useEffect } from "react";
 import { useLanguage } from "@/contexts/LanguageContext";
 import { getText } from "@/lib/text";
 import {
   Upload, Camera, CheckCircle, AlertCircle, MapPin,
-  Shield, FileCheck, Home as HomeIcon, ArrowRight, ArrowLeft
+  Shield, FileCheck, Home as HomeIcon, ArrowRight, ArrowLeft, Smartphone
 } from "lucide-react";
 import { useRouter } from "next/navigation";
 import MetaMapVerification from "@/components/MetaMapVerification";
+import { QRCodeSVG } from 'qrcode.react';
 
 export default function HostOnboarding() {
   const { language } = useLanguage();
@@ -25,6 +26,11 @@ export default function HostOnboarding() {
   // MetaMap verification state
   const [metamapVerified, setMetamapVerified] = useState(false);
   const [metamapData, setMetamapData] = useState<any>(null);
+
+  // Photo session state
+  const [photoSessionId, setPhotoSessionId] = useState<string | null>(null);
+  const [photoSessionUrl, setPhotoSessionUrl] = useState<string | null>(null);
+  const [sessionPhotos, setSessionPhotos] = useState<any[]>([]);
 
   const handleIDUpload = (e: React.ChangeEvent<HTMLInputElement>) => {
     if (e.target.files && e.target.files[0]) {
@@ -96,6 +102,83 @@ export default function HostOnboarding() {
   const handleMetaMapError = (error: any) => {
     console.error('MetaMap verification error:', error);
     alert('Verification failed. Please try again or contact support.');
+  };
+
+  // Create photo session when entering Step 2
+  useEffect(() => {
+    if (currentStep === 2 && !photoSessionId) {
+      createPhotoSession();
+    }
+  }, [currentStep]);
+
+  // Poll for photos every 2 seconds when on Step 2
+  useEffect(() => {
+    if (currentStep === 2 && photoSessionId) {
+      const interval = setInterval(() => {
+        fetchSessionPhotos();
+      }, 2000);
+
+      return () => clearInterval(interval);
+    }
+  }, [currentStep, photoSessionId]);
+
+  const createPhotoSession = async () => {
+    try {
+      const response = await fetch('/api/photo-session/create', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify({
+          hostProfileId: null, // We'll add this later when we have auth
+        }),
+      });
+
+      const data = await response.json();
+
+      if (data.success) {
+        const sessionId = data.sessionId;
+        setPhotoSessionId(sessionId);
+
+        // Create URL for mobile upload
+        const baseUrl = window.location.origin;
+        const url = `${baseUrl}/mobile-upload/${sessionId}`;
+        setPhotoSessionUrl(url);
+
+        console.log('✓ Photo session created:', sessionId);
+        console.log('📱 Mobile URL:', url);
+      }
+    } catch (error) {
+      console.error('Error creating photo session:', error);
+    }
+  };
+
+  const fetchSessionPhotos = async () => {
+    if (!photoSessionId) return;
+
+    try {
+      const response = await fetch(`/api/photo-session/${photoSessionId}`);
+      const data = await response.json();
+
+      if (data.success) {
+        setSessionPhotos(data.photos);
+
+        // Update propertyPhotos state for compatibility
+        const updatedPhotos = data.photos.map((photo: any) => ({
+          file: { name: photo.filename } as File,
+          location: {
+            latitude: photo.location.latitude,
+            longitude: photo.location.longitude,
+            accuracy: photo.location.accuracy,
+          } as GeolocationCoordinates,
+          data: photo.data,
+        }));
+
+        setPropertyPhotos(updatedPhotos);
+      }
+    } catch (error) {
+      console.error('Error fetching session photos:', error);
+    }
   };
 
   const handleSubmit = async () => {
@@ -249,74 +332,112 @@ export default function HostOnboarding() {
             </div>
           )}
 
-          {/* Step 2: Property Photos */}
+          {/* Step 2: Property Photos with QR Code */}
           {currentStep === 2 && (
             <div className="space-y-8">
               <div>
                 <h2 className="text-4xl font-bold text-gray-900 mb-3" style={{ fontFamily: '"DM Serif Display", serif' }}>
                   {getText("hostOnboarding.propertyPhotos", language)}
                 </h2>
-                <p className="text-lg text-gray-600">{getText("hostOnboarding.propertyPhotosDescription", language)}</p>
+                <p className="text-lg text-gray-600">Scan the QR code with your mobile phone to take photos with GPS location</p>
               </div>
 
+              {/* QR Code Section */}
+              {photoSessionUrl && (
+                <div className="bg-gradient-to-br from-sptc-red-50 to-orange-50 border-2 border-sptc-red-200 rounded-3xl p-8">
+                  <div className="flex flex-col md:flex-row items-center gap-8">
+                    {/* QR Code */}
+                    <div className="bg-white p-6 rounded-2xl shadow-xl">
+                      <QRCodeSVG
+                        value={photoSessionUrl}
+                        size={256}
+                        level="H"
+                        includeMargin={true}
+                      />
+                    </div>
+
+                    {/* Instructions */}
+                    <div className="flex-1">
+                      <div className="flex items-center gap-3 mb-4">
+                        <div className="w-12 h-12 bg-sptc-red-600 rounded-full flex items-center justify-center">
+                          <Smartphone className="w-6 h-6 text-white" />
+                        </div>
+                        <h3 className="text-2xl font-bold text-gray-900">Scan with your phone</h3>
+                      </div>
+
+                      <ol className="space-y-3 text-gray-700">
+                        <li className="flex gap-3">
+                          <span className="flex-shrink-0 w-8 h-8 bg-sptc-red-600 text-white font-bold rounded-full flex items-center justify-center text-sm">1</span>
+                          <span>Open your phone's camera app</span>
+                        </li>
+                        <li className="flex gap-3">
+                          <span className="flex-shrink-0 w-8 h-8 bg-sptc-red-600 text-white font-bold rounded-full flex items-center justify-center text-sm">2</span>
+                          <span>Point it at the QR code above</span>
+                        </li>
+                        <li className="flex gap-3">
+                          <span className="flex-shrink-0 w-8 h-8 bg-sptc-red-600 text-white font-bold rounded-full flex items-center justify-center text-sm">3</span>
+                          <span>Tap the link that appears</span>
+                        </li>
+                        <li className="flex gap-3">
+                          <span className="flex-shrink-0 w-8 h-8 bg-sptc-red-600 text-white font-bold rounded-full flex items-center justify-center text-sm">4</span>
+                          <span>Take 5 photos of your property</span>
+                        </li>
+                        <li className="flex gap-3">
+                          <span className="flex-shrink-0 w-8 h-8 bg-sptc-red-600 text-white font-bold rounded-full flex items-center justify-center text-sm">5</span>
+                          <span>Photos will appear here automatically</span>
+                        </li>
+                      </ol>
+
+                      <div className="mt-6 flex items-center gap-2 bg-white border border-gray-200 px-4 py-3 rounded-xl">
+                        <span className="text-sm text-gray-600 font-semibold">Photos uploaded:</span>
+                        <span className="text-2xl font-bold text-sptc-red-600">{sessionPhotos.length} / 5</span>
+                      </div>
+                    </div>
+                  </div>
+                </div>
+              )}
+
+              {/* Photo Grid - Shows photos as they're uploaded */}
               <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
                 {[0, 1, 2, 3, 4].map((index) => {
-                  const photo = propertyPhotos[index];
+                  const photo = sessionPhotos[index];
 
                   return (
-                    <div key={index} className="border-3 border-dashed border-gray-300 rounded-2xl p-6 hover:border-sptc-red-600 hover:bg-red-50/20 transition-all duration-300">
-                      <input
-                        type="file"
-                        id={`property-photo-${index}`}
-                        accept="image/*"
-                        onChange={(e) => handlePropertyPhotoUpload(e, index)}
-                        className="hidden"
-                      />
-                      <label htmlFor={`property-photo-${index}`} className="cursor-pointer block">
-                        {photo ? (
-                          <div className="space-y-4 animate-in fade-in duration-300">
-                            <div className="relative rounded-xl overflow-hidden shadow-lg">
-                              <img src={URL.createObjectURL(photo.file)} alt={`Property ${index + 1}`} className="w-full h-48 object-cover" />
-                              <div className="absolute top-2 right-2 bg-green-500 rounded-full p-2 shadow-lg">
-                                <CheckCircle className="w-5 h-5 text-white" />
-                              </div>
-                            </div>
-                            <div className="flex items-center gap-2 text-sm font-medium">
-                              {photo.location ? (
-                                <div className="flex items-center gap-2 text-green-600 bg-green-50 px-3 py-2 rounded-lg w-full">
-                                  <MapPin className="w-4 h-4" />
-                                  <span>{getText("hostOnboarding.locationCaptured", language)}</span>
-                                </div>
-                              ) : (
-                                <div className="flex items-center gap-2 text-orange-600 bg-orange-50 px-3 py-2 rounded-lg w-full">
-                                  <AlertCircle className="w-4 h-4" />
-                                  <span className="text-xs">{getText("hostOnboarding.locationRequired", language)}</span>
-                                </div>
-                              )}
+                    <div key={index} className="border-3 border-dashed border-gray-300 rounded-2xl p-6 bg-white">
+                      {photo ? (
+                        <div className="space-y-4 animate-in fade-in duration-500">
+                          <div className="relative rounded-xl overflow-hidden shadow-lg">
+                            <img src={photo.data} alt={`Property ${index + 1}`} className="w-full h-48 object-cover" />
+                            <div className="absolute top-2 right-2 bg-green-500 rounded-full p-2 shadow-lg">
+                              <CheckCircle className="w-5 h-5 text-white" />
                             </div>
                           </div>
-                        ) : (
-                          <div className="flex flex-col items-center gap-4 py-12">
-                            <div className="w-16 h-16 bg-gray-100 rounded-full flex items-center justify-center">
-                              <Upload className="w-9 h-9 text-gray-400" />
-                            </div>
-                            <div className="text-center">
-                              <p className="text-base font-bold text-gray-700 mb-1">{getText("hostOnboarding.photo", language)} {index + 1}</p>
-                              <p className="text-xs text-gray-500">{getText("hostOnboarding.uploadPhoto", language)}</p>
-                            </div>
+                          <div className="flex items-center gap-2 text-green-600 bg-green-50 px-3 py-2 rounded-lg text-sm font-medium">
+                            <MapPin className="w-4 h-4" />
+                            <span>GPS: {photo.location.latitude.toFixed(5)}, {photo.location.longitude.toFixed(5)}</span>
                           </div>
-                        )}
-                      </label>
+                        </div>
+                      ) : (
+                        <div className="flex flex-col items-center gap-4 py-12 opacity-40">
+                          <div className="w-16 h-16 bg-gray-100 rounded-full flex items-center justify-center">
+                            <Camera className="w-9 h-9 text-gray-400" />
+                          </div>
+                          <div className="text-center">
+                            <p className="text-base font-bold text-gray-700 mb-1">Photo {index + 1}</p>
+                            <p className="text-xs text-gray-500">Waiting for upload...</p>
+                          </div>
+                        </div>
+                      )}
                     </div>
                   );
                 })}
               </div>
 
-              <div className="bg-purple-50 border border-purple-200 rounded-2xl p-6 flex gap-4">
-                <MapPin className="w-6 h-6 text-purple-600 flex-shrink-0 mt-1" />
+              <div className="bg-blue-50 border border-blue-200 rounded-2xl p-6 flex gap-4">
+                <MapPin className="w-6 h-6 text-blue-600 flex-shrink-0 mt-1" />
                 <div>
-                  <h4 className="font-bold text-purple-900 mb-1">Location verification</h4>
-                  <p className="text-sm text-purple-800">We use geolocation data from your photos to verify your property location. Please enable location services when uploading.</p>
+                  <h4 className="font-bold text-blue-900 mb-1">Automatic GPS verification</h4>
+                  <p className="text-sm text-blue-800">Photos taken on your mobile phone automatically include GPS coordinates, proving the property location is authentic.</p>
                 </div>
               </div>
             </div>
@@ -418,7 +539,10 @@ export default function HostOnboarding() {
                   }
                   setCurrentStep(currentStep + 1);
                 }}
-                className="flex items-center gap-3 px-10 py-4 bg-gradient-to-r from-sptc-red-600 to-sptc-red-700 text-white font-bold text-lg rounded-2xl hover:from-sptc-red-700 hover:to-sptc-red-800 transition-all shadow-2xl transform hover:scale-105"
+                disabled={currentStep === 1 && !metamapVerified}
+                className={`flex items-center gap-3 px-10 py-4 bg-gradient-to-r from-sptc-red-600 to-sptc-red-700 text-white font-bold text-lg rounded-2xl hover:from-sptc-red-700 hover:to-sptc-red-800 transition-all shadow-2xl transform hover:scale-105 ${
+                  currentStep === 1 && !metamapVerified ? 'opacity-50 cursor-not-allowed hover:scale-100' : ''
+                }`}
               >
                 {getText("hostOnboarding.continue", language)}
                 <ArrowRight className="w-6 h-6" />
