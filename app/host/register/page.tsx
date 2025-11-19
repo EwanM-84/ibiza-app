@@ -8,12 +8,11 @@ import {
   CheckCircle, AlertCircle, ArrowRight, FileText, Camera
 } from "lucide-react";
 import { useRouter } from "next/navigation";
-import { createClientComponentClient } from "@supabase/auth-helpers-nextjs";
+import { supabase } from "@/lib/supabaseClient";
 
 export default function HostRegister() {
   const { language } = useLanguage();
   const router = useRouter();
-  const supabase = createClientComponentClient();
 
   const [step, setStep] = useState(1); // 1: Basic Info, 2: Contact Details, 3: Agreement
   const [isSubmitting, setIsSubmitting] = useState(false);
