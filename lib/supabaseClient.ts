@@ -3,20 +3,27 @@ import { createClient } from "@supabase/supabase-js";
 const supabaseUrl = process.env.NEXT_PUBLIC_SUPABASE_URL;
 const supabaseAnonKey = process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY;
 
-if (!supabaseUrl || !supabaseAnonKey) {
-  console.error(
-    "❌ Supabase environment variables are missing!"
-  );
-  console.error("NEXT_PUBLIC_SUPABASE_URL:", supabaseUrl ? "✓ Set" : "✗ Missing");
-  console.error("NEXT_PUBLIC_SUPABASE_ANON_KEY:", supabaseAnonKey ? "✓ Set" : "✗ Missing");
-  console.error("Please check your Netlify environment variables configuration.");
+console.log("🔍 Supabase Client Initialization:");
+console.log("  NEXT_PUBLIC_SUPABASE_URL:", supabaseUrl ? "✓ Set" : "✗ Missing");
+console.log("  NEXT_PUBLIC_SUPABASE_ANON_KEY:", supabaseAnonKey ? "✓ Set" : "✗ Missing");
+console.log("  typeof NEXT_PUBLIC_SUPABASE_URL:", typeof supabaseUrl);
+console.log("  typeof NEXT_PUBLIC_SUPABASE_ANON_KEY:", typeof supabaseAnonKey);
 
-  throw new Error(
-    "Supabase environment variables are not set. Please add NEXT_PUBLIC_SUPABASE_URL and NEXT_PUBLIC_SUPABASE_ANON_KEY to your environment variables."
-  );
+if (!supabaseUrl || !supabaseAnonKey) {
+  console.error("❌ Supabase environment variables are missing!");
+  console.error("NEXT_PUBLIC_SUPABASE_URL:", supabaseUrl);
+  console.error("NEXT_PUBLIC_SUPABASE_ANON_KEY:", supabaseAnonKey ? "[REDACTED]" : "undefined");
+
+  // Don't throw - create a dummy client to prevent crashes
+  // The registration will fail gracefully instead
+  console.error("⚠️ Creating dummy Supabase client - registration will not work!");
 }
 
-export const supabase = createClient(supabaseUrl, supabaseAnonKey);
+// Create client even if variables are missing to prevent module load errors
+export const supabase = createClient(
+  supabaseUrl || 'https://placeholder.supabase.co',
+  supabaseAnonKey || 'placeholder-key'
+);
 
 export type Database = {
   public: {
