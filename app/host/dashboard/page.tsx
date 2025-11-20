@@ -1,6 +1,6 @@
 "use client";
 
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import {
   Calendar,
   DollarSign,
@@ -18,11 +18,19 @@ import {
   TrendingDown,
   Percent,
   Settings,
+  User,
+  MapPin,
+  FileText,
+  Home,
+  Compass,
+  Heart,
 } from "lucide-react";
+import { useRouter } from 'next/navigation';
+import { createClientComponentClient } from '@supabase/auth-helpers-nextjs';
 import { useLanguage } from "@/contexts/LanguageContext";
 import { getText } from "@/lib/text";
 
-type Tab = "pricing" | "photos";
+type Tab = "profile" | "verification" | "photos" | "listing" | "pricing";
 
 interface PricingRule {
   id: string;
@@ -42,8 +50,90 @@ interface CustomPrice {
 
 export default function HostDashboard() {
   const { language } = useLanguage();
-  const [activeTab, setActiveTab] = useState<Tab>("pricing");
+  const router = useRouter();
+  const supabase = createClientComponentClient();
 
+  const [activeTab, setActiveTab] = useState<Tab>("profile");
+  const [loading, setLoading] = useState(true);
+  const [user, setUser] = useState<any>(null);
+  const [profile, setProfile] = useState<any>(null);
+  const [verificationPhotos, setVerificationPhotos] = useState<any[]>([]);
+  const [listingPhotos, setListingPhotos] = useState<any[]>([]);
+
+  useEffect(() => {
+    window.scrollTo({ top: 0, behavior: 'smooth' });
+    checkAuth();
+  }, []);
+
+  const checkAuth = async () => {
+    try {
+      const { data: { user } } = await supabase.auth.getUser();
+
+      if (!user) {
+        router.push('/host/login');
+        return;
+      }
+
+      setUser(user);
+      await loadProfile(user.id);
+    } catch (error) {
+      console.error('Auth error:', error);
+      router.push('/host/login');
+    }
+  };
+
+  const loadProfile = async (userId: string) => {
+    try {
+      // Load host profile
+      const { data: profileData, error: profileError } = await supabase
+        .from('host_profiles')
+        .select('*')
+        .eq('user_id', userId)
+        .single();
+
+      if (profileError) throw profileError;
+      setProfile(profileData);
+
+      // Load verification photos
+      const { data: verPhotos } = await supabase
+        .from('property_photos')
+        .select('*')
+        .eq('host_id', userId)
+        .order('created_at', { ascending: true });
+
+      setVerificationPhotos(verPhotos || []);
+
+      // Load listing photos
+      const { data: listPhotos } = await supabase
+        .from('listing_photos')
+        .select('*')
+        .eq('host_id', userId)
+        .order('display_order', { ascending: true });
+
+      setListingPhotos(listPhotos || []);
+
+    } catch (error) {
+      console.error('Error loading profile:', error);
+    } finally {
+      setLoading(false);
+    }
+  };
+
+  const handleTabChange = (tab: Tab) => {
+    setActiveTab(tab);
+    window.scrollTo({ top: 0, behavior: 'smooth' });
+  };
+
+  if (loading) {
+    return (
+      <div className="min-h-screen bg-gradient-to-br from-sptc-red-50 to-orange-50 flex items-center justify-center">
+        <div className="text-center">
+          <div className="w-16 h-16 border-4 border-sptc-red-600 border-t-transparent rounded-full animate-spin mx-auto mb-4" />
+          <p className="text-gray-600">Loading dashboard...</p>
+        </div>
+      </div>
+    );
+  }
 
   return (
     <div className="min-h-screen bg-gradient-to-br from-gray-50 via-white to-gray-100 py-12 px-4">
@@ -53,16 +143,23 @@ export default function HostDashboard() {
           <div className="flex items-center justify-between">
             <div>
               <h1 className="text-4xl md:text-5xl font-bold text-white mb-3" style={{ fontFamily: '"DM Serif Display", serif' }}>
-                Host Admin Panel
+                Host Dashboard
               </h1>
               <p className="text-red-100 text-lg md:text-xl">
-                Manage your pricing and listing photos
+                Welcome back, {profile?.first_name || 'Host'}!
               </p>
             </div>
             <div className="hidden lg:flex items-center space-x-4">
-              <div className="bg-white bg-opacity-20 backdrop-blur-sm rounded-xl px-6 py-3 text-white">
-                <p className="text-xs uppercase tracking-wide opacity-90">Last Updated</p>
-                <p className="text-sm font-semibold">Just now</p>
+              <div className={`px-4 py-2 rounded-full text-sm font-semibold ${
+                profile?.verification_status === 'approved'
+                  ? 'bg-green-100 text-green-700'
+                  : profile?.verification_status === 'pending'
+                  ? 'bg-yellow-100 text-yellow-700'
+                  : 'bg-red-100 text-red-700'
+              }`}>
+                {profile?.verification_status === 'approved' ? '✓ Verified' :
+                 profile?.verification_status === 'pending' ? '⏳ Pending' :
+                 '⚠ Not Verified'}
               </div>
             </div>
           </div>
@@ -71,47 +168,381 @@ export default function HostDashboard() {
         {/* Navigation Tabs */}
         <div className="bg-white rounded-2xl shadow-lg mb-8 p-1.5 border border-gray-100">
           <div className="flex space-x-1 overflow-x-auto">
-            <button
-              onClick={() => {
-                setActiveTab("pricing");
-              }}
-              className={`flex items-center space-x-2 px-6 py-3.5 rounded-xl font-semibold transition-all whitespace-nowrap ${
-                activeTab === "pricing"
-                  ? "bg-gradient-to-r from-sptc-red-600 to-sptc-red-700 text-white shadow-lg shadow-red-200"
-                  : "text-gray-600 hover:bg-gray-50 hover:text-gray-900"
-              }`}
-            >
-              <DollarSign className="w-5 h-5" />
-              <span>Pricing</span>
-            </button>
-
-            <button
-              onClick={() => {
-                setActiveTab("photos");
-              }}
-              className={`flex items-center space-x-2 px-6 py-3.5 rounded-xl font-semibold transition-all whitespace-nowrap ${
-                activeTab === "photos"
-                  ? "bg-gradient-to-r from-sptc-red-600 to-sptc-red-700 text-white shadow-lg shadow-red-200"
-                  : "text-gray-600 hover:bg-gray-50 hover:text-gray-900"
-              }`}
-            >
-              <ImageIcon className="w-5 h-5" />
-              <span>Photos</span>
-            </button>
+            <TabButton
+              active={activeTab === 'profile'}
+              onClick={() => handleTabChange('profile')}
+              icon={<User className="w-5 h-5" />}
+              label="Profile"
+            />
+            <TabButton
+              active={activeTab === 'verification'}
+              onClick={() => handleTabChange('verification')}
+              icon={<MapPin className="w-5 h-5" />}
+              label="Verification"
+            />
+            <TabButton
+              active={activeTab === 'photos'}
+              onClick={() => handleTabChange('photos')}
+              icon={<ImageIcon className="w-5 h-5" />}
+              label="Gallery"
+            />
+            <TabButton
+              active={activeTab === 'listing'}
+              onClick={() => handleTabChange('listing')}
+              icon={<FileText className="w-5 h-5" />}
+              label="Listing"
+            />
+            <TabButton
+              active={activeTab === 'pricing'}
+              onClick={() => handleTabChange('pricing')}
+              icon={<DollarSign className="w-5 h-5" />}
+              label="Pricing"
+            />
           </div>
         </div>
 
         {/* Tab Content */}
-        {activeTab === "pricing" && <PricingTab />}
-        {activeTab === "photos" && <PhotosTab />}
+        {activeTab === "profile" && (
+          <ProfileSection profile={profile} user={user} supabase={supabase} onUpdate={() => loadProfile(user.id)} />
+        )}
+        {activeTab === "verification" && (
+          <VerificationSection photos={verificationPhotos} profile={profile} />
+        )}
+        {activeTab === "photos" && (
+          <PhotosTabEnhanced photos={listingPhotos} userId={user?.id} supabase={supabase} onUpdate={() => loadProfile(user.id)} />
+        )}
+        {activeTab === "listing" && (
+          <ListingSection profile={profile} userId={user?.id} supabase={supabase} onUpdate={() => loadProfile(user.id)} />
+        )}
+        {activeTab === "pricing" && <PricingTab profile={profile} userId={user?.id} supabase={supabase} />}
       </div>
     </div>
   );
 }
 
-function PricingTab() {
+function TabButton({ active, onClick, icon, label }: any) {
+  return (
+    <button
+      onClick={onClick}
+      className={`flex items-center space-x-2 px-6 py-3.5 rounded-xl font-semibold transition-all whitespace-nowrap ${
+        active
+          ? "bg-gradient-to-r from-sptc-red-600 to-sptc-red-700 text-white shadow-lg shadow-red-200"
+          : "text-gray-600 hover:bg-gray-50 hover:text-gray-900"
+      }`}
+    >
+      {icon}
+      <span>{label}</span>
+    </button>
+  );
+}
+
+function ProfileSection({ profile, user, supabase, onUpdate }: any) {
+  const [hostType, setHostType] = useState(profile?.host_type || '');
+  const [saving, setSaving] = useState(false);
+
+  const handleSaveHostType = async () => {
+    setSaving(true);
+    try {
+      const { error } = await supabase
+        .from('host_profiles')
+        .update({ host_type: hostType })
+        .eq('user_id', user?.id);
+
+      if (error) throw error;
+
+      alert('Host type updated successfully!');
+      onUpdate();
+    } catch (error: any) {
+      console.error('Error saving:', error);
+      alert('Failed to save: ' + error.message);
+    } finally {
+      setSaving(false);
+    }
+  };
+
+  return (
+    <div className="bg-white rounded-3xl shadow-xl p-8">
+      <h2 className="text-2xl font-bold text-gray-900 mb-6">Profile Information</h2>
+
+      <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+        <InfoField label="First Name" value={profile?.first_name} />
+        <InfoField label="Last Name" value={profile?.last_name} />
+        <InfoField label="Email" value={user?.email} />
+        <InfoField label="Phone" value={profile?.phone} />
+        <InfoField label="Country" value={profile?.country} />
+        <InfoField label="City" value={profile?.city} />
+        <InfoField label="Date of Birth" value={profile?.date_of_birth} />
+        <InfoField label="Verification Status" value={profile?.verification_status} />
+      </div>
+
+      <div className="mt-8 pt-8 border-t border-gray-200">
+        <h3 className="text-lg font-bold text-gray-900 mb-4">Host Type</h3>
+        <p className="text-gray-600 text-sm mb-4">
+          Select what type of experience you want to offer
+        </p>
+        <div className="grid grid-cols-1 md:grid-cols-3 gap-4 mb-6">
+          <HostTypeCard
+            icon={<Home className="w-8 h-8" />}
+            title="Accommodation"
+            description="Offer a place to stay"
+            type="accommodation"
+            currentType={hostType}
+            onClick={() => setHostType('accommodation')}
+          />
+          <HostTypeCard
+            icon={<Compass className="w-8 h-8" />}
+            title="Excursion"
+            description="Offer tours & activities"
+            type="excursion"
+            currentType={hostType}
+            onClick={() => setHostType('excursion')}
+          />
+          <HostTypeCard
+            icon={<Heart className="w-8 h-8" />}
+            title="Volunteer Farm"
+            description="Seek volunteer help"
+            type="volunteer"
+            currentType={hostType}
+            onClick={() => setHostType('volunteer')}
+          />
+        </div>
+
+        {hostType && hostType !== profile?.host_type && (
+          <div className="flex justify-end">
+            <button
+              onClick={handleSaveHostType}
+              disabled={saving}
+              className="px-8 py-3 bg-sptc-red-600 text-white font-bold rounded-xl hover:bg-sptc-red-700 transition-all disabled:opacity-50 disabled:cursor-not-allowed"
+            >
+              {saving ? 'Saving...' : 'Save Host Type'}
+            </button>
+          </div>
+        )}
+      </div>
+    </div>
+  );
+}
+
+function HostTypeCard({ icon, title, description, type, currentType, onClick }: any) {
+  const isSelected = currentType === type;
+
+  return (
+    <div
+      onClick={onClick}
+      className={`p-6 rounded-2xl border-2 cursor-pointer transition-all ${
+      isSelected
+        ? 'border-sptc-red-600 bg-sptc-red-50'
+        : 'border-gray-200 hover:border-gray-300 bg-white'
+    }`}>
+      <div className={`mb-3 ${isSelected ? 'text-sptc-red-600' : 'text-gray-600'}`}>
+        {icon}
+      </div>
+      <h4 className="font-bold text-gray-900 mb-1">{title}</h4>
+      <p className="text-sm text-gray-600">{description}</p>
+      {isSelected && (
+        <div className="mt-3 text-sptc-red-600 font-semibold text-sm">✓ Selected</div>
+      )}
+    </div>
+  );
+}
+
+function InfoField({ label, value }: any) {
+  return (
+    <div>
+      <label className="block text-sm font-semibold text-gray-700 mb-2">
+        {label}
+      </label>
+      <div className="px-4 py-3 bg-gray-50 rounded-xl text-gray-900">
+        {value || 'Not set'}
+      </div>
+    </div>
+  );
+}
+
+function VerificationSection({ photos, profile }: any) {
+  return (
+    <div className="bg-white rounded-3xl shadow-xl p-8">
+      <h2 className="text-2xl font-bold text-gray-900 mb-6">Verification Photos</h2>
+
+      <div className="mb-6 p-4 bg-blue-50 rounded-xl">
+        <p className="text-blue-900 font-semibold mb-1">GPS-Verified Property Photos</p>
+        <p className="text-blue-700 text-sm">
+          These photos were taken with GPS location verification during your onboarding.
+        </p>
+      </div>
+
+      {photos.length === 0 ? (
+        <div className="text-center py-12">
+          <MapPin className="w-16 h-16 text-gray-400 mx-auto mb-4" />
+          <p className="text-gray-600">No verification photos uploaded yet</p>
+        </div>
+      ) : (
+        <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+          {photos.map((photo: any, index: number) => (
+            <div key={photo.id} className="bg-gray-50 rounded-2xl p-4">
+              <img
+                src={photo.photo_url}
+                alt={`Verification photo ${index + 1}`}
+                className="w-full h-64 object-cover rounded-xl mb-3"
+              />
+              <div className="flex items-center gap-2 text-sm text-gray-600">
+                <MapPin className="w-4 h-4" />
+                <span>
+                  {photo.latitude?.toFixed(6)}, {photo.longitude?.toFixed(6)}
+                </span>
+              </div>
+              <p className="text-xs text-gray-500 mt-1">
+                Uploaded {new Date(photo.created_at).toLocaleDateString()}
+              </p>
+            </div>
+          ))}
+        </div>
+      )}
+    </div>
+  );
+}
+
+function ListingSection({ profile, userId, supabase, onUpdate }: any) {
+  const [hostType, setHostType] = useState(profile?.host_type || '');
+  const [title, setTitle] = useState(profile?.listing_title || '');
+  const [description, setDescription] = useState(profile?.listing_description || '');
+  const [saving, setSaving] = useState(false);
+
+  const handleSave = async () => {
+    setSaving(true);
+    try {
+      const { error } = await supabase
+        .from('host_profiles')
+        .update({
+          host_type: hostType,
+          listing_title: title,
+          listing_description: description,
+        })
+        .eq('user_id', userId);
+
+      if (error) throw error;
+
+      alert('Listing updated successfully!');
+      onUpdate();
+    } catch (error: any) {
+      console.error('Error saving:', error);
+      alert('Failed to save: ' + error.message);
+    } finally {
+      setSaving(false);
+    }
+  };
+
+  return (
+    <div className="bg-white rounded-3xl shadow-xl p-8">
+      <h2 className="text-2xl font-bold text-gray-900 mb-6">Listing Details</h2>
+
+      <div className="space-y-6">
+        {/* Host Type Selection */}
+        <div>
+          <label className="block text-sm font-semibold text-gray-700 mb-3">
+            Host Type *
+          </label>
+          <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
+            <button
+              onClick={() => setHostType('accommodation')}
+              className={`p-4 rounded-xl border-2 transition-all text-left ${
+                hostType === 'accommodation'
+                  ? 'border-sptc-red-600 bg-sptc-red-50'
+                  : 'border-gray-200 hover:border-gray-300'
+              }`}
+            >
+              <Home className={`w-6 h-6 mb-2 ${hostType === 'accommodation' ? 'text-sptc-red-600' : 'text-gray-600'}`} />
+              <div className="font-semibold text-gray-900">Accommodation</div>
+              <div className="text-sm text-gray-600">Offer lodging</div>
+            </button>
+
+            <button
+              onClick={() => setHostType('excursion')}
+              className={`p-4 rounded-xl border-2 transition-all text-left ${
+                hostType === 'excursion'
+                  ? 'border-sptc-red-600 bg-sptc-red-50'
+                  : 'border-gray-200 hover:border-gray-300'
+              }`}
+            >
+              <Compass className={`w-6 h-6 mb-2 ${hostType === 'excursion' ? 'text-sptc-red-600' : 'text-gray-600'}`} />
+              <div className="font-semibold text-gray-900">Excursion</div>
+              <div className="text-sm text-gray-600">Tours & activities</div>
+            </button>
+
+            <button
+              onClick={() => setHostType('volunteer')}
+              className={`p-4 rounded-xl border-2 transition-all text-left ${
+                hostType === 'volunteer'
+                  ? 'border-sptc-red-600 bg-sptc-red-50'
+                  : 'border-gray-200 hover:border-gray-300'
+              }`}
+            >
+              <Heart className={`w-6 h-6 mb-2 ${hostType === 'volunteer' ? 'text-sptc-red-600' : 'text-gray-600'}`} />
+              <div className="font-semibold text-gray-900">Volunteer Farm</div>
+              <div className="text-sm text-gray-600">Seek volunteers</div>
+            </button>
+          </div>
+        </div>
+
+        {/* Listing Title */}
+        <div>
+          <label className="block text-sm font-semibold text-gray-700 mb-2">
+            Listing Title *
+          </label>
+          <input
+            type="text"
+            value={title}
+            onChange={(e) => setTitle(e.target.value)}
+            placeholder="e.g., Cozy Mountain Cabin with Amazing Views"
+            className="w-full px-4 py-3 border border-gray-300 rounded-xl focus:ring-2 focus:ring-sptc-red-500 focus:border-transparent"
+            maxLength={100}
+          />
+          <p className="text-xs text-gray-500 mt-1">{title.length}/100 characters</p>
+        </div>
+
+        {/* Listing Description */}
+        <div>
+          <label className="block text-sm font-semibold text-gray-700 mb-2">
+            Description *
+          </label>
+          <textarea
+            value={description}
+            onChange={(e) => setDescription(e.target.value)}
+            placeholder="Describe your property, what makes it special, what guests can expect..."
+            className="w-full px-4 py-3 border border-gray-300 rounded-xl focus:ring-2 focus:ring-sptc-red-500 focus:border-transparent h-48 resize-none"
+            maxLength={2000}
+          />
+          <p className="text-xs text-gray-500 mt-1">{description.length}/2000 characters</p>
+        </div>
+
+        {/* Save Button */}
+        <div className="flex justify-end pt-4">
+          <button
+            onClick={handleSave}
+            disabled={saving || !hostType || !title || !description}
+            className="px-8 py-3 bg-sptc-red-600 text-white font-bold rounded-xl hover:bg-sptc-red-700 transition-all disabled:opacity-50 disabled:cursor-not-allowed flex items-center gap-2"
+          >
+            {saving ? (
+              <>
+                <div className="w-5 h-5 border-3 border-white border-t-transparent rounded-full animate-spin" />
+                Saving...
+              </>
+            ) : (
+              <>
+                <Save className="w-5 h-5" />
+                Save Changes
+              </>
+            )}
+          </button>
+        </div>
+      </div>
+    </div>
+  );
+}
+
+function PricingTab({ profile, userId, supabase }: any) {
   const { language } = useLanguage();
-  const [basePrice, setBasePrice] = useState(50);
+  const [basePrice, setBasePrice] = useState(profile?.default_price_per_night || 50);
   const [selectedMonth, setSelectedMonth] = useState(new Date().getMonth());
   const [selectedYear, setSelectedYear] = useState(new Date().getFullYear());
   const [pricingRules, setPricingRules] = useState<PricingRule[]>([]);
@@ -770,42 +1201,88 @@ function DatePriceFormModal({
   );
 }
 
-function PhotosTab() {
+function PhotosTabEnhanced({ photos, userId, supabase, onUpdate }: any) {
   const { language } = useLanguage();
-  const [photos, setPhotos] = useState<Array<{ id: string; file: File; url: string }>>([]);
+  const [localPhotos, setLocalPhotos] = useState<Array<{ id: string; photo_url: string; caption?: string; display_order: number }>>([]);
   const [currentPhotoIndex, setCurrentPhotoIndex] = useState(0);
   const [previewMode, setPreviewMode] = useState<"carousel" | "advert">("carousel");
+  const [uploading, setUploading] = useState(false);
 
+  useEffect(() => {
+    setLocalPhotos(photos || []);
+  }, [photos]);
 
-  const handleFileUpload = (e: React.ChangeEvent<HTMLInputElement>) => {
+  const handleFileUpload = async (e: React.ChangeEvent<HTMLInputElement>) => {
     const files = e.target.files;
     if (!files) return;
 
-    Array.from(files).forEach((file) => {
+    setUploading(true);
+
+    for (const file of Array.from(files)) {
       if (file.type.startsWith("image/")) {
-        const id = Date.now().toString() + Math.random().toString(36).substr(2, 9);
-        const url = URL.createObjectURL(file);
-        setPhotos(prev => [...prev, { id, file, url }]);
+        try {
+          // Convert to base64
+          const reader = new FileReader();
+          const base64Promise = new Promise<string>((resolve) => {
+            reader.onload = (event) => {
+              resolve(event.target?.result as string);
+            };
+            reader.readAsDataURL(file);
+          });
+
+          const photoData = await base64Promise;
+          const displayOrder = localPhotos.length;
+
+          // Save to Supabase
+          const { data, error } = await supabase
+            .from('listing_photos')
+            .insert({
+              host_id: userId,
+              photo_url: photoData,
+              display_order: displayOrder,
+            })
+            .select()
+            .single();
+
+          if (error) throw error;
+
+          setLocalPhotos(prev => [...prev, data]);
+        } catch (error: any) {
+          console.error('Error uploading photo:', error);
+          alert('Failed to upload photo: ' + error.message);
+        }
       }
-    });
+    }
+
+    setUploading(false);
+    onUpdate();
   };
 
-  const handleDeletePhoto = (id: string) => {
-    const photo = photos.find(p => p.id === id);
-    if (photo) {
-      URL.revokeObjectURL(photo.url);
-    }
-    setPhotos(prev => prev.filter(p => p.id !== id));
-    if (currentPhotoIndex >= photos.length - 1 && currentPhotoIndex > 0) {
-      setCurrentPhotoIndex(currentPhotoIndex - 1);
+  const handleDeletePhoto = async (photoId: string) => {
+    try {
+      const { error } = await supabase
+        .from('listing_photos')
+        .delete()
+        .eq('id', photoId);
+
+      if (error) throw error;
+
+      setLocalPhotos(prev => prev.filter(p => p.id !== photoId));
+      if (currentPhotoIndex >= localPhotos.length - 1 && currentPhotoIndex > 0) {
+        setCurrentPhotoIndex(currentPhotoIndex - 1);
+      }
+      onUpdate();
+    } catch (error: any) {
+      console.error('Error deleting photo:', error);
+      alert('Failed to delete photo: ' + error.message);
     }
   };
 
   const navigatePhoto = (direction: "prev" | "next") => {
     if (direction === "prev") {
-      setCurrentPhotoIndex(currentPhotoIndex > 0 ? currentPhotoIndex - 1 : photos.length - 1);
+      setCurrentPhotoIndex(currentPhotoIndex > 0 ? currentPhotoIndex - 1 : localPhotos.length - 1);
     } else {
-      setCurrentPhotoIndex(currentPhotoIndex < photos.length - 1 ? currentPhotoIndex + 1 : 0);
+      setCurrentPhotoIndex(currentPhotoIndex < localPhotos.length - 1 ? currentPhotoIndex + 1 : 0);
     }
   };
 
@@ -834,8 +1311,14 @@ function PhotosTab() {
                 />
               </label>
               <span className="text-sm text-gray-600">
-                {photos.length} {photos.length === 1 ? "photo" : "photos"} uploaded
+                {localPhotos.length} {localPhotos.length === 1 ? "photo" : "photos"} uploaded
               </span>
+              {uploading && (
+                <div className="flex items-center gap-2 text-sptc-red-600">
+                  <div className="w-4 h-4 border-2 border-sptc-red-600 border-t-transparent rounded-full animate-spin" />
+                  <span className="text-sm font-semibold">Uploading...</span>
+                </div>
+              )}
             </div>
           </div>
         </div>
@@ -882,7 +1365,7 @@ function PhotosTab() {
           </div>
         </div>
 
-        {photos.length === 0 ? (
+        {localPhotos.length === 0 ? (
           <div className="text-center py-16 text-gray-500">
             <ImageIcon className="w-16 h-16 mx-auto mb-4 text-gray-300" />
             <p className="text-lg font-semibold mb-2">No photos uploaded yet</p>
@@ -892,15 +1375,15 @@ function PhotosTab() {
           <div className="space-y-6">
             {/* Main Carousel */}
             <div className="relative bg-gray-100 rounded-2xl overflow-hidden" style={{ aspectRatio: "16/9" }}>
-              {photos[currentPhotoIndex] && (
+              {localPhotos[currentPhotoIndex] && (
                 <img
-                  src={photos[currentPhotoIndex].url}
+                  src={localPhotos[currentPhotoIndex].photo_url}
                   alt={`Photo ${currentPhotoIndex + 1}`}
                   className="w-full h-full object-cover"
                 />
               )}
-              
-              {photos.length > 1 && (
+
+              {localPhotos.length > 1 && (
                 <>
                   <button
                     onClick={() => navigatePhoto("prev")}
@@ -919,12 +1402,12 @@ function PhotosTab() {
 
               <div className="absolute bottom-4 left-1/2 -translate-x-1/2">
                 <div className="bg-black bg-opacity-50 text-white px-4 py-2 rounded-full text-sm font-semibold">
-                  {currentPhotoIndex + 1} / {photos.length}
+                  {currentPhotoIndex + 1} / {localPhotos.length}
                 </div>
               </div>
 
               <button
-                onClick={() => handleDeletePhoto(photos[currentPhotoIndex].id)}
+                onClick={() => handleDeletePhoto(localPhotos[currentPhotoIndex].id)}
                 className="absolute top-4 right-4 p-3 bg-red-500 text-white rounded-full hover:bg-red-600 shadow-lg transition-all"
               >
                 <Trash2 className="w-5 h-5" />
@@ -933,7 +1416,7 @@ function PhotosTab() {
 
             {/* Thumbnail Grid */}
             <div className="grid grid-cols-4 md:grid-cols-6 lg:grid-cols-8 gap-3">
-              {photos.map((photo, index) => (
+              {localPhotos.map((photo, index) => (
                 <button
                   key={photo.id}
                   onClick={() => {
@@ -946,7 +1429,7 @@ function PhotosTab() {
                   }`}
                 >
                   <img
-                    src={photo.url}
+                    src={photo.photo_url}
                     alt={`Thumbnail ${index + 1}`}
                     className="w-full h-full object-cover"
                   />
@@ -959,10 +1442,10 @@ function PhotosTab() {
             {/* Advert Preview */}
             <div className="bg-white rounded-2xl border-2 border-gray-200 overflow-hidden shadow-xl">
               {/* Main Image */}
-              {photos[0] && (
+              {localPhotos[0] && (
                 <div className="relative" style={{ aspectRatio: "16/9" }}>
                   <img
-                    src={photos[0].url}
+                    src={localPhotos[0].photo_url}
                     alt="Main listing image"
                     className="w-full h-full object-cover"
                   />
@@ -979,15 +1462,15 @@ function PhotosTab() {
                 </p>
 
                 {/* Image Grid */}
-                {photos.length > 1 && (
+                {localPhotos.length > 1 && (
                   <div className="grid grid-cols-2 md:grid-cols-4 gap-3 mt-4">
-                    {photos.slice(1, 5).map((photo, index) => (
+                    {localPhotos.slice(1, 5).map((photo, index) => (
                       <div
                         key={photo.id}
                         className="relative aspect-square rounded-xl overflow-hidden border-2 border-gray-200"
                       >
                         <img
-                          src={photo.url}
+                          src={photo.photo_url}
                           alt={`Gallery ${index + 1}`}
                           className="w-full h-full object-cover"
                         />
