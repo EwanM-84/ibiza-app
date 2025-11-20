@@ -23,9 +23,12 @@ export default function MobilePhotoUpload() {
   const [useNativeCamera, setUseNativeCamera] = useState(true); // Use native camera by default
   const fileInputRef = useRef<HTMLInputElement>(null);
 
-  // Scroll to top on mount
+  // Scroll to top on mount and request location automatically
   useEffect(() => {
     window.scrollTo({ top: 0, behavior: 'smooth' });
+
+    // Automatically request location on mount
+    requestPermissions();
   }, []);
 
   // Request permissions function
@@ -204,18 +207,15 @@ export default function MobilePhotoUpload() {
           <h1 className="text-2xl font-bold text-gray-900 mb-2">Property Photos</h1>
           <p className="text-gray-600">Take 5 photos of your property with GPS location</p>
 
-          {/* Permission Request Button */}
-          {!permissionsRequested && !location && (
+          {/* Permission Status */}
+          {permissionsRequested && !location && !locationError && (
             <div className="mt-4 p-4 bg-blue-50 border-2 border-blue-200 rounded-xl">
-              <p className="text-blue-900 mb-3 text-sm">
-                This app needs access to your camera and location to upload property photos with GPS coordinates.
+              <p className="text-blue-900 text-sm font-semibold">
+                📍 Requesting location access...
               </p>
-              <button
-                onClick={requestPermissions}
-                className="w-full py-3 bg-blue-600 text-white font-bold rounded-xl hover:bg-blue-700 transition-all"
-              >
-                Grant Permissions
-              </button>
+              <p className="text-blue-700 text-xs mt-1">
+                Please allow location access when prompted by your browser
+              </p>
             </div>
           )}
 
