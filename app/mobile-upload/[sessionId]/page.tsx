@@ -19,9 +19,13 @@ export default function MobilePhotoUpload() {
   const canvasRef = useRef<HTMLCanvasElement>(null);
   const [cameraActive, setCameraActive] = useState(false);
   const [cameraError, setCameraError] = useState<string | null>(null);
+  const [permissionsRequested, setPermissionsRequested] = useState(false);
 
-  // Get geolocation on mount
-  useEffect(() => {
+  // Request permissions function
+  const requestPermissions = async () => {
+    setPermissionsRequested(true);
+
+    // Request location
     if (navigator.geolocation) {
       navigator.geolocation.getCurrentPosition(
         (position) => {
@@ -30,7 +34,13 @@ export default function MobilePhotoUpload() {
         },
         (error) => {
           console.error('Geolocation error:', error);
-          setLocationError('Please enable location services to continue');
+          if (error.code === 1) {
+            setLocationError('Location permission denied. Please enable location in your browser settings.');
+          } else if (error.code === 2) {
+            setLocationError('Location unavailable. Please check your device settings.');
+          } else {
+            setLocationError('Location request timed out. Please try again.');
+          }
         },
         {
           enableHighAccuracy: true,
@@ -41,10 +51,11 @@ export default function MobilePhotoUpload() {
     } else {
       setLocationError('Geolocation is not supported by your device');
     }
-  }, []);
+  };
 
   const startCamera = async () => {
     try {
+      console.log('📷 Requesting camera access...');
       const stream = await navigator.mediaDevices.getUserMedia({
         video: {
           facingMode: 'environment', // Use back camera
@@ -53,14 +64,26 @@ export default function MobilePhotoUpload() {
         },
       });
 
+      console.log('✓ Camera access granted');
       if (videoRef.current) {
         videoRef.current.srcObject = stream;
         setCameraActive(true);
         setCameraError(null);
       }
     } catch (err: any) {
-      console.error('Camera error:', err);
-      setCameraError('Could not access camera. Please enable camera permissions.');
+      console.error('❌ Camera error:', err);
+      console.error('Error name:', err.name);
+      console.error('Error message:', err.message);
+
+      if (err.name === 'NotAllowedError' || err.name === 'PermissionDeniedError') {
+        setCameraError('Camera permission denied. Please allow camera access in your browser settings and refresh the page.');
+      } else if (err.name === 'NotFoundError' || err.name === 'DevicesNotFoundError') {
+        setCameraError('No camera found on your device.');
+      } else if (err.name === 'NotReadableError' || err.name === 'TrackStartError') {
+        setCameraError('Camera is already in use by another app. Please close other apps and try again.');
+      } else {
+        setCameraError(`Could not access camera: ${err.message}`);
+      }
     }
   };
 
@@ -149,6 +172,21 @@ export default function MobilePhotoUpload() {
         <div className="bg-white rounded-3xl shadow-xl p-6 mb-6">
           <h1 className="text-2xl font-bold text-gray-900 mb-2">Property Photos</h1>
           <p className="text-gray-600">Take 5 photos of your property with GPS location</p>
+
+          {/* Permission Request Button */}
+          {!permissionsRequested && !location && (
+            <div className="mt-4 p-4 bg-blue-50 border-2 border-blue-200 rounded-xl">
+              <p className="text-blue-900 mb-3 text-sm">
+                This app needs access to your camera and location to upload property photos with GPS coordinates.
+              </p>
+              <button
+                onClick={requestPermissions}
+                className="w-full py-3 bg-blue-600 text-white font-bold rounded-xl hover:bg-blue-700 transition-all"
+              >
+                Grant Permissions
+              </button>
+            </div>
+          )}
 
           <div className="mt-4 flex items-center justify-between">
             <div className="flex items-center gap-2 text-sm">
