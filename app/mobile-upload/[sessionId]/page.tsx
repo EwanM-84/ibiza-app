@@ -20,6 +20,8 @@ export default function MobilePhotoUpload() {
   const [cameraActive, setCameraActive] = useState(false);
   const [cameraError, setCameraError] = useState<string | null>(null);
   const [permissionsRequested, setPermissionsRequested] = useState(false);
+  const [useNativeCamera, setUseNativeCamera] = useState(true); // Use native camera by default
+  const fileInputRef = useRef<HTMLInputElement>(null);
 
   // Scroll to top on mount
   useEffect(() => {
@@ -168,7 +170,30 @@ export default function MobilePhotoUpload() {
 
   const retakePhoto = () => {
     setCurrentPhoto(null);
-    startCamera();
+    if (useNativeCamera && fileInputRef.current) {
+      fileInputRef.current.click();
+    } else {
+      startCamera();
+    }
+  };
+
+  const handleFileSelect = async (e: React.ChangeEvent<HTMLInputElement>) => {
+    const file = e.target.files?.[0];
+    if (!file) return;
+
+    // Read the file as base64
+    const reader = new FileReader();
+    reader.onload = (event) => {
+      const photoData = event.target?.result as string;
+      setCurrentPhoto(photoData);
+    };
+    reader.readAsDataURL(file);
+  };
+
+  const openNativeCamera = () => {
+    if (fileInputRef.current) {
+      fileInputRef.current.click();
+    }
   };
 
   return (
@@ -232,7 +257,44 @@ export default function MobilePhotoUpload() {
         {/* Camera View */}
         {!currentPhoto && (
           <div className="bg-white rounded-3xl shadow-xl p-6 mb-6">
-            {!cameraActive ? (
+            {useNativeCamera ? (
+              <div className="flex flex-col items-center justify-center py-16">
+                <Camera className="w-20 h-20 text-sptc-red-600 mb-4" />
+                <h3 className="text-xl font-bold text-gray-900 mb-2">Take a Photo</h3>
+                <p className="text-gray-600 text-center mb-6">
+                  Take clear photos of your property from different angles
+                </p>
+                <button
+                  onClick={openNativeCamera}
+                  disabled={!location}
+                  className="px-8 py-4 bg-sptc-red-600 text-white font-bold rounded-2xl hover:bg-sptc-red-700 transition-all disabled:opacity-50 disabled:cursor-not-allowed flex items-center gap-3"
+                >
+                  <Camera className="w-6 h-6" />
+                  Take Photo
+                </button>
+
+                {/* Hidden file input for native camera */}
+                <input
+                  ref={fileInputRef}
+                  type="file"
+                  accept="image/*"
+                  capture="environment"
+                  onChange={handleFileSelect}
+                  className="hidden"
+                />
+
+                {/* Option to use web camera instead */}
+                <button
+                  onClick={() => {
+                    setUseNativeCamera(false);
+                    startCamera();
+                  }}
+                  className="mt-4 text-sm text-gray-600 underline hover:text-gray-900"
+                >
+                  Use web camera instead
+                </button>
+              </div>
+            ) : !cameraActive ? (
               <div className="flex flex-col items-center justify-center py-16">
                 <Camera className="w-20 h-20 text-sptc-red-600 mb-4" />
                 <h3 className="text-xl font-bold text-gray-900 mb-2">Take a Photo</h3>
@@ -249,6 +311,14 @@ export default function MobilePhotoUpload() {
                 {cameraError && (
                   <p className="text-red-600 text-sm mt-4">{cameraError}</p>
                 )}
+
+                {/* Option to use native camera instead */}
+                <button
+                  onClick={() => setUseNativeCamera(true)}
+                  className="mt-4 text-sm text-gray-600 underline hover:text-gray-900"
+                >
+                  Use native camera instead
+                </button>
               </div>
             ) : (
               <div>
