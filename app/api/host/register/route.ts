@@ -66,33 +66,9 @@ export async function POST(request: NextRequest) {
     }
 
     console.log('✅ Auth user created successfully:', authData.user.id);
+    console.log('✅ Public users record created automatically by trigger');
 
-    // 2. Create public.users record
-    console.log('👤 Creating public.users record for:', authData.user.id);
-    const { error: usersError } = await supabaseAdmin
-      .from('users')
-      .insert({
-        id: authData.user.id,
-        email: email,
-        role: 'host',
-      });
-
-    if (usersError) {
-      console.error('❌ Public users creation error:', JSON.stringify(usersError, null, 2));
-      // If users creation fails, delete the auth user
-      await supabaseAdmin.auth.admin.deleteUser(authData.user.id);
-      return NextResponse.json(
-        {
-          error: `Failed to create user record: ${usersError.message}`,
-          code: usersError.code,
-        },
-        { status: 400 }
-      );
-    }
-
-    console.log('✅ Public users record created successfully');
-
-    // 3. Create host profile (bypassing RLS with service role)
+    // 2. Create host profile (bypassing RLS with service role)
     console.log('📝 Creating host profile for user:', authData.user.id);
     const profileData = {
       user_id: authData.user.id,
@@ -133,7 +109,7 @@ export async function POST(request: NextRequest) {
       );
     }
 
-    // 4. Sign in the user on the client side
+    // 3. Sign in the user on the client side
     const supabase = createRouteHandlerClient({ cookies });
     const { error: signInError } = await supabase.auth.signInWithPassword({
       email,
