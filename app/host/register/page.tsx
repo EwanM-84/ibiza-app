@@ -120,8 +120,10 @@ export default function HostRegister() {
   const handleNext = () => {
     if (step === 1 && validateStep1()) {
       setStep(2);
+      window.scrollTo({ top: 0, behavior: 'smooth' });
     } else if (step === 2 && validateStep2()) {
       setStep(3);
+      window.scrollTo({ top: 0, behavior: 'smooth' });
     }
   };
 
@@ -631,7 +633,10 @@ export default function HostRegister() {
               {step > 1 ? (
                 <button
                   type="button"
-                  onClick={() => setStep(step - 1)}
+                  onClick={() => {
+                    setStep(step - 1);
+                    window.scrollTo({ top: 0, behavior: 'smooth' });
+                  }}
                   className="px-6 py-3 border-2 border-gray-300 text-gray-700 font-bold rounded-xl hover:border-gray-400 hover:bg-gray-50 transition-all"
                 >
                   Back
