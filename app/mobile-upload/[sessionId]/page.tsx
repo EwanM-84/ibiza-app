@@ -21,6 +21,11 @@ export default function MobilePhotoUpload() {
   const [cameraError, setCameraError] = useState<string | null>(null);
   const [permissionsRequested, setPermissionsRequested] = useState(false);
 
+  // Scroll to top on mount
+  useEffect(() => {
+    window.scrollTo({ top: 0, behavior: 'smooth' });
+  }, []);
+
   // Request permissions function
   const requestPermissions = async () => {
     setPermissionsRequested(true);
@@ -120,6 +125,7 @@ export default function MobilePhotoUpload() {
     }
 
     setUploading(true);
+    window.scrollTo({ top: 0, behavior: 'smooth' });
 
     try {
       const response = await fetch('/api/photo-session/upload', {
