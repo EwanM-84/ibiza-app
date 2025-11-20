@@ -205,7 +205,7 @@ export default function MobilePhotoUpload() {
         {/* Header */}
         <div className="bg-white rounded-3xl shadow-xl p-6 mb-6">
           <h1 className="text-2xl font-bold text-gray-900 mb-2">Property Photos</h1>
-          <p className="text-gray-600">Take 5 photos of your property with GPS location</p>
+          <p className="text-gray-600">Take 2 photos of your property with GPS location</p>
 
           {/* Permission Status */}
           {permissionsRequested && !location && !locationError && (
@@ -233,7 +233,7 @@ export default function MobilePhotoUpload() {
 
             <div className="flex items-center gap-2 bg-sptc-red-100 text-sptc-red-700 px-4 py-2 rounded-full font-bold">
               <CheckCircle className="w-5 h-5" />
-              <span>{photos} / 5 photos</span>
+              <span>{photos} / 2 photos</span>
             </div>
           </div>
         </div>
@@ -389,7 +389,7 @@ export default function MobilePhotoUpload() {
         )}
 
         {/* Completion */}
-        {photos >= 5 && (
+        {photos >= 2 && (
           <div className="bg-green-50 border-2 border-green-200 rounded-2xl p-8 text-center">
             <CheckCircle className="w-16 h-16 text-green-600 mx-auto mb-4" />
             <h3 className="text-2xl font-bold text-green-900 mb-2">All Photos Uploaded!</h3>

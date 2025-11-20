@@ -380,7 +380,7 @@ export default function HostOnboarding() {
                         </li>
                         <li className="flex gap-3">
                           <span className="flex-shrink-0 w-8 h-8 bg-sptc-red-600 text-white font-bold rounded-full flex items-center justify-center text-sm">4</span>
-                          <span>Take 5 photos of your property</span>
+                          <span>Take 2 photos of your property</span>
                         </li>
                         <li className="flex gap-3">
                           <span className="flex-shrink-0 w-8 h-8 bg-sptc-red-600 text-white font-bold rounded-full flex items-center justify-center text-sm">5</span>
