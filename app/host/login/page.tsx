@@ -16,6 +16,9 @@ export default function HostLogin() {
   const [error, setError] = useState('');
 
   useEffect(() => {
+    // Scroll to top on mount
+    window.scrollTo({ top: 0, behavior: 'smooth' });
+
     // Check if already logged in
     checkAuth();
   }, []);

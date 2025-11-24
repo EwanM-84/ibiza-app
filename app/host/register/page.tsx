@@ -1,6 +1,6 @@
 "use client";
 
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { useLanguage } from "@/contexts/LanguageContext";
 import { getText } from "@/lib/text";
 import {
@@ -13,6 +13,11 @@ import { supabase } from "@/lib/supabaseClient";
 export default function HostRegister() {
   const { language } = useLanguage();
   const router = useRouter();
+
+  // Scroll to top on mount
+  useEffect(() => {
+    window.scrollTo({ top: 0, behavior: 'smooth' });
+  }, []);
 
   const [step, setStep] = useState(1); // 1: Basic Info, 2: Contact Details, 3: Agreement
   const [isSubmitting, setIsSubmitting] = useState(false);
