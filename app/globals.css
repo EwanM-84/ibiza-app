@@ -3,8 +3,9 @@
 @tailwind utilities;
 
 :root {
-  --background: #FAFAFA;
-  --foreground: #171717;
+  --background: #FDFCFA;
+  --foreground: #1A1A1A;
+  --premium-bg: linear-gradient(135deg, #F5EBE0 0%, #E8DDD0 50%, #DED0BD 100%);
 }
 
 @layer base {
@@ -14,22 +15,20 @@
 
   body {
     @apply text-sptc-gray-900 antialiased;
-    background: #F8F9FA;
+    background: linear-gradient(135deg, #F5EBE0 0%, #E8DDD0 50%, #DED0BD 100%);
     min-height: 100vh;
     font-feature-settings: "ss01", "ss02", "cv01", "cv03";
-    /* Mobile optimizations */
     -webkit-font-smoothing: antialiased;
     -moz-osx-font-smoothing: grayscale;
-    /* Prevent horizontal scroll on mobile */
     overflow-x: hidden;
-    /* iOS Safari safe area for notched devices */
     padding-top: env(safe-area-inset-top);
     padding-bottom: env(safe-area-inset-bottom);
   }
 
   h1, h2, h3, h4, h5, h6 {
-    font-family: "SF Pro Display", -apple-system, BlinkMacSystemFont, system-ui, sans-serif;
+    font-family: var(--font-dm-serif), "Playfair Display", Georgia, serif;
     font-feature-settings: "ss01", "ss02";
+    letter-spacing: -0.02em;
   }
 
   /* iOS Safari tap highlight removal */
@@ -40,7 +39,7 @@
 
   /* Android Chrome tap highlight */
   a, button, input, select, textarea {
-    -webkit-tap-highlight-color: rgba(220, 38, 38, 0.1);
+    -webkit-tap-highlight-color: rgba(212, 175, 55, 0.1);
   }
 
   /* Prevent text size adjustment on mobile */
@@ -49,49 +48,99 @@
     -moz-text-size-adjust: 100%;
     -ms-text-size-adjust: 100%;
     text-size-adjust: 100%;
+    scroll-behavior: smooth;
+  }
+
+  /* Premium selection styling */
+  ::selection {
+    background-color: rgba(212, 175, 55, 0.2);
+    color: #1A1A1A;
   }
 }
 
 @layer components {
   .glass-card {
-    @apply bg-white/80 backdrop-blur-xl border border-white/20 shadow-glass;
+    @apply bg-white/90 backdrop-blur-xl border border-white/40 shadow-premium;
   }
 
   .premium-card {
-    @apply bg-white rounded-3xl shadow-ios-lg border border-sptc-gray-100
-           hover:shadow-ios-xl transition-all duration-300;
+    @apply bg-white rounded-3xl shadow-premium border border-white/60
+           hover:shadow-premium-lg transition-all duration-500 ease-out;
+  }
+
+  .luxury-card {
+    @apply bg-white rounded-3xl shadow-premium-lg border border-luxury-cream-300/50
+           hover:shadow-premium-xl transition-all duration-500 ease-out
+           hover:-translate-y-1;
   }
 
   .btn-primary {
     @apply bg-gradient-to-r from-sptc-red-500 to-sptc-red-600
            text-white font-semibold px-8 py-4 rounded-full
-           shadow-ios-md hover:shadow-ios-lg hover:scale-[1.02]
-           active:scale-[0.98] transition-all duration-200
+           shadow-premium hover:shadow-premium-lg hover:scale-[1.02]
+           active:scale-[0.98] transition-all duration-300 ease-out
            border border-sptc-red-600/20;
-    /* Mobile touch optimization */
-    min-height: 44px;
+    min-height: 48px;
+    touch-action: manipulation;
+  }
+
+  .btn-premium {
+    @apply bg-luxury-charcoal-900 text-white font-semibold px-8 py-4 rounded-full
+           shadow-premium hover:shadow-premium-lg hover:scale-[1.02]
+           active:scale-[0.98] transition-all duration-300 ease-out
+           border border-luxury-charcoal-800;
+    min-height: 48px;
+    touch-action: manipulation;
+  }
+
+  .btn-gold {
+    @apply bg-gradient-to-r from-luxury-gold-500 to-luxury-gold-600
+           text-luxury-charcoal-900 font-semibold px-8 py-4 rounded-full
+           shadow-gold-glow hover:shadow-premium-lg hover:scale-[1.02]
+           active:scale-[0.98] transition-all duration-300 ease-out
+           border border-luxury-gold-400;
+    min-height: 48px;
     touch-action: manipulation;
   }
 
   .btn-secondary {
     @apply bg-white text-sptc-gray-900 font-semibold px-8 py-4 rounded-full
-           shadow-ios hover:shadow-ios-md hover:scale-[1.02]
-           active:scale-[0.98] transition-all duration-200
+           shadow-soft hover:shadow-premium hover:scale-[1.02]
+           active:scale-[0.98] transition-all duration-300 ease-out
            border border-sptc-gray-200;
-    /* Mobile touch optimization */
-    min-height: 44px;
+    min-height: 48px;
     touch-action: manipulation;
   }
 
   .input-premium {
     @apply w-full px-6 py-4 rounded-2xl
-           bg-sptc-gray-50 border-2 border-sptc-gray-200
+           bg-white border-2 border-luxury-cream-300
            focus:bg-white focus:border-sptc-red-500 focus:outline-none
-           focus:ring-4 focus:ring-sptc-red-100
-           transition-all duration-200
+           focus:ring-4 focus:ring-sptc-red-100/50
+           transition-all duration-300 ease-out
            text-base font-medium placeholder:text-sptc-gray-400;
-    /* Mobile input optimization */
-    min-height: 48px;
+    min-height: 52px;
+  }
+
+  /* Premium section dividers */
+  .section-divider {
+    @apply h-px bg-gradient-to-r from-transparent via-luxury-cream-400 to-transparent;
+  }
+
+  /* Luxury badge */
+  .luxury-badge {
+    @apply inline-flex items-center gap-2 px-4 py-2 bg-luxury-gold-100
+           text-luxury-gold-700 text-sm font-semibold rounded-full
+           border border-luxury-gold-200;
+  }
+
+  /* Premium text styles */
+  .text-premium-heading {
+    @apply font-display text-luxury-charcoal-900 tracking-tight;
+  }
+
+  .text-premium-body {
+    @apply font-sans text-luxury-charcoal-600 leading-relaxed;
   }
 }
 
@@ -104,8 +153,42 @@
     @apply bg-clip-text text-transparent bg-gradient-to-r from-sptc-red-500 to-sptc-red-700;
   }
 
+  .text-gold-gradient {
+    @apply bg-clip-text text-transparent bg-gradient-to-r from-luxury-gold-500 via-luxury-gold-400 to-luxury-gold-600;
+  }
+
   .hover-lift {
-    @apply hover:-translate-y-1 transition-transform duration-200;
+    @apply hover:-translate-y-1 transition-transform duration-300 ease-out;
+  }
+
+  .hover-glow {
+    @apply hover:shadow-premium-lg transition-shadow duration-300 ease-out;
+  }
+
+  /* Premium background pattern */
+  .bg-premium-pattern {
+    background-image: radial-gradient(circle at 1px 1px, rgba(212, 175, 55, 0.03) 1px, transparent 0);
+    background-size: 40px 40px;
+  }
+
+  /* Smooth scrollbar */
+  .scrollbar-premium::-webkit-scrollbar {
+    width: 6px;
+    height: 6px;
+  }
+
+  .scrollbar-premium::-webkit-scrollbar-track {
+    background: rgba(0, 0, 0, 0.02);
+    border-radius: 3px;
+  }
+
+  .scrollbar-premium::-webkit-scrollbar-thumb {
+    background: rgba(0, 0, 0, 0.1);
+    border-radius: 3px;
+  }
+
+  .scrollbar-premium::-webkit-scrollbar-thumb:hover {
+    background: rgba(0, 0, 0, 0.15);
   }
 }
 
