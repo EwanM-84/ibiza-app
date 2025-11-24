@@ -183,10 +183,37 @@ export default function HostOnboarding() {
 
   const handleSubmit = async () => {
     setIsSubmitting(true);
-    // Simulate API call
-    await new Promise(resolve => setTimeout(resolve, 2000));
-    setIsSubmitting(false);
-    setSubmitted(true);
+
+    try {
+      // Save MetaMap verification data to database
+      if (metamapData) {
+        console.log('💾 Saving MetaMap verification data...');
+        const response = await fetch('/api/host/onboarding/complete', {
+          method: 'POST',
+          headers: {
+            'Content-Type': 'application/json',
+          },
+          body: JSON.stringify({
+            metamapData
+          }),
+        });
+
+        const data = await response.json();
+
+        if (!data.success) {
+          throw new Error(data.error || 'Failed to save verification data');
+        }
+
+        console.log('✅ MetaMap verification data saved successfully');
+      }
+
+      setIsSubmitting(false);
+      setSubmitted(true);
+    } catch (error: any) {
+      console.error('❌ Error submitting onboarding:', error);
+      alert('Failed to complete onboarding: ' + error.message);
+      setIsSubmitting(false);
+    }
   };
 
   const steps = [
