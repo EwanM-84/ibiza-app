@@ -141,7 +141,13 @@ export default function HostOnboarding() {
         setPhotoSessionId(sessionId);
 
         // Create URL for mobile upload
-        const baseUrl = window.location.origin;
+        // Use local network IP if on localhost for mobile access
+        let baseUrl = window.location.origin;
+        if (baseUrl.includes('localhost')) {
+          // Replace localhost with local IP for mobile access
+          // This allows QR code to work on phones in the same network
+          baseUrl = baseUrl.replace('localhost', '192.168.1.133');
+        }
         const url = `${baseUrl}/mobile-upload/${sessionId}`;
         setPhotoSessionUrl(url);
 
