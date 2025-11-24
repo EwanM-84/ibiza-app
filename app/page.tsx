@@ -2,7 +2,7 @@
 
 import { useState } from "react";
 import Link from "next/link";
-import { Search, Star, Heart, Award, Shield, TreePine, Home as HomeIcon, Mail, Phone, MapPin, Facebook, Instagram, Twitter, Users, DollarSign, Sprout, GraduationCap, Lightbulb, TrendingUp, CheckCircle, ArrowRight, Play } from "lucide-react";
+import { Search, Star, Heart, Award, Shield, TreePine, Home as HomeIcon, Mail, Phone, MapPin, Facebook, Instagram, Twitter, Users, DollarSign, Sprout, GraduationCap, Lightbulb, TrendingUp, CheckCircle } from "lucide-react";
 import AccommodationMap from "@/components/AccommodationMap";
 import { useLanguage } from "@/contexts/LanguageContext";
 import { getText } from "@/lib/text";
@@ -16,52 +16,60 @@ export default function Home() {
   const [showGuestPicker, setShowGuestPicker] = useState(false);
 
   return (
-    <div className="min-h-screen bg-premium-pattern">
+    <div
+      className="min-h-screen"
+      style={{
+        background:
+          "radial-gradient(circle at top left, #F5EBE0 0%, #E8DDD0 40%, #DED0BD 100%)",
+      }}
+    >
       {/* HERO */}
-      <section className="relative overflow-visible pt-24 md:pt-28 lg:pt-32">
-        {/* Subtle background decoration */}
-        <div className="absolute top-0 right-0 w-1/2 h-full bg-gradient-to-l from-luxury-cream-300/30 to-transparent pointer-events-none"></div>
-        <div className="absolute top-40 left-10 w-72 h-72 bg-luxury-gold-200/20 rounded-full blur-3xl pointer-events-none"></div>
-
-        <div className="max-w-[1400px] mx-auto px-4 sm:px-6 lg:px-8 py-8 md:py-12 lg:py-16">
-          <div className="grid lg:grid-cols-[45fr_55fr] gap-8 lg:gap-16 items-center">
+      <section
+        className="relative overflow-visible pt-4 md:pt-8 lg:pt-12"
+        style={{
+          background:
+            "radial-gradient(circle at top left, #F5EBE0 0%, #E8DDD0 40%, #DED0BD 100%)",
+        }}
+      >
+        <div className="max-w-[1400px] mx-auto px-4 sm:px-6 lg:px-8 py-8 md:py-12 lg:py-20">
+          <div className="grid lg:grid-cols-[45fr_55fr] gap-8 lg:gap-12 items-center">
             {/* Left side: heading + booking bar */}
-            <div className="order-1 space-y-6 md:space-y-8 animate-fade-in-up">
-              {/* Premium badge */}
-              <div className="inline-flex items-center gap-2 px-4 py-2 bg-white/80 backdrop-blur-sm rounded-full shadow-soft border border-luxury-cream-300">
-                <div className="w-2 h-2 bg-luxury-gold-500 rounded-full animate-pulse-soft"></div>
-                <span className="text-xs font-semibold text-luxury-charcoal-700 tracking-wide uppercase">
-                  Sustainable Travel • Community Impact
-                </span>
-              </div>
-
-              <h1 className="space-y-2">
-                {/* Line 1: "Live the" - elegant, supporting */}
-                <span className="block font-sans text-sm sm:text-base md:text-lg font-medium text-luxury-charcoal-500 tracking-widest uppercase">
+            <div className="order-1 space-y-6 md:space-y-8">
+              <h1 className="space-y-0">
+                {/* Line 1: "Live the" - small, supporting */}
+                <span className="block font-sans text-sm sm:text-base md:text-xl font-medium text-sptc-gray-700 tracking-wide mb-2">
                   {getText("hero.liveThe", language)}
                 </span>
 
-                {/* Line 2: "stories" - BIG hero word with gold accent */}
-                <span className="block font-display text-4xl sm:text-5xl md:text-6xl lg:text-7xl font-bold text-luxury-charcoal-900 leading-[0.9] tracking-tight">
-                  {getText("hero.stories", language)}
+                {/* Line 2: "stories" - BIG hero word */}
+                <span className="block font-display text-3xl sm:text-4xl md:text-5xl lg:text-6xl font-bold text-sptc-red-600 leading-none tracking-tight -mt-2">
+                  <span className="text-4xl sm:text-5xl md:text-6xl lg:text-7xl">{getText("hero.stories", language).charAt(0)}</span>{getText("hero.stories", language).slice(1)}
                 </span>
 
                 {/* Line 3: "of rural Colombia" - medium, grounded */}
-                <span className="block font-sans text-xl sm:text-2xl md:text-3xl lg:text-4xl font-semibold text-luxury-charcoal-700 leading-tight">
-                  {getText("hero.ofRuralColombia", language).split("Colombia")[0]}
-                  <span className="text-gold-gradient font-display">Colombia</span>
+                <span className="block font-sans text-xl sm:text-2xl md:text-3xl lg:text-4xl font-semibold text-sptc-gray-900 leading-tight mt-2">
+                  {getText("hero.ofRuralColombia", language).split("Colombia")[0]}<span className="text-sptc-yellow-500">Colombia</span>
                 </span>
               </h1>
 
-              <p className="text-base sm:text-lg md:text-xl max-w-xl text-luxury-charcoal-500 leading-relaxed font-sans">
+              <p className="text-base sm:text-lg md:text-xl max-w-xl text-sptc-gray-600 leading-relaxed font-sans mt-6">
                 {getText("hero.heroDescription", language)}
               </p>
 
               {/* Booking bar */}
-              <div className="bg-white rounded-3xl p-4 sm:p-6 w-full max-w-[900px] shadow-premium-lg border border-luxury-cream-200">
-                <div className="flex flex-col sm:flex-row items-stretch sm:items-end gap-4 sm:gap-6">
-                  <div className="flex-1 min-w-0 sm:min-w-[140px]">
-                    <label className="block text-[11px] font-semibold text-luxury-charcoal-500 uppercase tracking-wider mb-2">
+              <div
+                className="bg-white rounded-2xl sm:rounded-3xl p-3 sm:p-5 w-full max-w-[900px]"
+                style={{
+                  boxShadow: "0 24px 60px rgba(0,0,0,0.08)",
+                  border: "1px solid rgba(0,0,0,0.04)",
+                }}
+              >
+                <div className="flex flex-col sm:flex-row items-stretch sm:items-end gap-3 sm:gap-6">
+                  <div className="flex-1 min-w-0 sm:min-w-[160px]">
+                    <label
+                      className="block text-[11px] font-semibold text-gray-500 uppercase tracking-wider mb-2"
+                      style={{ fontFamily: '"Inter", sans-serif' }}
+                    >
                       {getText("hero.checkIn", language)}
                     </label>
                     <div className="relative">
@@ -70,14 +78,18 @@ export default function Home() {
                         value={checkIn}
                         onChange={(e) => setCheckIn(e.target.value)}
                         min={new Date().toISOString().split('T')[0]}
-                        className="w-full text-base text-luxury-charcoal-900 bg-luxury-cream-50 border border-luxury-cream-200 rounded-xl px-4 py-3 focus:outline-none focus:ring-2 focus:ring-luxury-gold-400/50 focus:border-luxury-gold-400 hover:border-luxury-cream-400 transition-all duration-300 cursor-pointer"
+                        className="w-full text-base text-gray-900 bg-white border border-gray-200 rounded-xl px-4 py-3 focus:outline-none focus:ring-2 focus:ring-red-500/60 hover:border-gray-300 transition-colors cursor-pointer"
+                        style={{ fontFamily: '"Inter", sans-serif' }}
                         placeholder={getText("hero.selectDate", language)}
                       />
                     </div>
                   </div>
 
-                  <div className="flex-1 min-w-0 sm:min-w-[140px]">
-                    <label className="block text-[11px] font-semibold text-luxury-charcoal-500 uppercase tracking-wider mb-2">
+                  <div className="flex-1 min-w-0 sm:min-w-[160px]">
+                    <label
+                      className="block text-[11px] font-semibold text-gray-500 uppercase tracking-wider mb-2"
+                      style={{ fontFamily: '"Inter", sans-serif' }}
+                    >
                       {getText("hero.checkOut", language)}
                     </label>
                     <div className="relative">
@@ -86,51 +98,56 @@ export default function Home() {
                         value={checkOut}
                         onChange={(e) => setCheckOut(e.target.value)}
                         min={checkIn || new Date().toISOString().split('T')[0]}
-                        className="w-full text-base text-luxury-charcoal-900 bg-luxury-cream-50 border border-luxury-cream-200 rounded-xl px-4 py-3 focus:outline-none focus:ring-2 focus:ring-luxury-gold-400/50 focus:border-luxury-gold-400 hover:border-luxury-cream-400 transition-all duration-300 cursor-pointer"
+                        className="w-full text-base text-gray-900 bg-white border border-gray-200 rounded-xl px-4 py-3 focus:outline-none focus:ring-2 focus:ring-red-500/60 hover:border-gray-300 transition-colors cursor-pointer"
+                        style={{ fontFamily: '"Inter", sans-serif' }}
                         placeholder={getText("hero.selectDate", language)}
                       />
                     </div>
                   </div>
 
-                  <div className="flex-1 min-w-0 sm:min-w-[160px] relative">
-                    <label className="block text-[11px] font-semibold text-luxury-charcoal-500 uppercase tracking-wider mb-2">
+                  <div className="flex-1 min-w-0 sm:min-w-[180px] relative">
+                    <label
+                      className="block text-[11px] font-semibold text-gray-500 uppercase tracking-wider mb-2"
+                      style={{ fontFamily: '"Inter", sans-serif' }}
+                    >
                       {getText("hero.guests", language)}
                     </label>
                     <div
                       onClick={() => setShowGuestPicker(!showGuestPicker)}
-                      className="w-full text-base text-luxury-charcoal-900 bg-luxury-cream-50 border border-luxury-cream-200 rounded-xl px-4 py-3 cursor-pointer hover:border-luxury-cream-400 transition-all duration-300 flex items-center justify-between"
+                      className="w-full text-base text-gray-900 bg-transparent border border-gray-200 rounded-xl px-4 py-3 cursor-pointer hover:border-gray-300 transition-colors flex items-center justify-between"
+                      style={{ fontFamily: '"Inter", sans-serif' }}
                     >
                       <span suppressHydrationWarning>
                         {adults + children} {adults + children === 1 ? getText("hero.guest", language) : getText("hero.guestsPlural", language)}
                       </span>
-                      <svg className={`w-4 h-4 text-luxury-charcoal-400 transition-transform duration-300 ${showGuestPicker ? 'rotate-180' : ''}`} fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                      <svg className={`w-4 h-4 text-gray-400 transition-transform ${showGuestPicker ? 'rotate-180' : ''}`} fill="none" stroke="currentColor" viewBox="0 0 24 24">
                         <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M19 9l-7 7-7-7" />
                       </svg>
                     </div>
 
                     {/* Guest Picker Dropdown */}
                     {showGuestPicker && (
-                      <div className="absolute top-full left-0 right-0 mt-2 bg-white rounded-2xl shadow-premium-lg p-6 z-50 border border-luxury-cream-200 min-w-[280px] animate-fade-in">
+                      <div className="absolute top-full left-0 right-0 mt-2 bg-white rounded-2xl shadow-[0_10px_40px_rgba(0,0,0,0.15)] p-6 z-50 border border-gray-100 min-w-[280px]">
                         {/* Adults */}
-                        <div className="flex items-center justify-between mb-6 pb-6 border-b border-luxury-cream-200">
+                        <div className="flex items-center justify-between mb-6 pb-6 border-b border-gray-100">
                           <div>
-                            <p className="text-sm font-medium text-luxury-charcoal-900">{getText("hero.adults", language)}</p>
-                            <p className="text-xs text-luxury-charcoal-500 mt-1">{getText("hero.agesAdult", language)}</p>
+                            <p className="text-sm font-medium text-gray-900" style={{ fontFamily: '"Inter", sans-serif' }}>{getText("hero.adults", language)}</p>
+                            <p className="text-xs text-gray-500 mt-1" style={{ fontFamily: '"Inter", sans-serif' }}>{getText("hero.agesAdult", language)}</p>
                           </div>
                           <div className="flex items-center gap-3">
                             <button
                               onClick={(e) => { e.stopPropagation(); setAdults(Math.max(1, adults - 1)); }}
-                              className="w-9 h-9 rounded-full border-2 border-luxury-cream-300 hover:border-luxury-charcoal-900 transition-colors duration-300 flex items-center justify-center disabled:opacity-30 disabled:cursor-not-allowed"
+                              className="w-9 h-9 rounded-full border-2 border-gray-300 hover:border-gray-900 transition-colors flex items-center justify-center disabled:opacity-30 disabled:cursor-not-allowed"
                               disabled={adults <= 1}
                             >
-                              <span className="text-luxury-charcoal-600 text-lg font-light">−</span>
+                              <span className="text-gray-600 text-lg font-light">−</span>
                             </button>
-                            <span className="w-8 text-center text-base font-medium text-luxury-charcoal-900" suppressHydrationWarning>{adults}</span>
+                            <span className="w-8 text-center text-base font-light text-gray-900" style={{ fontFamily: '"Inter", sans-serif' }} suppressHydrationWarning>{adults}</span>
                             <button
                               onClick={(e) => { e.stopPropagation(); setAdults(Math.min(10, adults + 1)); }}
-                              className="w-9 h-9 rounded-full border-2 border-luxury-cream-300 hover:border-luxury-charcoal-900 transition-colors duration-300 flex items-center justify-center"
+                              className="w-9 h-9 rounded-full border-2 border-gray-300 hover:border-gray-900 transition-colors flex items-center justify-center"
                             >
-                              <span className="text-luxury-charcoal-600 text-lg font-light">+</span>
+                              <span className="text-gray-600 text-lg font-light">+</span>
                             </button>
                           </div>
                         </div>
@@ -138,23 +155,23 @@ export default function Home() {
                         {/* Children */}
                         <div className="flex items-center justify-between">
                           <div>
-                            <p className="text-sm font-medium text-luxury-charcoal-900">{getText("hero.children", language)}</p>
-                            <p className="text-xs text-luxury-charcoal-500 mt-1">{getText("hero.agesChild", language)}</p>
+                            <p className="text-sm font-medium text-gray-900" style={{ fontFamily: '"Inter", sans-serif' }}>{getText("hero.children", language)}</p>
+                            <p className="text-xs text-gray-500 mt-1" style={{ fontFamily: '"Inter", sans-serif' }}>{getText("hero.agesChild", language)}</p>
                           </div>
                           <div className="flex items-center gap-3">
                             <button
                               onClick={(e) => { e.stopPropagation(); setChildren(Math.max(0, children - 1)); }}
-                              className="w-9 h-9 rounded-full border-2 border-luxury-cream-300 hover:border-luxury-charcoal-900 transition-colors duration-300 flex items-center justify-center disabled:opacity-30 disabled:cursor-not-allowed"
+                              className="w-9 h-9 rounded-full border-2 border-gray-300 hover:border-gray-900 transition-colors flex items-center justify-center disabled:opacity-30 disabled:cursor-not-allowed"
                               disabled={children <= 0}
                             >
-                              <span className="text-luxury-charcoal-600 text-lg font-light">−</span>
+                              <span className="text-gray-600 text-lg font-light">−</span>
                             </button>
-                            <span className="w-8 text-center text-base font-medium text-luxury-charcoal-900" suppressHydrationWarning>{children}</span>
+                            <span className="w-8 text-center text-base font-light text-gray-900" style={{ fontFamily: '"Inter", sans-serif' }} suppressHydrationWarning>{children}</span>
                             <button
                               onClick={(e) => { e.stopPropagation(); setChildren(Math.min(10, children + 1)); }}
-                              className="w-9 h-9 rounded-full border-2 border-luxury-cream-300 hover:border-luxury-charcoal-900 transition-colors duration-300 flex items-center justify-center"
+                              className="w-9 h-9 rounded-full border-2 border-gray-300 hover:border-gray-900 transition-colors flex items-center justify-center"
                             >
-                              <span className="text-luxury-charcoal-600 text-lg font-light">+</span>
+                              <span className="text-gray-600 text-lg font-light">+</span>
                             </button>
                           </div>
                         </div>
@@ -164,100 +181,76 @@ export default function Home() {
 
                   <Link
                     href={`/search?location=Fusagasugá&checkIn=${checkIn}&checkOut=${checkOut}&adults=${adults}&children=${children}`}
-                    className="w-full sm:w-auto whitespace-nowrap px-8 py-3.5 bg-luxury-charcoal-900 hover:bg-luxury-charcoal-800 text-white font-medium rounded-xl transition-all duration-300 shadow-premium hover:shadow-premium-lg transform hover:scale-[1.02] flex items-center justify-center gap-2"
+                    className="w-full sm:w-auto whitespace-nowrap px-6 sm:px-10 py-3 bg-gradient-to-br from-red-600 via-red-700 to-red-800 hover:from-red-700 hover:via-red-800 hover:to-red-900 text-white font-medium rounded-xl sm:rounded-2xl transition-all shadow-[0_8px_30px_rgba(220,38,38,0.35)] hover:shadow-[0_12px_40px_rgba(220,38,38,0.45)] transform hover:scale-[1.02] flex items-center justify-center gap-2"
+                    style={{
+                      fontFamily: '"Inter", sans-serif',
+                      letterSpacing: "0.02em",
+                    }}
                   >
                     <Search className="w-5 h-5" />
-                    <span className="text-sm font-semibold">
+                    <span className="text-sm">
                       {getText("hero.search", language)}
                     </span>
                   </Link>
                 </div>
               </div>
 
-              {/* Trust indicators */}
-              <div className="flex flex-wrap items-center gap-6 pt-4">
-                <div className="flex items-center gap-2 text-sm text-luxury-charcoal-600">
-                  <div className="w-5 h-5 bg-green-100 rounded-full flex items-center justify-center">
-                    <svg className="w-3 h-3 text-green-600" fill="currentColor" viewBox="0 0 20 20">
-                      <path fillRule="evenodd" d="M16.707 5.293a1 1 0 010 1.414l-8 8a1 1 0 01-1.414 0l-4-4a1 1 0 011.414-1.414L8 12.586l7.293-7.293a1 1 0 011.414 0z" clipRule="evenodd" />
-                    </svg>
-                  </div>
-                  <span>Community Impact</span>
-                </div>
-                <div className="flex items-center gap-2 text-sm text-luxury-charcoal-600">
-                  <div className="w-5 h-5 bg-luxury-gold-100 rounded-full flex items-center justify-center">
-                    <Star className="w-3 h-3 text-luxury-gold-600" />
-                  </div>
-                  <span>Verified Hosts</span>
-                </div>
-                <div className="flex items-center gap-2 text-sm text-luxury-charcoal-600">
-                  <div className="w-5 h-5 bg-blue-100 rounded-full flex items-center justify-center">
-                    <Shield className="w-3 h-3 text-blue-600" />
-                  </div>
-                  <span>Secure Booking</span>
-                </div>
+              {/* Trust line */}
+              <div className="flex items-center gap-2 pt-4 text-xs md:text-sm text-gray-500">
+                <span className="text-green-500">✓</span>
+                <span
+                  style={{ fontFamily: '"Inter", sans-serif', opacity: 0.9 }}
+                >
+                  Every booking supports local community projects
+                </span>
               </div>
             </div>
 
             {/* Right side: image collage - HIDDEN on mobile, shows on md+ */}
             <div className="hidden md:block order-first lg:order-last">
-              <div className="grid grid-cols-3 gap-4 max-w-[600px] ml-auto lg:ml-0">
+              <div className="grid grid-cols-3 gap-3 max-w-[600px] ml-auto lg:ml-0">
                 {/* Column 1: Image 1 alone */}
-                <div className="relative overflow-hidden rounded-3xl shadow-premium-lg h-[325px] mt-[50%] group">
+                <div className="relative overflow-hidden rounded-2xl shadow-lg h-[325px] mt-[50%]">
                   <img
                     src="/images/hero/image-1.png"
-                    alt="Rural Colombia landscape"
-                    className="w-full h-full object-cover transition-transform duration-700 group-hover:scale-110"
+                    alt="image-1 placeholder"
+                    className="w-full h-full object-cover"
                   />
-                  <div className="absolute inset-0 bg-gradient-to-t from-black/20 to-transparent"></div>
                 </div>
 
                 {/* Column 2: Image 2 and Image 3 stacked */}
-                <div className="flex flex-col gap-4">
-                  <div className="relative overflow-hidden rounded-3xl shadow-premium-lg h-[175px] group">
+                <div className="flex flex-col gap-3">
+                  <div className="relative overflow-hidden rounded-2xl shadow-lg h-[175px]">
                     <img
                       src="/images/hero/image-2.png"
-                      alt="Colombian hospitality"
-                      className="w-full h-full object-cover transition-transform duration-700 group-hover:scale-110"
+                      alt="image-2 placeholder"
+                      className="w-full h-full object-cover"
                     />
-                    <div className="absolute inset-0 bg-gradient-to-t from-black/20 to-transparent"></div>
                   </div>
-                  <div className="relative overflow-hidden rounded-3xl shadow-premium-lg h-[300px] group">
+                  <div className="relative overflow-hidden rounded-2xl shadow-lg h-[300px]">
                     <img
                       src="/images/hero/image-3.png"
-                      alt="Traditional Colombian home"
-                      className="w-full h-full object-cover transition-transform duration-700 group-hover:scale-110"
+                      alt="image-3 placeholder"
+                      className="w-full h-full object-cover"
                     />
-                    <div className="absolute inset-0 bg-gradient-to-t from-black/20 to-transparent"></div>
-                    {/* Featured badge */}
-                    <div className="absolute bottom-4 left-4 right-4">
-                      <div className="bg-white/95 backdrop-blur-sm rounded-xl px-4 py-2 shadow-soft">
-                        <div className="flex items-center gap-2">
-                          <Star className="w-4 h-4 text-luxury-gold-500 fill-luxury-gold-500" />
-                          <span className="text-sm font-semibold text-luxury-charcoal-900">Top Rated</span>
-                        </div>
-                      </div>
-                    </div>
                   </div>
                 </div>
 
                 {/* Column 3: Image 4 and Image 5 stacked */}
-                <div className="flex flex-col gap-4">
-                  <div className="relative overflow-hidden rounded-3xl shadow-premium-lg h-[250px] group">
+                <div className="flex flex-col gap-3">
+                  <div className="relative overflow-hidden rounded-2xl shadow-lg h-[250px]">
                     <img
                       src="/images/hero/image-4.png"
-                      alt="Coffee region experience"
-                      className="w-full h-full object-cover object-top transition-transform duration-700 group-hover:scale-110"
+                      alt="image-4 placeholder"
+                      className="w-full h-full object-cover object-top"
                     />
-                    <div className="absolute inset-0 bg-gradient-to-t from-black/20 to-transparent"></div>
                   </div>
-                  <div className="relative overflow-hidden rounded-3xl shadow-premium-lg h-[250px] group">
+                  <div className="relative overflow-hidden rounded-2xl shadow-lg h-[250px]">
                     <img
                       src="/images/hero/image-5.jpg"
-                      alt="Mountain views"
-                      className="w-full h-full object-cover object-top transition-transform duration-700 group-hover:scale-110"
+                      alt="image-5 placeholder"
+                      className="w-full h-full object-cover object-top"
                     />
-                    <div className="absolute inset-0 bg-gradient-to-t from-black/20 to-transparent"></div>
                   </div>
                 </div>
               </div>
@@ -267,150 +260,143 @@ export default function Home() {
       </section>
 
       {/* MAP SECTION */}
-      <section className="py-16 md:py-20 lg:py-28 px-4 relative">
-        <div className="absolute inset-0 bg-gradient-to-b from-luxury-cream-200/50 to-transparent pointer-events-none"></div>
-        <div className="max-w-[1400px] mx-auto relative">
-          <div className="mb-10 md:mb-14 text-center">
-            <div className="inline-flex items-center gap-2 px-4 py-2 bg-white/80 backdrop-blur-sm rounded-full shadow-soft border border-luxury-cream-300 mb-6">
-              <MapPin className="w-4 h-4 text-luxury-gold-600" />
-              <span className="text-xs font-semibold text-luxury-charcoal-700 tracking-wide uppercase">Discover Locations</span>
-            </div>
-            <h2 className="text-3xl sm:text-4xl md:text-5xl lg:text-6xl font-display text-luxury-charcoal-900 mb-4">
-              {getText("map.title", language).split(" ").slice(0, -2).join(" ")} <span className="text-gold-gradient">{getText("map.title", language).split(" ").slice(-2).join(" ")}</span>
+      <section className="py-12 md:py-16 lg:py-20 px-4" style={{ backgroundColor: "#E8DDD0" }}>
+        <div className="max-w-[1400px] mx-auto">
+          <div className="mb-8 md:mb-12">
+            <h2
+              className="text-2xl sm:text-3xl md:text-4xl lg:text-5xl font-light text-gray-900 mb-3 md:mb-4"
+              style={{ fontFamily: '"Playfair Display", serif' }}
+            >
+              {getText("map.title", language).split(" ").slice(0, -2).join(" ")} <span className="font-semibold">{getText("map.title", language).split(" ").slice(-2).join(" ")}</span>
             </h2>
-            <p className="text-lg md:text-xl text-luxury-charcoal-500 max-w-2xl mx-auto">
+            <p
+              className="text-base md:text-lg text-gray-600"
+              style={{ fontFamily: '"Inter", sans-serif' }}
+            >
               {getText("map.subtitle", language)}
             </p>
           </div>
-          <div className="rounded-3xl overflow-hidden shadow-premium-xl border border-luxury-cream-200">
-            <AccommodationMap />
-          </div>
+          <AccommodationMap />
         </div>
       </section>
 
       {/* COMMUNITY PROJECTS SECTION */}
-      <section className="py-16 md:py-24 lg:py-32 px-4 relative overflow-hidden">
-        {/* Background decorations */}
-        <div className="absolute top-20 right-0 w-96 h-96 bg-luxury-gold-200/20 rounded-full blur-3xl pointer-events-none"></div>
-        <div className="absolute bottom-20 left-0 w-80 h-80 bg-green-200/20 rounded-full blur-3xl pointer-events-none"></div>
-
-        <div className="max-w-[1400px] mx-auto relative">
+      <section className="py-12 md:py-16 lg:py-24 px-4" style={{ background: "radial-gradient(circle at top left, #F5EBE0 0%, #E8DDD0 40%, #DED0BD 100%)" }}>
+        <div className="max-w-[1400px] mx-auto">
           {/* Header */}
-          <div className="text-center mb-16 md:mb-20 lg:mb-24">
-            <div className="inline-flex items-center gap-2 px-5 py-2.5 bg-white/80 backdrop-blur-sm rounded-full shadow-soft border border-luxury-cream-300 mb-6">
-              <Heart className="w-4 h-4 text-sptc-red-500" />
-              <span className="text-xs font-semibold text-luxury-charcoal-700 tracking-wide uppercase">
-                {getText("community.ourImpact", language)}
-              </span>
+          <div className="text-center mb-12 md:mb-16 lg:mb-20 relative">
+            <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[300px] md:w-[600px] h-[150px] md:h-[300px] bg-sptc-red/5 blur-3xl rounded-full -z-10"></div>
+            <div className="inline-block mb-4 md:mb-6">
+              <div className="flex items-center gap-2 md:gap-3 px-4 md:px-6 py-2 md:py-3 bg-white rounded-full shadow-md border border-gray-100">
+                <div className="w-2 h-2 bg-sptc-red rounded-full animate-pulse"></div>
+                <span className="text-xs md:text-sm font-semibold text-gray-700 tracking-wide uppercase" style={{ fontFamily: '"Inter", sans-serif' }}>
+                  {getText("community.ourImpact", language)}
+                </span>
+              </div>
             </div>
-            <h2 className="text-3xl sm:text-4xl md:text-5xl lg:text-6xl font-display text-luxury-charcoal-900 mb-6 leading-tight">
-              {getText("community.travelWithPurpose", language).split(" ").slice(0, -1).join(" ")} <span className="text-gold-gradient">{getText("community.travelWithPurpose", language).split(" ").slice(-1)}</span>
+            <h2 className="text-3xl sm:text-4xl md:text-5xl lg:text-7xl font-light text-gray-900 mb-4 md:mb-6 leading-tight px-4" style={{ fontFamily: '"Playfair Display", serif' }}>
+              {getText("community.travelWithPurpose", language).split(" ").slice(0, -1).join(" ")} <span className="font-semibold text-sptc-red">{getText("community.travelWithPurpose", language).split(" ").slice(-1)}</span>
             </h2>
-            <p className="text-lg md:text-xl text-luxury-charcoal-500 max-w-3xl mx-auto leading-relaxed">
+            <p className="text-base md:text-xl lg:text-2xl text-gray-600 max-w-4xl mx-auto leading-relaxed font-light px-4" style={{ fontFamily: '"Inter", sans-serif' }}>
               {getText("community.impactDescription", language)}
             </p>
+            <div className="mt-6 md:mt-8 flex items-center justify-center gap-2">
+              <div className="h-1 w-8 md:w-12 bg-sptc-red rounded-full"></div>
+              <div className="h-1 w-6 md:w-8 bg-sptc-red/40 rounded-full"></div>
+              <div className="h-1 w-3 md:w-4 bg-sptc-red/20 rounded-full"></div>
+            </div>
           </div>
 
           {/* Impact Statistics Grid */}
-          <div className="grid grid-cols-2 md:grid-cols-4 gap-4 md:gap-6 mb-16">
-            <div className="bg-white rounded-3xl p-6 md:p-8 shadow-premium hover:shadow-premium-lg transition-all duration-500 hover:-translate-y-2 border border-luxury-cream-200 text-center group">
-              <div className="w-14 h-14 bg-gradient-to-br from-luxury-gold-100 to-luxury-gold-200 rounded-2xl flex items-center justify-center mx-auto mb-4 group-hover:scale-110 transition-transform duration-300">
-                <TrendingUp className="w-7 h-7 text-luxury-gold-600" />
-              </div>
-              <div className="text-3xl md:text-4xl font-bold text-luxury-charcoal-900 mb-2">$60,600</div>
-              <div className="text-luxury-charcoal-500 text-sm font-medium">{getText("community.totalRaised", language)}</div>
+          <div className="grid grid-cols-2 md:grid-cols-4 gap-3 sm:gap-4 md:gap-6 mt-8 sm:mt-12">
+            <div className="bg-white rounded-2xl sm:rounded-3xl p-4 sm:p-5 md:p-6 shadow-xl hover:shadow-2xl transition-all hover:-translate-y-2 border border-gray-100">
+              <TrendingUp className="w-6 h-6 sm:w-7 sm:h-7 md:w-8 md:h-8 text-sptc-red-600 mx-auto mb-2 sm:mb-3" />
+              <div className="text-2xl sm:text-3xl md:text-4xl font-bold text-gray-900 mb-1 sm:mb-2">$60,600</div>
+              <div className="text-gray-600 text-xs sm:text-sm font-semibold">{getText("community.totalRaised", language)}</div>
             </div>
 
-            <div className="bg-white rounded-3xl p-6 md:p-8 shadow-premium hover:shadow-premium-lg transition-all duration-500 hover:-translate-y-2 border border-luxury-cream-200 text-center group">
-              <div className="w-14 h-14 bg-gradient-to-br from-green-100 to-green-200 rounded-2xl flex items-center justify-center mx-auto mb-4 group-hover:scale-110 transition-transform duration-300">
-                <TreePine className="w-7 h-7 text-green-600" />
-              </div>
-              <div className="text-3xl md:text-4xl font-bold text-luxury-charcoal-900 mb-2">3,750</div>
-              <div className="text-luxury-charcoal-500 text-sm font-medium">{getText("community.treesPlanted", language)}</div>
+            <div className="bg-white rounded-2xl sm:rounded-3xl p-4 sm:p-5 md:p-6 shadow-xl hover:shadow-2xl transition-all hover:-translate-y-2 border border-gray-100">
+              <TreePine className="w-6 h-6 sm:w-7 sm:h-7 md:w-8 md:h-8 text-sptc-red-600 mx-auto mb-2 sm:mb-3" />
+              <div className="text-2xl sm:text-3xl md:text-4xl font-bold text-gray-900 mb-1 sm:mb-2">3,750</div>
+              <div className="text-gray-600 text-xs sm:text-sm font-semibold">{getText("community.treesPlanted", language)}</div>
             </div>
 
-            <div className="bg-white rounded-3xl p-6 md:p-8 shadow-premium hover:shadow-premium-lg transition-all duration-500 hover:-translate-y-2 border border-luxury-cream-200 text-center group">
-              <div className="w-14 h-14 bg-gradient-to-br from-blue-100 to-blue-200 rounded-2xl flex items-center justify-center mx-auto mb-4 group-hover:scale-110 transition-transform duration-300">
-                <Users className="w-7 h-7 text-blue-600" />
-              </div>
-              <div className="text-3xl md:text-4xl font-bold text-luxury-charcoal-900 mb-2">12</div>
-              <div className="text-luxury-charcoal-500 text-sm font-medium">{getText("community.communitiesServed", language)}</div>
+            <div className="bg-white rounded-2xl sm:rounded-3xl p-4 sm:p-5 md:p-6 shadow-xl hover:shadow-2xl transition-all hover:-translate-y-2 border border-gray-100">
+              <Users className="w-6 h-6 sm:w-7 sm:h-7 md:w-8 md:h-8 text-sptc-red-600 mx-auto mb-2 sm:mb-3" />
+              <div className="text-2xl sm:text-3xl md:text-4xl font-bold text-gray-900 mb-1 sm:mb-2">12</div>
+              <div className="text-gray-600 text-xs sm:text-sm font-semibold">{getText("community.communitiesServed", language)}</div>
             </div>
 
-            <div className="bg-white rounded-3xl p-6 md:p-8 shadow-premium hover:shadow-premium-lg transition-all duration-500 hover:-translate-y-2 border border-luxury-cream-200 text-center group">
-              <div className="w-14 h-14 bg-gradient-to-br from-purple-100 to-purple-200 rounded-2xl flex items-center justify-center mx-auto mb-4 group-hover:scale-110 transition-transform duration-300">
-                <CheckCircle className="w-7 h-7 text-purple-600" />
-              </div>
-              <div className="text-3xl md:text-4xl font-bold text-luxury-charcoal-900 mb-2">8</div>
-              <div className="text-luxury-charcoal-500 text-sm font-medium">{getText("community.projectsCompleted", language)}</div>
+            <div className="bg-white rounded-2xl sm:rounded-3xl p-4 sm:p-5 md:p-6 shadow-xl hover:shadow-2xl transition-all hover:-translate-y-2 border border-gray-100">
+              <CheckCircle className="w-6 h-6 sm:w-7 sm:h-7 md:w-8 md:h-8 text-sptc-red-600 mx-auto mb-2 sm:mb-3" />
+              <div className="text-2xl sm:text-3xl md:text-4xl font-bold text-gray-900 mb-1 sm:mb-2">8</div>
+              <div className="text-gray-600 text-xs sm:text-sm font-semibold">{getText("community.projectsCompleted", language)}</div>
             </div>
           </div>
 
           {/* How Your Stay Makes an Impact */}
-          <div className="mb-16 md:mb-24 mt-16 md:mt-24">
-            <div className="text-center mb-12">
-              <h3 className="text-2xl sm:text-3xl md:text-4xl lg:text-5xl font-display text-luxury-charcoal-900 mb-4">
-                {getText("community.howItWorksTitle", language).split(" ").slice(0, -1).join(" ")} <span className="text-gold-gradient">{getText("community.howItWorksTitle", language).split(" ").slice(-1)}</span>
-              </h3>
-              <p className="text-lg text-luxury-charcoal-500 max-w-2xl mx-auto">
-                {getText("community.howItWorksSubtitle", language)}
-              </p>
-            </div>
-            <div className="grid sm:grid-cols-2 lg:grid-cols-4 gap-6 md:gap-8">
+          <div className="mb-12 md:mb-16 lg:mb-24 mt-16 md:mt-24 lg:mt-32">
+            <h3 className="text-2xl sm:text-3xl md:text-4xl lg:text-5xl font-light text-gray-900 text-center mb-3 md:mb-4 px-4" style={{ fontFamily: '"Playfair Display", serif' }}>
+              {getText("community.howItWorksTitle", language).split(" ").slice(0, -1).join(" ")} <span className="font-semibold text-sptc-red">{getText("community.howItWorksTitle", language).split(" ").slice(-1)}</span>
+            </h3>
+            <p className="text-base md:text-lg text-gray-600 text-center mb-8 md:mb-12 max-w-2xl mx-auto px-4" style={{ fontFamily: '"Inter", sans-serif' }}>
+              {getText("community.howItWorksSubtitle", language)}
+            </p>
+            <div className="grid sm:grid-cols-2 md:grid-cols-4 gap-6 md:gap-8">
               {/* Step 1 */}
-              <div className="bg-white rounded-3xl p-8 shadow-premium hover:shadow-premium-lg transition-all duration-500 border border-luxury-cream-200 text-center group">
+              <div className="text-center">
                 <div className="relative mb-6">
-                  <div className="w-16 h-16 bg-gradient-to-br from-luxury-charcoal-900 to-luxury-charcoal-700 rounded-2xl flex items-center justify-center mx-auto shadow-premium group-hover:scale-110 transition-transform duration-300">
-                    <HomeIcon className="w-8 h-8 text-white" />
+                  <div className="w-20 h-20 bg-gradient-to-br from-sptc-red-600 to-sptc-red-700 rounded-3xl flex items-center justify-center mx-auto shadow-xl">
+                    <HomeIcon className="w-10 h-10 text-white" />
                   </div>
-                  <div className="absolute -top-2 -right-2 w-8 h-8 bg-luxury-gold-500 rounded-full flex items-center justify-center text-sm font-bold text-luxury-charcoal-900 shadow-gold-glow">
+                  <div className="absolute -top-2 -right-2 w-10 h-10 bg-sptc-yellow-500 rounded-full flex items-center justify-center font-bold text-gray-900 shadow-lg">
                     1
                   </div>
                 </div>
-                <h4 className="text-lg font-bold text-luxury-charcoal-900 mb-3">{getText("community.step1Title", language)}</h4>
-                <p className="text-luxury-charcoal-500 text-sm leading-relaxed">{getText("community.step1Description", language)}</p>
+                <h3 className="text-xl font-bold text-gray-900 mb-3">{getText("community.step1Title", language)}</h3>
+                <p className="text-gray-600 leading-relaxed">{getText("community.step1Description", language)}</p>
               </div>
 
               {/* Step 2 */}
-              <div className="bg-white rounded-3xl p-8 shadow-premium hover:shadow-premium-lg transition-all duration-500 border border-luxury-cream-200 text-center group">
+              <div className="text-center">
                 <div className="relative mb-6">
-                  <div className="w-16 h-16 bg-gradient-to-br from-luxury-charcoal-900 to-luxury-charcoal-700 rounded-2xl flex items-center justify-center mx-auto shadow-premium group-hover:scale-110 transition-transform duration-300">
-                    <Heart className="w-8 h-8 text-white" />
+                  <div className="w-20 h-20 bg-gradient-to-br from-sptc-red-600 to-sptc-red-700 rounded-3xl flex items-center justify-center mx-auto shadow-xl">
+                    <Heart className="w-10 h-10 text-white" />
                   </div>
-                  <div className="absolute -top-2 -right-2 w-8 h-8 bg-luxury-gold-500 rounded-full flex items-center justify-center text-sm font-bold text-luxury-charcoal-900 shadow-gold-glow">
+                  <div className="absolute -top-2 -right-2 w-10 h-10 bg-sptc-yellow-500 rounded-full flex items-center justify-center font-bold text-gray-900 shadow-lg">
                     2
                   </div>
                 </div>
-                <h4 className="text-lg font-bold text-luxury-charcoal-900 mb-3">{getText("community.step2Title", language)}</h4>
-                <p className="text-luxury-charcoal-500 text-sm leading-relaxed">{getText("community.step2Description", language)}</p>
+                <h3 className="text-xl font-bold text-gray-900 mb-3">{getText("community.step2Title", language)}</h3>
+                <p className="text-gray-600 leading-relaxed">{getText("community.step2Description", language)}</p>
               </div>
 
               {/* Step 3 */}
-              <div className="bg-white rounded-3xl p-8 shadow-premium hover:shadow-premium-lg transition-all duration-500 border border-luxury-cream-200 text-center group">
+              <div className="text-center">
                 <div className="relative mb-6">
-                  <div className="w-16 h-16 bg-gradient-to-br from-luxury-charcoal-900 to-luxury-charcoal-700 rounded-2xl flex items-center justify-center mx-auto shadow-premium group-hover:scale-110 transition-transform duration-300">
-                    <TrendingUp className="w-8 h-8 text-white" />
+                  <div className="w-20 h-20 bg-gradient-to-br from-sptc-red-600 to-sptc-red-700 rounded-3xl flex items-center justify-center mx-auto shadow-xl">
+                    <TrendingUp className="w-10 h-10 text-white" />
                   </div>
-                  <div className="absolute -top-2 -right-2 w-8 h-8 bg-luxury-gold-500 rounded-full flex items-center justify-center text-sm font-bold text-luxury-charcoal-900 shadow-gold-glow">
+                  <div className="absolute -top-2 -right-2 w-10 h-10 bg-sptc-yellow-500 rounded-full flex items-center justify-center font-bold text-gray-900 shadow-lg">
                     3
                   </div>
                 </div>
-                <h4 className="text-lg font-bold text-luxury-charcoal-900 mb-3">{getText("community.step3Title", language)}</h4>
-                <p className="text-luxury-charcoal-500 text-sm leading-relaxed">{getText("community.step3Description", language)}</p>
+                <h3 className="text-xl font-bold text-gray-900 mb-3">{getText("community.step3Title", language)}</h3>
+                <p className="text-gray-600 leading-relaxed">{getText("community.step3Description", language)}</p>
               </div>
 
               {/* Step 4 */}
-              <div className="bg-white rounded-3xl p-8 shadow-premium hover:shadow-premium-lg transition-all duration-500 border border-luxury-cream-200 text-center group">
+              <div className="text-center">
                 <div className="relative mb-6">
-                  <div className="w-16 h-16 bg-gradient-to-br from-luxury-charcoal-900 to-luxury-charcoal-700 rounded-2xl flex items-center justify-center mx-auto shadow-premium group-hover:scale-110 transition-transform duration-300">
-                    <Award className="w-8 h-8 text-white" />
+                  <div className="w-20 h-20 bg-gradient-to-br from-sptc-red-600 to-sptc-red-700 rounded-3xl flex items-center justify-center mx-auto shadow-xl">
+                    <Award className="w-10 h-10 text-white" />
                   </div>
-                  <div className="absolute -top-2 -right-2 w-8 h-8 bg-luxury-gold-500 rounded-full flex items-center justify-center text-sm font-bold text-luxury-charcoal-900 shadow-gold-glow">
+                  <div className="absolute -top-2 -right-2 w-10 h-10 bg-sptc-yellow-500 rounded-full flex items-center justify-center font-bold text-gray-900 shadow-lg">
                     4
                   </div>
                 </div>
-                <h4 className="text-lg font-bold text-luxury-charcoal-900 mb-3">{getText("community.step4Title", language)}</h4>
-                <p className="text-luxury-charcoal-500 text-sm leading-relaxed">{getText("community.step4Description", language)}</p>
+                <h3 className="text-xl font-bold text-gray-900 mb-3">{getText("community.step4Title", language)}</h3>
+                <p className="text-gray-600 leading-relaxed">{getText("community.step4Description", language)}</p>
               </div>
             </div>
           </div>
