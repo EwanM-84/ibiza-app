@@ -1,9 +1,5 @@
 import { NextRequest, NextResponse } from 'next/server';
-
-// Initialize global photo sessions store if not exists
-if (!(global as any).photoSessions) {
-  (global as any).photoSessions = new Map<string, any>();
-}
+import { supabase } from '@/lib/supabaseClient';
 
 export async function POST(request: NextRequest) {
   try {
@@ -16,10 +12,15 @@ export async function POST(request: NextRequest) {
       );
     }
 
-    // Get session from global store
-    const session = (global as any).photoSessions?.get(sessionId);
+    // Get session from Supabase
+    const { data: session, error: fetchError } = await supabase
+      .from('photo_sessions')
+      .select('*')
+      .eq('session_id', sessionId)
+      .single();
 
-    if (!session) {
+    if (fetchError || !session) {
+      console.error('Session not found:', fetchError);
       return NextResponse.json(
         { success: false, error: 'Invalid or expired session' },
         { status: 404 }
@@ -27,7 +28,7 @@ export async function POST(request: NextRequest) {
     }
 
     // Check if session is expired
-    if (new Date() > new Date(session.expiresAt)) {
+    if (new Date() > new Date(session.expires_at)) {
       return NextResponse.json(
         { success: false, error: 'Session expired' },
         { status: 410 }
@@ -35,8 +36,9 @@ export async function POST(request: NextRequest) {
     }
 
     // Add photo to session
+    const currentPhotos = session.photos || [];
     const photoData = {
-      filename: `photo-${session.photos.length + 1}-${Date.now()}.jpg`,
+      filename: `photo-${currentPhotos.length + 1}-${Date.now()}.jpg`,
       data: photo,
       location: {
         latitude: location.latitude,
@@ -46,16 +48,29 @@ export async function POST(request: NextRequest) {
       timestamp: new Date().toISOString(),
     };
 
-    session.photos.push(photoData);
-    (global as any).photoSessions.set(sessionId, session);
+    const updatedPhotos = [...currentPhotos, photoData];
+
+    // Update session in Supabase
+    const { error: updateError } = await supabase
+      .from('photo_sessions')
+      .update({ photos: updatedPhotos })
+      .eq('session_id', sessionId);
+
+    if (updateError) {
+      console.error('Error updating session:', updateError);
+      return NextResponse.json(
+        { success: false, error: 'Failed to save photo' },
+        { status: 500 }
+      );
+    }
 
     console.log(`✓ Photo uploaded to session ${sessionId}: ${photoData.filename}`);
     console.log(`  Location: ${location.latitude}, ${location.longitude}`);
-    console.log(`  Total photos: ${session.photos.length}`);
+    console.log(`  Total photos: ${updatedPhotos.length}`);
 
     return NextResponse.json({
       success: true,
-      photoCount: session.photos.length,
+      photoCount: updatedPhotos.length,
       filename: photoData.filename,
     });
   } catch (error: any) {

@@ -1,9 +1,5 @@
 import { NextRequest, NextResponse } from 'next/server';
-
-// Initialize global photo sessions store if not exists
-if (!(global as any).photoSessions) {
-  (global as any).photoSessions = new Map<string, any>();
-}
+import { supabase } from '@/lib/supabaseClient';
 
 export async function GET(
   request: NextRequest,
@@ -12,10 +8,14 @@ export async function GET(
   try {
     const { sessionId } = params;
 
-    // Get session from global store
-    const session = (global as any).photoSessions?.get(sessionId);
+    // Get session from Supabase
+    const { data: session, error } = await supabase
+      .from('photo_sessions')
+      .select('*')
+      .eq('session_id', sessionId)
+      .single();
 
-    if (!session) {
+    if (error || !session) {
       return NextResponse.json(
         { success: false, error: 'Session not found' },
         { status: 404 }
@@ -24,11 +24,11 @@ export async function GET(
 
     return NextResponse.json({
       success: true,
-      sessionId: session.sessionId,
-      photos: session.photos,
-      photoCount: session.photos.length,
-      createdAt: session.createdAt,
-      expiresAt: session.expiresAt,
+      sessionId: session.session_id,
+      photos: session.photos || [],
+      photoCount: (session.photos || []).length,
+      createdAt: session.created_at,
+      expiresAt: session.expires_at,
     });
   } catch (error: any) {
     console.error('Error fetching photo session:', error);

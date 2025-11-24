@@ -1,25 +1,6 @@
 import { NextRequest, NextResponse } from 'next/server';
 import { randomBytes } from 'crypto';
-
-// Initialize global photo sessions store
-if (!(global as any).photoSessions) {
-  (global as any).photoSessions = new Map<string, {
-    sessionId: string;
-    hostProfileId: string | null;
-    photos: Array<{
-      filename: string;
-      data: string;
-      location: {
-        latitude: number;
-        longitude: number;
-        accuracy: number;
-      };
-      timestamp: string;
-    }>;
-    createdAt: Date;
-    expiresAt: Date;
-  }>();
-}
+import { supabase } from '@/lib/supabaseClient';
 
 export async function POST(request: NextRequest) {
   try {
@@ -32,13 +13,23 @@ export async function POST(request: NextRequest) {
     const expiresAt = new Date();
     expiresAt.setHours(expiresAt.getHours() + 1);
 
-    (global as any).photoSessions.set(sessionId, {
-      sessionId,
-      hostProfileId: hostProfileId || null,
-      photos: [],
-      createdAt: new Date(),
-      expiresAt,
-    });
+    // Store session in Supabase for persistence across serverless invocations
+    const { error } = await supabase
+      .from('photo_sessions')
+      .insert({
+        session_id: sessionId,
+        host_profile_id: hostProfileId || null,
+        photos: [],
+        expires_at: expiresAt.toISOString(),
+      });
+
+    if (error) {
+      console.error('Error storing session in Supabase:', error);
+      return NextResponse.json(
+        { success: false, error: 'Failed to create session' },
+        { status: 500 }
+      );
+    }
 
     console.log(`✓ Created photo session: ${sessionId}`);
 
