@@ -21,7 +21,14 @@ export default function MobilePhotoUpload() {
   const [cameraError, setCameraError] = useState<string | null>(null);
   const [permissionsRequested, setPermissionsRequested] = useState(false);
   const [useNativeCamera, setUseNativeCamera] = useState(true); // Use native camera by default
+  const [useFakeLocation, setUseFakeLocation] = useState(false); // For development
   const fileInputRef = useRef<HTMLInputElement>(null);
+
+  // Detect if we're on local IP (development mode)
+  const isDevelopment = typeof window !== 'undefined' && (
+    window.location.hostname === 'localhost' ||
+    window.location.hostname.startsWith('192.168.')
+  );
 
   // Scroll to top on mount and request location automatically
   useEffect(() => {
@@ -121,6 +128,26 @@ export default function MobilePhotoUpload() {
       stream?.getTracks().forEach(track => track.stop());
       setCameraActive(false);
     }
+  };
+
+  const useFakeLocationForDev = () => {
+    // Use fake coordinates for development (Bogotá, Colombia)
+    const fakePosition: GeolocationPosition = {
+      coords: {
+        latitude: 4.6097,
+        longitude: -74.0817,
+        accuracy: 10,
+        altitude: null,
+        altitudeAccuracy: null,
+        heading: null,
+        speed: null,
+      },
+      timestamp: Date.now(),
+    };
+    setLocation(fakePosition);
+    setLocationError(null);
+    setUseFakeLocation(true);
+    console.log('✓ Using fake location for development:', fakePosition.coords.latitude, fakePosition.coords.longitude);
   };
 
   const uploadPhoto = async () => {
@@ -243,14 +270,31 @@ export default function MobilePhotoUpload() {
           <div className="bg-red-50 border-2 border-red-200 rounded-2xl p-6 mb-6">
             <div className="flex items-start gap-3">
               <AlertCircle className="w-6 h-6 text-red-600 flex-shrink-0 mt-1" />
-              <div>
+              <div className="flex-1">
                 <h3 className="font-bold text-red-900 mb-1">Location Required</h3>
-                <p className="text-red-700 text-sm">
+                <p className="text-red-700 text-sm mb-3">
                   Please enable location services in your browser settings to continue.
                   We need GPS coordinates to verify the property photos.
                 </p>
+                {isDevelopment && !useFakeLocation && (
+                  <button
+                    onClick={useFakeLocationForDev}
+                    className="px-4 py-2 bg-yellow-600 text-white font-semibold rounded-xl hover:bg-yellow-700 transition-all text-sm"
+                  >
+                    Use Fake Location (Dev Only)
+                  </button>
+                )}
               </div>
             </div>
+          </div>
+        )}
+
+        {/* Fake Location Warning */}
+        {useFakeLocation && (
+          <div className="bg-yellow-50 border-2 border-yellow-200 rounded-2xl p-4 mb-6">
+            <p className="text-yellow-900 text-sm font-semibold">
+              ⚠️ Development Mode: Using fake GPS coordinates (Bogotá, Colombia)
+            </p>
           </div>
         )}
 
