@@ -423,7 +423,7 @@ export default function HostOnboarding() {
 
                       <div className="mt-6 flex items-center gap-2 bg-white border border-gray-200 px-4 py-3 rounded-xl">
                         <span className="text-sm text-gray-600 font-semibold">Photos uploaded:</span>
-                        <span className="text-2xl font-bold text-sptc-red-600">{sessionPhotos.length} / 5</span>
+                        <span className="text-2xl font-bold text-sptc-red-600">{sessionPhotos.length} / 2</span>
                       </div>
                     </div>
                   </div>
@@ -566,8 +566,8 @@ export default function HostOnboarding() {
                     alert("Please complete your identity verification with MetaMap");
                     return;
                   }
-                  if (currentStep === 2 && propertyPhotos.filter(p => p && p.location).length < 5) {
-                    alert(getText("hostOnboarding.allPhotosRequired", language));
+                  if (currentStep === 2 && sessionPhotos.length < 2) {
+                    alert("Please upload 2 photos of your property");
                     return;
                   }
                   setCurrentStep(currentStep + 1);
