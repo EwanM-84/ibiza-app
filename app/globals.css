@@ -6,6 +6,13 @@
   --background: #FDFCFA;
   --foreground: #1A1A1A;
   --premium-bg: linear-gradient(135deg, #F5EBE0 0%, #E8DDD0 50%, #DED0BD 100%);
+
+  /* Premium shadows as CSS variables */
+  --shadow-soft: 0 2px 8px rgba(0, 0, 0, 0.04), 0 4px 16px rgba(0, 0, 0, 0.06);
+  --shadow-premium: 0 4px 20px -2px rgba(0, 0, 0, 0.1), 0 12px 40px -4px rgba(0, 0, 0, 0.15);
+  --shadow-premium-lg: 0 8px 30px -4px rgba(0, 0, 0, 0.12), 0 20px 60px -8px rgba(0, 0, 0, 0.18);
+  --shadow-premium-xl: 0 12px 40px -6px rgba(0, 0, 0, 0.15), 0 32px 80px -12px rgba(0, 0, 0, 0.22);
+  --shadow-gold-glow: 0 4px 20px -2px rgba(212, 175, 55, 0.25), 0 12px 40px -4px rgba(212, 175, 55, 0.15);
 }
 
 @layer base {
@@ -60,87 +67,130 @@
 
 @layer components {
   .glass-card {
-    @apply bg-white/90 backdrop-blur-xl border border-white/40 shadow-premium;
+    @apply bg-white/90 backdrop-blur-xl border border-white/40;
+    box-shadow: var(--shadow-premium);
   }
 
   .premium-card {
-    @apply bg-white rounded-3xl shadow-premium border border-white/60
-           hover:shadow-premium-lg transition-all duration-500 ease-out;
+    @apply bg-white rounded-3xl border border-white/60 transition-all duration-500 ease-out;
+    box-shadow: var(--shadow-premium);
+  }
+  .premium-card:hover {
+    box-shadow: var(--shadow-premium-lg);
   }
 
   .luxury-card {
-    @apply bg-white rounded-3xl shadow-premium-lg border border-luxury-cream-300/50
-           hover:shadow-premium-xl transition-all duration-500 ease-out
-           hover:-translate-y-1;
+    @apply bg-white rounded-3xl transition-all duration-500 ease-out hover:-translate-y-1;
+    border: 1px solid rgba(237, 230, 220, 0.5);
+    box-shadow: var(--shadow-premium-lg);
+  }
+  .luxury-card:hover {
+    box-shadow: var(--shadow-premium-xl);
   }
 
   .btn-primary {
     @apply bg-gradient-to-r from-sptc-red-500 to-sptc-red-600
            text-white font-semibold px-8 py-4 rounded-full
-           shadow-premium hover:shadow-premium-lg hover:scale-[1.02]
-           active:scale-[0.98] transition-all duration-300 ease-out
+           hover:scale-[1.02] active:scale-[0.98] transition-all duration-300 ease-out
            border border-sptc-red-600/20;
     min-height: 48px;
     touch-action: manipulation;
+    box-shadow: var(--shadow-premium);
+  }
+  .btn-primary:hover {
+    box-shadow: var(--shadow-premium-lg);
   }
 
   .btn-premium {
-    @apply bg-luxury-charcoal-900 text-white font-semibold px-8 py-4 rounded-full
-           shadow-premium hover:shadow-premium-lg hover:scale-[1.02]
-           active:scale-[0.98] transition-all duration-300 ease-out
-           border border-luxury-charcoal-800;
+    @apply text-white font-semibold px-8 py-4 rounded-full
+           hover:scale-[1.02] active:scale-[0.98] transition-all duration-300 ease-out;
+    background-color: #1A1A1A;
+    border: 1px solid #383838;
     min-height: 48px;
     touch-action: manipulation;
+    box-shadow: var(--shadow-premium);
+  }
+  .btn-premium:hover {
+    background-color: #383838;
+    box-shadow: var(--shadow-premium-lg);
   }
 
   .btn-gold {
-    @apply bg-gradient-to-r from-luxury-gold-500 to-luxury-gold-600
-           text-luxury-charcoal-900 font-semibold px-8 py-4 rounded-full
-           shadow-gold-glow hover:shadow-premium-lg hover:scale-[1.02]
-           active:scale-[0.98] transition-all duration-300 ease-out
-           border border-luxury-gold-400;
+    @apply bg-gradient-to-r from-amber-500 to-amber-600
+           font-semibold px-8 py-4 rounded-full
+           hover:scale-[1.02] active:scale-[0.98] transition-all duration-300 ease-out;
+    color: #1A1A1A;
+    border: 1px solid #F5D56E;
     min-height: 48px;
     touch-action: manipulation;
+    box-shadow: var(--shadow-gold-glow);
+  }
+  .btn-gold:hover {
+    box-shadow: var(--shadow-premium-lg);
   }
 
   .btn-secondary {
     @apply bg-white text-sptc-gray-900 font-semibold px-8 py-4 rounded-full
-           shadow-soft hover:shadow-premium hover:scale-[1.02]
-           active:scale-[0.98] transition-all duration-300 ease-out
+           hover:scale-[1.02] active:scale-[0.98] transition-all duration-300 ease-out
            border border-sptc-gray-200;
     min-height: 48px;
     touch-action: manipulation;
+    box-shadow: var(--shadow-soft);
+  }
+  .btn-secondary:hover {
+    box-shadow: var(--shadow-premium);
   }
 
   .input-premium {
     @apply w-full px-6 py-4 rounded-2xl
-           bg-white border-2 border-luxury-cream-300
-           focus:bg-white focus:border-sptc-red-500 focus:outline-none
+           bg-white focus:bg-white focus:border-sptc-red-500 focus:outline-none
            focus:ring-4 focus:ring-sptc-red-100/50
            transition-all duration-300 ease-out
            text-base font-medium placeholder:text-sptc-gray-400;
+    border: 2px solid #EDE6DC;
     min-height: 52px;
   }
 
   /* Premium section dividers */
   .section-divider {
-    @apply h-px bg-gradient-to-r from-transparent via-luxury-cream-400 to-transparent;
+    @apply h-px;
+    background: linear-gradient(to right, transparent, #E2D8C8, transparent);
   }
 
   /* Luxury badge */
   .luxury-badge {
-    @apply inline-flex items-center gap-2 px-4 py-2 bg-luxury-gold-100
-           text-luxury-gold-700 text-sm font-semibold rounded-full
-           border border-luxury-gold-200;
+    @apply inline-flex items-center gap-2 px-4 py-2 text-sm font-semibold rounded-full;
+    background-color: #FEF9E7;
+    color: #9A7B26;
+    border: 1px solid #FCF0C3;
   }
 
   /* Premium text styles */
   .text-premium-heading {
-    @apply font-display text-luxury-charcoal-900 tracking-tight;
+    @apply font-display tracking-tight;
+    color: #1A1A1A;
   }
 
   .text-premium-body {
-    @apply font-sans text-luxury-charcoal-600 leading-relaxed;
+    @apply font-sans leading-relaxed;
+    color: #515151;
+  }
+
+  /* Shadow utility classes */
+  .shadow-soft {
+    box-shadow: var(--shadow-soft);
+  }
+  .shadow-premium {
+    box-shadow: var(--shadow-premium);
+  }
+  .shadow-premium-lg {
+    box-shadow: var(--shadow-premium-lg);
+  }
+  .shadow-premium-xl {
+    box-shadow: var(--shadow-premium-xl);
+  }
+  .shadow-gold-glow {
+    box-shadow: var(--shadow-gold-glow);
   }
 }
 
@@ -154,7 +204,8 @@
   }
 
   .text-gold-gradient {
-    @apply bg-clip-text text-transparent bg-gradient-to-r from-luxury-gold-500 via-luxury-gold-400 to-luxury-gold-600;
+    @apply bg-clip-text text-transparent;
+    background-image: linear-gradient(to right, #D4AF37, #F5D56E, #D4AF37);
   }
 
   .hover-lift {
@@ -162,7 +213,10 @@
   }
 
   .hover-glow {
-    @apply hover:shadow-premium-lg transition-shadow duration-300 ease-out;
+    @apply transition-shadow duration-300 ease-out;
+  }
+  .hover-glow:hover {
+    box-shadow: var(--shadow-premium-lg);
   }
 
   /* Premium background pattern */
