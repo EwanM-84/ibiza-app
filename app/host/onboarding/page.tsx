@@ -525,7 +525,7 @@ export default function HostOnboarding() {
                     <div className="flex items-center justify-between p-4 bg-gray-50 rounded-xl">
                       <span className="text-gray-600 font-medium">Photos:</span>
                       <span className="font-bold text-gray-900">
-                        {propertyPhotos.filter(p => p).length} {getText("hostOnboarding.photosUploaded", language)}
+                        {sessionPhotos.length} {getText("hostOnboarding.photosUploaded", language)}
                       </span>
                     </div>
                     <div className="flex items-center justify-between p-4 bg-gray-50 rounded-xl">
@@ -536,13 +536,19 @@ export default function HostOnboarding() {
                       </span>
                     </div>
                   </div>
-                  <div className="grid grid-cols-5 gap-3">
-                    {propertyPhotos.filter(p => p).map((photo, index) => (
-                      <div key={index} className="relative rounded-xl overflow-hidden shadow-md hover:shadow-xl transition-shadow">
-                        <img src={URL.createObjectURL(photo.file)} alt={`Property ${index + 1}`} className="w-full h-24 object-cover" />
-                      </div>
-                    ))}
-                  </div>
+                  {sessionPhotos.length > 0 && (
+                    <div className="grid grid-cols-2 gap-4">
+                      {sessionPhotos.map((photo, index) => (
+                        <div key={photo.id} className="relative rounded-xl overflow-hidden shadow-md hover:shadow-xl transition-shadow">
+                          <img src={photo.photo_url} alt={`Property ${index + 1}`} className="w-full h-32 object-cover" />
+                          <div className="absolute bottom-0 left-0 right-0 bg-black bg-opacity-50 text-white text-xs p-2">
+                            <MapPin className="w-3 h-3 inline mr-1" />
+                            GPS Verified
+                          </div>
+                        </div>
+                      ))}
+                    </div>
+                  )}
                 </div>
               </div>
             </div>
