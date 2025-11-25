@@ -260,65 +260,183 @@ function ProfileSection({ profile, user, supabase, onUpdate }: any) {
     }
   };
 
+  // Calculate verification progress
+  const hasIdVerified = profile?.id_verified;
+  const hasFaceVerified = profile?.face_verified;
+  const hasHostType = !!profile?.host_type;
+  const isApproved = profile?.verification_status === 'approved';
+
   return (
-    <div className="bg-white rounded-3xl shadow-xl p-8">
-      <h2 className="text-2xl font-bold text-gray-900 mb-6">Profile Information</h2>
-
-      <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-        <InfoField label="First Name" value={profile?.first_name} />
-        <InfoField label="Last Name" value={profile?.last_name} />
-        <InfoField label="Email" value={user?.email} />
-        <InfoField label="Phone" value={profile?.phone} />
-        <InfoField label="Country" value={profile?.country} />
-        <InfoField label="City" value={profile?.city} />
-        <InfoField label="Date of Birth" value={profile?.date_of_birth} />
-        <InfoField label="Verification Status" value={profile?.verification_status} />
-      </div>
-
-      <div className="mt-8 pt-8 border-t border-gray-200">
-        <h3 className="text-lg font-bold text-gray-900 mb-4">Host Type</h3>
-        <p className="text-gray-600 text-sm mb-4">
-          Select what type of experience you want to offer
-        </p>
-        <div className="grid grid-cols-1 md:grid-cols-3 gap-4 mb-6">
-          <HostTypeCard
-            icon={<Home className="w-8 h-8" />}
-            title="Accommodation"
-            description="Offer a place to stay"
-            type="accommodation"
-            currentType={hostType}
-            onClick={() => setHostType('accommodation')}
-          />
-          <HostTypeCard
-            icon={<Compass className="w-8 h-8" />}
-            title="Excursion"
-            description="Offer tours & activities"
-            type="excursion"
-            currentType={hostType}
-            onClick={() => setHostType('excursion')}
-          />
-          <HostTypeCard
-            icon={<Heart className="w-8 h-8" />}
-            title="Volunteer Farm"
-            description="Seek volunteer help"
-            type="volunteer"
-            currentType={hostType}
-            onClick={() => setHostType('volunteer')}
-          />
+    <div className="space-y-8">
+      {/* Verification Status Card */}
+      <div className={`rounded-3xl shadow-xl p-8 border-2 ${
+        isApproved
+          ? 'bg-gradient-to-br from-green-50 to-emerald-50 border-green-200'
+          : 'bg-gradient-to-br from-amber-50 to-yellow-50 border-amber-200'
+      }`}>
+        <div className="flex items-start justify-between mb-6">
+          <div>
+            <h2 className="text-2xl font-bold text-gray-900 mb-2">Verification Status</h2>
+            <p className="text-gray-600">Complete all steps to get your profile approved</p>
+          </div>
+          <div className={`px-6 py-3 rounded-full text-lg font-bold ${
+            isApproved
+              ? 'bg-green-500 text-white'
+              : 'bg-amber-500 text-white'
+          }`}>
+            {isApproved ? '✓ Approved' : '⏳ Pending'}
+          </div>
         </div>
 
-        {hostType && hostType !== profile?.host_type && (
-          <div className="flex justify-end">
-            <button
-              onClick={handleSaveHostType}
-              disabled={saving}
-              className="px-8 py-3 bg-sptc-red-600 text-white font-bold rounded-xl hover:bg-sptc-red-700 transition-all disabled:opacity-50 disabled:cursor-not-allowed"
-            >
-              {saving ? 'Saving...' : 'Save Host Type'}
-            </button>
+        {/* Progress Steps */}
+        <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
+          <div className={`p-5 rounded-2xl border-2 ${hasIdVerified ? 'bg-green-100 border-green-300' : 'bg-white border-gray-200'}`}>
+            <div className="flex items-center gap-3 mb-2">
+              <div className={`w-10 h-10 rounded-full flex items-center justify-center ${hasIdVerified ? 'bg-green-500 text-white' : 'bg-gray-200 text-gray-500'}`}>
+                {hasIdVerified ? '✓' : '1'}
+              </div>
+              <h4 className="font-bold text-gray-900">ID Verified</h4>
+            </div>
+            <p className="text-sm text-gray-600 ml-13">
+              {hasIdVerified ? 'Completed via MetaMap' : 'Verify your identity'}
+            </p>
           </div>
-        )}
+
+          <div className={`p-5 rounded-2xl border-2 ${hasFaceVerified ? 'bg-green-100 border-green-300' : 'bg-white border-gray-200'}`}>
+            <div className="flex items-center gap-3 mb-2">
+              <div className={`w-10 h-10 rounded-full flex items-center justify-center ${hasFaceVerified ? 'bg-green-500 text-white' : 'bg-gray-200 text-gray-500'}`}>
+                {hasFaceVerified ? '✓' : '2'}
+              </div>
+              <h4 className="font-bold text-gray-900">Face Verified</h4>
+            </div>
+            <p className="text-sm text-gray-600 ml-13">
+              {hasFaceVerified ? 'Selfie verification passed' : 'Complete face scan'}
+            </p>
+          </div>
+
+          <div className={`p-5 rounded-2xl border-2 ${hasHostType ? 'bg-green-100 border-green-300' : 'bg-white border-gray-200'}`}>
+            <div className="flex items-center gap-3 mb-2">
+              <div className={`w-10 h-10 rounded-full flex items-center justify-center ${hasHostType ? 'bg-green-500 text-white' : 'bg-gray-200 text-gray-500'}`}>
+                {hasHostType ? '✓' : '3'}
+              </div>
+              <h4 className="font-bold text-gray-900">Host Type</h4>
+            </div>
+            <p className="text-sm text-gray-600 ml-13">
+              {hasHostType ? `Selected: ${profile.host_type}` : 'Choose your host type'}
+            </p>
+          </div>
+        </div>
       </div>
+
+      {/* Profile Information Card */}
+      <div className="bg-white rounded-3xl shadow-xl overflow-hidden">
+        <div className="bg-gradient-to-r from-gray-800 to-gray-900 px-8 py-6">
+          <h2 className="text-2xl font-bold text-white">Profile Information</h2>
+          <p className="text-gray-300">Your personal details</p>
+        </div>
+
+        <div className="p-8">
+          <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+            <PremiumInfoField label="First Name" value={profile?.first_name} icon="👤" />
+            <PremiumInfoField label="Last Name" value={profile?.last_name} icon="👤" />
+            <PremiumInfoField label="Email" value={user?.email} icon="✉️" />
+            <PremiumInfoField label="Phone" value={profile?.phone} icon="📱" />
+            <PremiumInfoField label="Country" value={profile?.country} icon="🌍" />
+            <PremiumInfoField label="City" value={profile?.city} icon="🏙️" />
+            <PremiumInfoField label="Date of Birth" value={profile?.date_of_birth} icon="🎂" />
+            <PremiumInfoField label="Member Since" value={profile?.created_at ? new Date(profile.created_at).toLocaleDateString() : 'N/A'} icon="📅" />
+          </div>
+        </div>
+      </div>
+
+      {/* Host Type Selection Card */}
+      <div className="bg-white rounded-3xl shadow-xl overflow-hidden">
+        <div className="bg-gradient-to-r from-sptc-red-600 to-sptc-red-700 px-8 py-6">
+          <h2 className="text-2xl font-bold text-white">Choose Your Host Type</h2>
+          <p className="text-red-100">Select what type of experience you want to offer</p>
+        </div>
+
+        <div className="p-8">
+          <div className="grid grid-cols-1 md:grid-cols-3 gap-6 mb-6">
+            <PremiumHostTypeCard
+              icon={<Home className="w-10 h-10" />}
+              title="Accommodation"
+              description="Offer a cozy place for travelers to stay and experience local life"
+              type="accommodation"
+              currentType={hostType}
+              onClick={() => setHostType('accommodation')}
+            />
+            <PremiumHostTypeCard
+              icon={<Compass className="w-10 h-10" />}
+              title="Excursion"
+              description="Share your local knowledge through guided tours & activities"
+              type="excursion"
+              currentType={hostType}
+              onClick={() => setHostType('excursion')}
+            />
+            <PremiumHostTypeCard
+              icon={<Heart className="w-10 h-10" />}
+              title="Volunteer Farm"
+              description="Connect with volunteers who want to help on your farm"
+              type="volunteer"
+              currentType={hostType}
+              onClick={() => setHostType('volunteer')}
+            />
+          </div>
+
+          {hostType && hostType !== profile?.host_type && (
+            <div className="flex justify-end">
+              <button
+                onClick={handleSaveHostType}
+                disabled={saving}
+                className="px-10 py-4 bg-gradient-to-r from-sptc-red-600 to-sptc-red-700 text-white font-bold text-lg rounded-2xl hover:from-sptc-red-700 hover:to-sptc-red-800 transition-all disabled:opacity-50 disabled:cursor-not-allowed shadow-xl hover:shadow-2xl transform hover:scale-[1.02]"
+              >
+                {saving ? 'Saving...' : 'Save Host Type'}
+              </button>
+            </div>
+          )}
+        </div>
+      </div>
+    </div>
+  );
+}
+
+function PremiumInfoField({ label, value, icon }: { label: string; value: any; icon: string }) {
+  return (
+    <div className="group">
+      <label className="flex items-center gap-2 text-sm font-semibold text-gray-500 mb-2">
+        <span>{icon}</span>
+        {label}
+      </label>
+      <div className="px-5 py-4 bg-gradient-to-r from-gray-50 to-gray-100 rounded-xl text-gray-900 font-medium border border-gray-200 group-hover:border-sptc-red-200 transition-all">
+        {value || <span className="text-gray-400 italic">Not set</span>}
+      </div>
+    </div>
+  );
+}
+
+function PremiumHostTypeCard({ icon, title, description, type, currentType, onClick }: any) {
+  const isSelected = currentType === type;
+
+  return (
+    <div
+      onClick={onClick}
+      className={`relative p-8 rounded-3xl border-3 cursor-pointer transition-all transform hover:scale-[1.02] ${
+        isSelected
+          ? 'border-sptc-red-500 bg-gradient-to-br from-sptc-red-50 to-orange-50 shadow-xl'
+          : 'border-gray-200 hover:border-sptc-red-200 bg-white hover:shadow-lg'
+      }`}
+    >
+      {isSelected && (
+        <div className="absolute -top-3 -right-3 w-8 h-8 bg-sptc-red-500 rounded-full flex items-center justify-center text-white font-bold shadow-lg">
+          ✓
+        </div>
+      )}
+      <div className={`mb-4 ${isSelected ? 'text-sptc-red-600' : 'text-gray-600'}`}>
+        {icon}
+      </div>
+      <h4 className="font-bold text-xl text-gray-900 mb-2">{title}</h4>
+      <p className="text-gray-600">{description}</p>
     </div>
   );
 }

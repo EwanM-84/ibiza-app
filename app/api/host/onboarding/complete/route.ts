@@ -53,6 +53,7 @@ export async function POST(request: NextRequest) {
     }
 
     // Update host_profiles with MetaMap verification data
+    // AUTO-APPROVE when MetaMap verification is complete (no manual review needed)
     const updateData: any = {
       metamap_verification_id: metamapData.verificationId || metamapData.flowId || 'unknown',
       metamap_identity_status: metamapData.identityStatus || 'verified',
@@ -62,7 +63,8 @@ export async function POST(request: NextRequest) {
       id_verified: true,
       face_verified: true,
       liveness_check_passed: true,
-      verification_status: 'pending', // Still pending until admin reviews
+      verification_status: 'approved', // AUTO-APPROVE when MetaMap verification completes
+      approved_at: new Date().toISOString(),
       updated_at: new Date().toISOString(),
     };
 
