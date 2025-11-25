@@ -166,7 +166,11 @@ export default function HostOnboarding() {
       const response = await fetch(`/api/photo-session/${photoSessionId}`);
       const data = await response.json();
 
-      if (data.success) {
+      console.log('📷 Fetching photos for session:', photoSessionId);
+      console.log('📷 Response:', data);
+
+      if (data.success && data.photos && data.photos.length > 0) {
+        console.log('📷 Found', data.photos.length, 'photos');
         setSessionPhotos(data.photos);
 
         // Update propertyPhotos state for compatibility
@@ -181,6 +185,8 @@ export default function HostOnboarding() {
         }));
 
         setPropertyPhotos(updatedPhotos);
+      } else if (!data.success) {
+        console.error('📷 Session fetch failed:', data.error);
       }
     } catch (error) {
       console.error('Error fetching session photos:', error);
@@ -431,8 +437,8 @@ export default function HostOnboarding() {
               )}
 
               {/* Photo Grid - Shows photos as they're uploaded */}
-              <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-                {[0, 1, 2, 3, 4].map((index) => {
+              <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+                {[0, 1].map((index) => {
                   const photo = sessionPhotos[index];
 
                   return (
