@@ -328,28 +328,7 @@ function ProfileSection({ profile, user, supabase, onUpdate }: any) {
         </div>
       </div>
 
-      {/* Profile Information Card */}
-      <div className="bg-white rounded-3xl shadow-xl overflow-hidden">
-        <div className="bg-gradient-to-r from-gray-800 to-gray-900 px-8 py-6">
-          <h2 className="text-2xl font-bold text-white">Profile Information</h2>
-          <p className="text-gray-300">Your personal details</p>
-        </div>
-
-        <div className="p-8">
-          <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-            <PremiumInfoField label="First Name" value={profile?.first_name} icon="👤" />
-            <PremiumInfoField label="Last Name" value={profile?.last_name} icon="👤" />
-            <PremiumInfoField label="Email" value={user?.email} icon="✉️" />
-            <PremiumInfoField label="Phone" value={profile?.phone} icon="📱" />
-            <PremiumInfoField label="Country" value={profile?.country} icon="🌍" />
-            <PremiumInfoField label="City" value={profile?.city} icon="🏙️" />
-            <PremiumInfoField label="Date of Birth" value={profile?.date_of_birth} icon="🎂" />
-            <PremiumInfoField label="Member Since" value={profile?.created_at ? new Date(profile.created_at).toLocaleDateString() : 'N/A'} icon="📅" />
-          </div>
-        </div>
-      </div>
-
-      {/* Host Type Selection Card */}
+      {/* Host Type Selection Card - First, as it's part of setup */}
       <div className="bg-white rounded-3xl shadow-xl overflow-hidden">
         <div className="bg-gradient-to-r from-sptc-red-600 to-sptc-red-700 px-8 py-6">
           <h2 className="text-2xl font-bold text-white">Choose Your Host Type</h2>
@@ -395,6 +374,27 @@ function ProfileSection({ profile, user, supabase, onUpdate }: any) {
               </button>
             </div>
           )}
+        </div>
+      </div>
+
+      {/* Profile Information Card */}
+      <div className="bg-white rounded-3xl shadow-xl overflow-hidden">
+        <div className="bg-gradient-to-r from-gray-800 to-gray-900 px-8 py-6">
+          <h2 className="text-2xl font-bold text-white">Profile Information</h2>
+          <p className="text-gray-300">Your personal details</p>
+        </div>
+
+        <div className="p-8">
+          <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+            <PremiumInfoField label="First Name" value={profile?.first_name} icon="👤" />
+            <PremiumInfoField label="Last Name" value={profile?.last_name} icon="👤" />
+            <PremiumInfoField label="Email" value={user?.email} icon="✉️" />
+            <PremiumInfoField label="Phone" value={profile?.phone} icon="📱" />
+            <PremiumInfoField label="Country" value={profile?.country} icon="🌍" />
+            <PremiumInfoField label="City" value={profile?.city} icon="🏙️" />
+            <PremiumInfoField label="Date of Birth" value={profile?.date_of_birth} icon="🎂" />
+            <PremiumInfoField label="Member Since" value={profile?.created_at ? new Date(profile.created_at).toLocaleDateString() : 'N/A'} icon="📅" />
+          </div>
         </div>
       </div>
     </div>
