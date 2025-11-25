@@ -132,7 +132,8 @@ export default function MobilePhotoUpload() {
 
   const useFakeLocationForDev = () => {
     // Use fake coordinates for development (Bogotá, Colombia)
-    const fakePosition: GeolocationPosition = {
+    // Cast to any to avoid TypeScript strict interface checks for mock data
+    const fakePosition = {
       coords: {
         latitude: 4.6097,
         longitude: -74.0817,
@@ -141,20 +142,9 @@ export default function MobilePhotoUpload() {
         altitudeAccuracy: null,
         heading: null,
         speed: null,
-        toJSON() {
-          return {
-            latitude: this.latitude,
-            longitude: this.longitude,
-            accuracy: this.accuracy,
-            altitude: this.altitude,
-            altitudeAccuracy: this.altitudeAccuracy,
-            heading: this.heading,
-            speed: this.speed,
-          };
-        },
       },
       timestamp: Date.now(),
-    };
+    } as GeolocationPosition;
     setLocation(fakePosition);
     setLocationError(null);
     setUseFakeLocation(true);
