@@ -227,6 +227,30 @@ export default function MobilePhotoUpload() {
     }
   };
 
+  // Show only completion screen when done
+  if (photos >= 2) {
+    return (
+      <div className="min-h-screen bg-gradient-to-br from-green-50 to-emerald-100 p-4 flex items-center justify-center">
+        <div className="max-w-md mx-auto text-center">
+          <div className="bg-white rounded-3xl shadow-2xl p-10">
+            <div className="w-24 h-24 bg-green-500 rounded-full flex items-center justify-center mx-auto mb-6 animate-bounce">
+              <CheckCircle className="w-14 h-14 text-white" />
+            </div>
+            <h1 className="text-3xl font-bold text-gray-900 mb-4">All Photos Uploaded!</h1>
+            <p className="text-lg text-gray-600 mb-6">
+              Your {photos} photos have been successfully uploaded with GPS verification.
+            </p>
+            <div className="bg-green-50 border-2 border-green-200 rounded-2xl p-6">
+              <p className="text-green-800 font-semibold">
+                ✓ You can now close this page and return to the computer to continue.
+              </p>
+            </div>
+          </div>
+        </div>
+      </div>
+    );
+  }
+
   return (
     <div className="min-h-screen bg-gradient-to-br from-sptc-red-50 to-orange-50 p-4">
       <div className="max-w-2xl mx-auto">
@@ -430,17 +454,6 @@ export default function MobilePhotoUpload() {
               <CheckCircle className="w-6 h-6 text-green-600" />
               <p className="text-green-900 font-bold">Photo uploaded successfully!</p>
             </div>
-          </div>
-        )}
-
-        {/* Completion */}
-        {photos >= 2 && (
-          <div className="bg-green-50 border-2 border-green-200 rounded-2xl p-8 text-center">
-            <CheckCircle className="w-16 h-16 text-green-600 mx-auto mb-4" />
-            <h3 className="text-2xl font-bold text-green-900 mb-2">All Photos Uploaded!</h3>
-            <p className="text-green-700">
-              You can close this page and return to the computer.
-            </p>
           </div>
         )}
 

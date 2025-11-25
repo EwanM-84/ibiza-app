@@ -430,7 +430,28 @@ export default function HostOnboarding() {
                       <div className="mt-6 flex items-center gap-2 bg-white border border-gray-200 px-4 py-3 rounded-xl">
                         <span className="text-sm text-gray-600 font-semibold">Photos uploaded:</span>
                         <span className="text-2xl font-bold text-sptc-red-600">{sessionPhotos.length} / 2</span>
+                        {sessionPhotos.length < 2 && (
+                          <div className="ml-2 flex items-center gap-2 text-blue-600">
+                            <div className="w-4 h-4 border-2 border-blue-600 border-t-transparent rounded-full animate-spin"></div>
+                            <span className="text-sm">Syncing...</span>
+                          </div>
+                        )}
                       </div>
+                    </div>
+                  </div>
+                </div>
+              )}
+
+              {/* Success Banner when all photos uploaded */}
+              {sessionPhotos.length >= 2 && (
+                <div className="bg-green-50 border-2 border-green-300 rounded-2xl p-6 mb-6 animate-in fade-in duration-500">
+                  <div className="flex items-center gap-4">
+                    <div className="w-12 h-12 bg-green-500 rounded-full flex items-center justify-center">
+                      <CheckCircle className="w-7 h-7 text-white" />
+                    </div>
+                    <div>
+                      <h3 className="text-xl font-bold text-green-900">All Photos Received!</h3>
+                      <p className="text-green-700">Your property photos have been uploaded with GPS verification. You can continue to the next step.</p>
                     </div>
                   </div>
                 </div>
@@ -442,7 +463,7 @@ export default function HostOnboarding() {
                   const photo = sessionPhotos[index];
 
                   return (
-                    <div key={index} className="border-3 border-dashed border-gray-300 rounded-2xl p-6 bg-white">
+                    <div key={index} className={`border-3 border-dashed rounded-2xl p-6 bg-white transition-all ${photo ? 'border-green-300' : 'border-gray-300'}`}>
                       {photo ? (
                         <div className="space-y-4 animate-in fade-in duration-500">
                           <div className="relative rounded-xl overflow-hidden shadow-lg">
@@ -457,13 +478,13 @@ export default function HostOnboarding() {
                           </div>
                         </div>
                       ) : (
-                        <div className="flex flex-col items-center gap-4 py-12 opacity-40">
+                        <div className="flex flex-col items-center gap-4 py-12">
                           <div className="w-16 h-16 bg-gray-100 rounded-full flex items-center justify-center">
-                            <Camera className="w-9 h-9 text-gray-400" />
+                            <div className="w-10 h-10 border-3 border-gray-300 border-t-sptc-red-500 rounded-full animate-spin"></div>
                           </div>
                           <div className="text-center">
                             <p className="text-base font-bold text-gray-700 mb-1">Photo {index + 1}</p>
-                            <p className="text-xs text-gray-500">Waiting for upload...</p>
+                            <p className="text-xs text-gray-500">Waiting for upload from phone...</p>
                           </div>
                         </div>
                       )}
