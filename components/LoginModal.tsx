@@ -1,8 +1,9 @@
 "use client";
 
 import { useState } from "react";
-import { X, Mail, Eye, EyeOff } from "lucide-react";
+import { X, Mail, Eye, EyeOff, Loader2 } from "lucide-react";
 import { useRouter } from "next/navigation";
+import { createClientComponentClient } from '@supabase/auth-helpers-nextjs';
 
 interface LoginModalProps {
   isOpen: boolean;
@@ -12,6 +13,7 @@ interface LoginModalProps {
 
 export default function LoginModal({ isOpen, onClose, initialMode = "client" }: LoginModalProps) {
   const router = useRouter();
+  const supabase = createClientComponentClient();
   const [mode, setMode] = useState<"client" | "host" | "admin">(initialMode);
   const [isSignup, setIsSignup] = useState(false);
   const [email, setEmail] = useState("");
@@ -19,6 +21,7 @@ export default function LoginModal({ isOpen, onClose, initialMode = "client" }: 
   const [name, setName] = useState("");
   const [error, setError] = useState("");
   const [showPassword, setShowPassword] = useState(false);
+  const [loading, setLoading] = useState(false);
 
   if (!isOpen) return null;
 
@@ -28,45 +31,52 @@ export default function LoginModal({ isOpen, onClose, initialMode = "client" }: 
     }
   };
 
-  const handleSubmit = (e: React.FormEvent) => {
+  const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     setError("");
+    setLoading(true);
 
-    // Check for admin login
-    if (email === "ewanmair8@gmail.com" && password === "login1234") {
-      // Admin login successful
-      console.log("Admin login successful");
-      onClose();
-      router.push("/admin");
-      return;
-    }
+    try {
+      // Use Supabase authentication
+      const { data, error: authError } = await supabase.auth.signInWithPassword({
+        email,
+        password,
+      });
 
-    // Check for host login
-    if (email === "ewanmair8@gmail.com" && password === "login12344") {
-      // Host login successful
-      console.log("Host login successful");
-      onClose();
-      // TODO: Redirect to host dashboard when created
-      router.push("/");
-      return;
-    }
+      if (authError) {
+        console.error("Login error:", authError);
+        setError(authError.message || "Invalid email or password");
+        setLoading(false);
+        return;
+      }
 
-    // Check for traveler login
-    if (email === "ewanmair8@gmail.com" && password === "login123455") {
-      // Traveler login successful
-      console.log("Traveler login successful");
-      onClose();
-      // TODO: Redirect to traveler dashboard when created
-      router.push("/");
-      return;
-    }
+      if (data.user) {
+        console.log("Login successful:", data.user.email);
 
-    // Regular user authentication would go here
-    console.log("Login/Signup:", { mode, isSignup, email, password, name });
+        // Check if user has a host profile
+        const { data: hostProfile } = await supabase
+          .from('host_profiles')
+          .select('id')
+          .eq('user_id', data.user.id)
+          .single();
 
-    // Show error for invalid credentials
-    if (!isSignup && email && password) {
-      setError("Invalid email or password");
+        onClose();
+
+        if (hostProfile) {
+          // User is a host, redirect to host dashboard
+          router.push('/host/dashboard');
+        } else {
+          // Regular user, redirect to home
+          router.push('/');
+        }
+
+        router.refresh();
+      }
+    } catch (err: any) {
+      console.error("Login error:", err);
+      setError(err.message || "An error occurred during login");
+    } finally {
+      setLoading(false);
     }
   };
 
@@ -223,9 +233,17 @@ export default function LoginModal({ isOpen, onClose, initialMode = "client" }: 
             {/* Submit button */}
             <button
               type="submit"
-              className="w-full bg-sptc-red-500 hover:bg-sptc-red-600 text-white font-bold py-4 transition-all duration-300 text-sm uppercase tracking-wider mt-2"
+              disabled={loading}
+              className="w-full bg-sptc-red-500 hover:bg-sptc-red-600 text-white font-bold py-4 transition-all duration-300 text-sm uppercase tracking-wider mt-2 disabled:opacity-50 disabled:cursor-not-allowed flex items-center justify-center gap-2"
             >
-              {isSignup ? "Create Account" : "Sign In"}
+              {loading ? (
+                <>
+                  <Loader2 className="w-5 h-5 animate-spin" />
+                  Signing in...
+                </>
+              ) : (
+                isSignup ? "Create Account" : "Sign In"
+              )}
             </button>
           </form>
 
