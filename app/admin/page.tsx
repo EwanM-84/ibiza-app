@@ -1,6 +1,6 @@
 "use client";
 
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import {
   Home,
   Calendar,
@@ -14,11 +14,17 @@ import {
   Trash2,
   Eye,
   Download,
+  FileEdit,
+  Plus,
+  Save,
+  X,
+  GripVertical,
 } from "lucide-react";
 import { getText } from "@/lib/text";
 import { useLanguage } from "@/contexts/LanguageContext";
+import { createClientComponentClient } from "@supabase/auth-helpers-nextjs";
 
-type Tab = "listings" | "bookings" | "users" | "funds" | "images";
+type Tab = "listings" | "bookings" | "users" | "funds" | "images" | "content";
 
 export default function AdminDashboard() {
   const { language } = useLanguage();
@@ -111,6 +117,18 @@ export default function AdminDashboard() {
               <ImageIcon className="w-4 h-4" />
               <span>Images</span>
             </button>
+
+            <button
+              onClick={() => setActiveTab("content")}
+              className={`flex items-center space-x-2 px-6 py-3.5 rounded-xl font-semibold transition-all whitespace-nowrap ${
+                activeTab === "content"
+                  ? "bg-gradient-to-r from-sptc-red to-red-600 text-white shadow-lg shadow-red-200"
+                  : "text-gray-600 hover:bg-gray-50 hover:text-gray-900"
+              }`}
+            >
+              <FileEdit className="w-4 h-4" />
+              <span>Homepage Content</span>
+            </button>
           </div>
         </div>
 
@@ -119,6 +137,7 @@ export default function AdminDashboard() {
         {activeTab === "users" && <UsersTab />}
         {activeTab === "funds" && <FundsTab />}
         {activeTab === "images" && <ImagesTab />}
+        {activeTab === "content" && <HomepageContentTab />}
       </div>
     </div>
   );
@@ -888,5 +907,486 @@ function ImageCard({ image, onDelete }: { image: any; onDelete: (id: number) => 
         </div>
       )}
     </React.Fragment>
+  );
+}
+
+// Homepage Content Management Tab
+function HomepageContentTab() {
+  const { language } = useLanguage();
+  const supabase = createClientComponentClient();
+  const [sections, setSections] = useState<any[]>([]);
+  const [loading, setLoading] = useState(true);
+  const [editingSection, setEditingSection] = useState<any>(null);
+  const [editingItem, setEditingItem] = useState<any>(null);
+  const [saving, setSaving] = useState(false);
+
+  // Default sections if database is empty
+  const defaultSections = [
+    {
+      id: 'community_projects',
+      section_key: 'community_projects',
+      title_en: 'Current community projects',
+      title_es: 'Proyectos comunitarios actuales',
+      description_en: 'Help us reach our goals and make a lasting difference in rural Colombia',
+      description_es: 'Ayúdanos a alcanzar nuestras metas y hacer una diferencia duradera en la Colombia rural',
+      items: [
+        {
+          id: '1',
+          image_url: 'https://images.unsplash.com/photo-1509316975850-ff9c5deb0cd9?w=800&q=80',
+          title_en: 'School Renovation',
+          title_es: 'Renovación de Escuela',
+          description_en: 'Improving educational facilities in rural areas',
+          description_es: 'Mejorando las instalaciones educativas en áreas rurales',
+          goal: 5000,
+          raised: 3200
+        },
+        {
+          id: '2',
+          image_url: 'https://images.unsplash.com/photo-1594708767771-a7502f38b0ff?w=800&q=80',
+          title_en: 'Clean Water Initiative',
+          title_es: 'Iniciativa de Agua Limpia',
+          description_en: 'Bringing clean water to remote communities',
+          description_es: 'Llevando agua limpia a comunidades remotas',
+          goal: 8000,
+          raised: 6500
+        },
+        {
+          id: '3',
+          image_url: 'https://images.unsplash.com/photo-1488521787991-ed7bbaae773c?w=800&q=80',
+          title_en: "Women Artisan Collective",
+          title_es: 'Colectivo de Artesanas',
+          description_en: 'Supporting local crafts and traditions',
+          description_es: 'Apoyando artesanías y tradiciones locales',
+          goal: 3000,
+          raised: 2800
+        }
+      ],
+      is_active: true
+    },
+    {
+      id: 'destinations',
+      section_key: 'destinations',
+      title_en: 'Explore Colombian destinations',
+      title_es: 'Explora destinos colombianos',
+      description_en: 'Authentic rural experiences across Colombia',
+      description_es: 'Experiencias rurales auténticas en toda Colombia',
+      items: [
+        {
+          id: '1',
+          image_url: 'https://images.unsplash.com/photo-1596422846543-75c6fc197f07?w=800&q=80',
+          title_en: 'Coffee Region',
+          title_es: 'Región Cafetera',
+          description_en: 'Experience authentic coffee culture',
+          description_es: 'Experimenta la auténtica cultura cafetera',
+          link: '/search?region=Coffee%20Region'
+        },
+        {
+          id: '2',
+          image_url: 'https://images.unsplash.com/photo-1518509562904-e7ef99cdcc86?w=800&q=80',
+          title_en: 'Andean Mountains',
+          title_es: 'Montañas Andinas',
+          description_en: 'Breathtaking mountain landscapes',
+          description_es: 'Paisajes montañosos impresionantes',
+          link: '/search?region=Andean%20Mountains'
+        },
+        {
+          id: '3',
+          image_url: 'https://images.unsplash.com/photo-1506905925346-21bda4d32df4?w=800&q=80',
+          title_en: 'Caribbean Coast',
+          title_es: 'Costa Caribe',
+          description_en: 'Tropical paradise and rich culture',
+          description_es: 'Paraíso tropical y rica cultura',
+          link: '/search?region=Caribbean%20Coast'
+        },
+        {
+          id: '4',
+          image_url: 'https://images.unsplash.com/photo-1559128010-7c1ad6e1b6a5?w=800&q=80',
+          title_en: 'Amazon Rainforest',
+          title_es: 'Selva Amazónica',
+          description_en: 'Explore the worlds largest rainforest',
+          description_es: 'Explora la selva más grande del mundo',
+          link: '/search?region=Amazon'
+        }
+      ],
+      is_active: true
+    }
+  ];
+
+  useEffect(() => {
+    fetchSections();
+  }, []);
+
+  const fetchSections = async () => {
+    setLoading(true);
+    try {
+      const { data, error } = await supabase
+        .from('homepage_content')
+        .select('*')
+        .order('display_order');
+
+      if (error) {
+        console.log('Using default sections (table may not exist yet)');
+        setSections(defaultSections);
+      } else if (data && data.length > 0) {
+        setSections(data);
+      } else {
+        setSections(defaultSections);
+      }
+    } catch (e) {
+      console.log('Using default sections');
+      setSections(defaultSections);
+    }
+    setLoading(false);
+  };
+
+  const saveSection = async (section: any) => {
+    setSaving(true);
+    try {
+      const { error } = await supabase
+        .from('homepage_content')
+        .upsert({
+          ...section,
+          updated_at: new Date().toISOString()
+        }, { onConflict: 'section_key' });
+
+      if (error) {
+        console.error('Error saving:', error);
+        alert('Error saving. Please run the SQL migration first.');
+      } else {
+        alert('Saved successfully!');
+        fetchSections();
+      }
+    } catch (e) {
+      console.error('Save error:', e);
+      alert('Error saving. Database table may not exist yet.');
+    }
+    setSaving(false);
+    setEditingSection(null);
+  };
+
+  const updateItem = (sectionKey: string, itemId: string, field: string, value: any) => {
+    setSections(prev => prev.map(section => {
+      if (section.section_key === sectionKey) {
+        return {
+          ...section,
+          items: section.items.map((item: any) =>
+            item.id === itemId ? { ...item, [field]: value } : item
+          )
+        };
+      }
+      return section;
+    }));
+  };
+
+  const addItem = (sectionKey: string) => {
+    const newItem = {
+      id: Date.now().toString(),
+      image_url: 'https://images.unsplash.com/photo-1500835556837-99ac94a94552?w=800&q=80',
+      title_en: 'New Item',
+      title_es: 'Nuevo Elemento',
+      description_en: 'Description here',
+      description_es: 'Descripción aquí',
+      ...(sectionKey === 'community_projects' ? { goal: 1000, raised: 0 } : { link: '/search' })
+    };
+
+    setSections(prev => prev.map(section => {
+      if (section.section_key === sectionKey) {
+        return {
+          ...section,
+          items: [...section.items, newItem]
+        };
+      }
+      return section;
+    }));
+  };
+
+  const removeItem = (sectionKey: string, itemId: string) => {
+    if (!confirm('Are you sure you want to remove this item?')) return;
+
+    setSections(prev => prev.map(section => {
+      if (section.section_key === sectionKey) {
+        return {
+          ...section,
+          items: section.items.filter((item: any) => item.id !== itemId)
+        };
+      }
+      return section;
+    }));
+  };
+
+  if (loading) {
+    return (
+      <div className="flex items-center justify-center py-20">
+        <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-sptc-red"></div>
+      </div>
+    );
+  }
+
+  return (
+    <div className="space-y-6">
+      {/* Header Info */}
+      <div className="bg-gradient-to-br from-blue-50 to-indigo-50 rounded-2xl shadow-lg p-6 border border-blue-200">
+        <div className="flex items-start space-x-4">
+          <div className="w-12 h-12 bg-gradient-to-br from-blue-500 to-blue-600 rounded-xl flex items-center justify-center shadow-md flex-shrink-0">
+            <FileEdit className="w-6 h-6 text-white" />
+          </div>
+          <div>
+            <h3 className="text-xl font-bold text-gray-900 mb-2">Homepage Content Manager</h3>
+            <p className="text-gray-700">
+              Edit the images and text for homepage sections like Community Projects and Destinations.
+              Changes will appear on the homepage after saving.
+            </p>
+          </div>
+        </div>
+      </div>
+
+      {/* Sections */}
+      {sections.map((section) => (
+        <div key={section.section_key} className="bg-white rounded-2xl shadow-lg border border-gray-100 overflow-hidden">
+          {/* Section Header */}
+          <div className="bg-gradient-to-r from-gray-50 to-white p-6 border-b border-gray-100">
+            <div className="flex items-center justify-between">
+              <div className="flex-1">
+                <div className="flex items-center gap-3 mb-2">
+                  <span className="px-3 py-1 bg-sptc-red text-white rounded-full text-xs font-bold uppercase">
+                    {section.section_key.replace('_', ' ')}
+                  </span>
+                  <span className={`px-3 py-1 rounded-full text-xs font-bold ${section.is_active ? 'bg-green-100 text-green-700' : 'bg-gray-100 text-gray-500'}`}>
+                    {section.is_active ? 'Active' : 'Inactive'}
+                  </span>
+                </div>
+                {editingSection === section.section_key ? (
+                  <div className="space-y-3">
+                    <div className="grid md:grid-cols-2 gap-4">
+                      <div>
+                        <label className="block text-xs font-semibold text-gray-500 mb-1">Title (English)</label>
+                        <input
+                          type="text"
+                          value={section.title_en}
+                          onChange={(e) => setSections(prev => prev.map(s => s.section_key === section.section_key ? { ...s, title_en: e.target.value } : s))}
+                          className="w-full px-4 py-2 border border-gray-200 rounded-xl focus:ring-2 focus:ring-sptc-red focus:border-transparent"
+                        />
+                      </div>
+                      <div>
+                        <label className="block text-xs font-semibold text-gray-500 mb-1">Title (Spanish)</label>
+                        <input
+                          type="text"
+                          value={section.title_es}
+                          onChange={(e) => setSections(prev => prev.map(s => s.section_key === section.section_key ? { ...s, title_es: e.target.value } : s))}
+                          className="w-full px-4 py-2 border border-gray-200 rounded-xl focus:ring-2 focus:ring-sptc-red focus:border-transparent"
+                        />
+                      </div>
+                    </div>
+                    <div className="grid md:grid-cols-2 gap-4">
+                      <div>
+                        <label className="block text-xs font-semibold text-gray-500 mb-1">Description (English)</label>
+                        <textarea
+                          value={section.description_en}
+                          onChange={(e) => setSections(prev => prev.map(s => s.section_key === section.section_key ? { ...s, description_en: e.target.value } : s))}
+                          className="w-full px-4 py-2 border border-gray-200 rounded-xl focus:ring-2 focus:ring-sptc-red focus:border-transparent"
+                          rows={2}
+                        />
+                      </div>
+                      <div>
+                        <label className="block text-xs font-semibold text-gray-500 mb-1">Description (Spanish)</label>
+                        <textarea
+                          value={section.description_es}
+                          onChange={(e) => setSections(prev => prev.map(s => s.section_key === section.section_key ? { ...s, description_es: e.target.value } : s))}
+                          className="w-full px-4 py-2 border border-gray-200 rounded-xl focus:ring-2 focus:ring-sptc-red focus:border-transparent"
+                          rows={2}
+                        />
+                      </div>
+                    </div>
+                  </div>
+                ) : (
+                  <>
+                    <h3 className="text-2xl font-bold text-gray-900">{language === 'es' ? section.title_es : section.title_en}</h3>
+                    <p className="text-gray-600 mt-1">{language === 'es' ? section.description_es : section.description_en}</p>
+                  </>
+                )}
+              </div>
+              <div className="flex items-center gap-2 ml-4">
+                {editingSection === section.section_key ? (
+                  <>
+                    <button
+                      onClick={() => saveSection(section)}
+                      disabled={saving}
+                      className="flex items-center gap-2 px-4 py-2 bg-gradient-to-r from-green-500 to-green-600 text-white rounded-xl font-semibold hover:shadow-lg transition-all disabled:opacity-50"
+                    >
+                      <Save className="w-4 h-4" />
+                      {saving ? 'Saving...' : 'Save'}
+                    </button>
+                    <button
+                      onClick={() => { setEditingSection(null); fetchSections(); }}
+                      className="flex items-center gap-2 px-4 py-2 bg-gray-200 text-gray-700 rounded-xl font-semibold hover:bg-gray-300 transition-all"
+                    >
+                      <X className="w-4 h-4" />
+                      Cancel
+                    </button>
+                  </>
+                ) : (
+                  <button
+                    onClick={() => setEditingSection(section.section_key)}
+                    className="flex items-center gap-2 px-4 py-2 bg-gradient-to-r from-sptc-red to-red-600 text-white rounded-xl font-semibold hover:shadow-lg transition-all"
+                  >
+                    <FileEdit className="w-4 h-4" />
+                    Edit Section
+                  </button>
+                )}
+              </div>
+            </div>
+          </div>
+
+          {/* Items Grid */}
+          <div className="p-6">
+            <div className="flex items-center justify-between mb-4">
+              <h4 className="text-lg font-semibold text-gray-800">Items ({section.items?.length || 0})</h4>
+              {editingSection === section.section_key && (
+                <button
+                  onClick={() => addItem(section.section_key)}
+                  className="flex items-center gap-2 px-3 py-1.5 bg-blue-500 text-white rounded-lg text-sm font-semibold hover:bg-blue-600 transition-all"
+                >
+                  <Plus className="w-4 h-4" />
+                  Add Item
+                </button>
+              )}
+            </div>
+
+            <div className="grid sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-4">
+              {section.items?.map((item: any, index: number) => (
+                <div key={item.id} className="group relative bg-gray-50 rounded-xl overflow-hidden border border-gray-200 hover:border-sptc-red transition-all">
+                  {/* Image */}
+                  <div className="aspect-[4/3] relative overflow-hidden bg-gray-200">
+                    <img
+                      src={item.image_url}
+                      alt={item.title_en}
+                      className="absolute inset-0 w-full h-full object-cover"
+                      onError={(e) => {
+                        (e.target as HTMLImageElement).src = 'https://images.unsplash.com/photo-1500835556837-99ac94a94552?w=800&q=80';
+                      }}
+                    />
+                    {editingSection === section.section_key && (
+                      <button
+                        onClick={() => removeItem(section.section_key, item.id)}
+                        className="absolute top-2 right-2 p-2 bg-red-500 text-white rounded-lg opacity-0 group-hover:opacity-100 transition-opacity"
+                      >
+                        <Trash2 className="w-4 h-4" />
+                      </button>
+                    )}
+                  </div>
+
+                  {/* Content */}
+                  <div className="p-4">
+                    {editingSection === section.section_key ? (
+                      <div className="space-y-3">
+                        <div>
+                          <label className="block text-xs font-semibold text-gray-500 mb-1">Image URL</label>
+                          <input
+                            type="text"
+                            value={item.image_url}
+                            onChange={(e) => updateItem(section.section_key, item.id, 'image_url', e.target.value)}
+                            className="w-full px-3 py-1.5 text-sm border border-gray-200 rounded-lg focus:ring-2 focus:ring-sptc-red focus:border-transparent"
+                            placeholder="https://..."
+                          />
+                        </div>
+                        <div>
+                          <label className="block text-xs font-semibold text-gray-500 mb-1">Title (EN)</label>
+                          <input
+                            type="text"
+                            value={item.title_en}
+                            onChange={(e) => updateItem(section.section_key, item.id, 'title_en', e.target.value)}
+                            className="w-full px-3 py-1.5 text-sm border border-gray-200 rounded-lg focus:ring-2 focus:ring-sptc-red focus:border-transparent"
+                          />
+                        </div>
+                        <div>
+                          <label className="block text-xs font-semibold text-gray-500 mb-1">Title (ES)</label>
+                          <input
+                            type="text"
+                            value={item.title_es}
+                            onChange={(e) => updateItem(section.section_key, item.id, 'title_es', e.target.value)}
+                            className="w-full px-3 py-1.5 text-sm border border-gray-200 rounded-lg focus:ring-2 focus:ring-sptc-red focus:border-transparent"
+                          />
+                        </div>
+                        <div>
+                          <label className="block text-xs font-semibold text-gray-500 mb-1">Description (EN)</label>
+                          <textarea
+                            value={item.description_en}
+                            onChange={(e) => updateItem(section.section_key, item.id, 'description_en', e.target.value)}
+                            className="w-full px-3 py-1.5 text-sm border border-gray-200 rounded-lg focus:ring-2 focus:ring-sptc-red focus:border-transparent"
+                            rows={2}
+                          />
+                        </div>
+                        <div>
+                          <label className="block text-xs font-semibold text-gray-500 mb-1">Description (ES)</label>
+                          <textarea
+                            value={item.description_es}
+                            onChange={(e) => updateItem(section.section_key, item.id, 'description_es', e.target.value)}
+                            className="w-full px-3 py-1.5 text-sm border border-gray-200 rounded-lg focus:ring-2 focus:ring-sptc-red focus:border-transparent"
+                            rows={2}
+                          />
+                        </div>
+                        {section.section_key === 'community_projects' && (
+                          <div className="grid grid-cols-2 gap-2">
+                            <div>
+                              <label className="block text-xs font-semibold text-gray-500 mb-1">Goal ($)</label>
+                              <input
+                                type="number"
+                                value={item.goal || 0}
+                                onChange={(e) => updateItem(section.section_key, item.id, 'goal', parseInt(e.target.value) || 0)}
+                                className="w-full px-3 py-1.5 text-sm border border-gray-200 rounded-lg focus:ring-2 focus:ring-sptc-red focus:border-transparent"
+                              />
+                            </div>
+                            <div>
+                              <label className="block text-xs font-semibold text-gray-500 mb-1">Raised ($)</label>
+                              <input
+                                type="number"
+                                value={item.raised || 0}
+                                onChange={(e) => updateItem(section.section_key, item.id, 'raised', parseInt(e.target.value) || 0)}
+                                className="w-full px-3 py-1.5 text-sm border border-gray-200 rounded-lg focus:ring-2 focus:ring-sptc-red focus:border-transparent"
+                              />
+                            </div>
+                          </div>
+                        )}
+                        {section.section_key === 'destinations' && (
+                          <div>
+                            <label className="block text-xs font-semibold text-gray-500 mb-1">Link</label>
+                            <input
+                              type="text"
+                              value={item.link || ''}
+                              onChange={(e) => updateItem(section.section_key, item.id, 'link', e.target.value)}
+                              className="w-full px-3 py-1.5 text-sm border border-gray-200 rounded-lg focus:ring-2 focus:ring-sptc-red focus:border-transparent"
+                              placeholder="/search?region=..."
+                            />
+                          </div>
+                        )}
+                      </div>
+                    ) : (
+                      <>
+                        <h5 className="font-semibold text-gray-900 mb-1">{language === 'es' ? item.title_es : item.title_en}</h5>
+                        <p className="text-sm text-gray-600 line-clamp-2">{language === 'es' ? item.description_es : item.description_en}</p>
+                        {section.section_key === 'community_projects' && item.goal && (
+                          <div className="mt-3">
+                            <div className="flex justify-between text-xs text-gray-500 mb-1">
+                              <span>${item.raised?.toLocaleString()} raised</span>
+                              <span>${item.goal?.toLocaleString()} goal</span>
+                            </div>
+                            <div className="h-2 bg-gray-200 rounded-full overflow-hidden">
+                              <div
+                                className="h-full bg-gradient-to-r from-sptc-red to-red-500 rounded-full"
+                                style={{ width: `${Math.min(100, (item.raised / item.goal) * 100)}%` }}
+                              />
+                            </div>
+                          </div>
+                        )}
+                      </>
+                    )}
+                  </div>
+                </div>
+              ))}
+            </div>
+          </div>
+        </div>
+      ))}
+    </div>
   );
 }
