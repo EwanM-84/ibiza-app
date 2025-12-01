@@ -2,9 +2,7 @@
 -- Run this in Supabase SQL Editor
 
 UPDATE host_profiles
-SET
-  verification_status = 'approved',
-  approved_at = NOW()
+SET verification_status = 'approved'
 WHERE
   id_verified = true
   AND face_verified = true
@@ -17,6 +15,5 @@ SELECT
   last_name,
   id_verified,
   face_verified,
-  verification_status,
-  approved_at
+  verification_status
 FROM host_profiles;
