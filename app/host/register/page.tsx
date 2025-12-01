@@ -324,13 +324,13 @@ export default function HostRegister() {
                     {t("hostRegister.password")} *
                   </label>
                   <div className="relative">
-                    <Lock className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-gray-400" />
+                    <Lock className="absolute left-4 top-1/2 -translate-y-1/2 w-5 h-5 text-gray-400" />
                     <input
                       type={showPassword ? "text" : "password"}
                       name="password"
                       value={formData.password}
                       onChange={handleChange}
-                      className={`w-full pl-[4rem] pr-12 py-3 border-2 rounded-xl focus:outline-none focus:ring-2 focus:ring-sptc-red-500 transition-all ${
+                      className={`w-full pl-12 pr-12 py-3 border-2 rounded-xl focus:outline-none focus:ring-2 focus:ring-sptc-red-500 transition-all ${
                         errors.password ? 'border-red-500' : 'border-gray-200'
                       }`}
                       placeholder="••••••••"
@@ -338,7 +338,7 @@ export default function HostRegister() {
                     <button
                       type="button"
                       onClick={() => setShowPassword(!showPassword)}
-                      className="absolute right-4 top-1/2 -translate-y-1/2 text-gray-400 hover:text-gray-600"
+                      className="absolute right-4 top-1/2 -translate-y-1/2 text-gray-400 hover:text-gray-600 p-1"
                     >
                       {showPassword ? <EyeOff className="w-5 h-5" /> : <Eye className="w-5 h-5" />}
                     </button>
@@ -375,13 +375,13 @@ export default function HostRegister() {
                     {t("hostRegister.confirmPassword")} *
                   </label>
                   <div className="relative">
-                    <Lock className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-gray-400" />
+                    <Lock className="absolute left-4 top-1/2 -translate-y-1/2 w-5 h-5 text-gray-400" />
                     <input
                       type={showConfirmPassword ? "text" : "password"}
                       name="confirmPassword"
                       value={formData.confirmPassword}
                       onChange={handleChange}
-                      className={`w-full pl-[4rem] pr-12 py-3 border-2 rounded-xl focus:outline-none focus:ring-2 focus:ring-sptc-red-500 transition-all ${
+                      className={`w-full pl-12 pr-12 py-3 border-2 rounded-xl focus:outline-none focus:ring-2 focus:ring-sptc-red-500 transition-all ${
                         errors.confirmPassword ? 'border-red-500' : 'border-gray-200'
                       }`}
                       placeholder="••••••••"
@@ -389,7 +389,7 @@ export default function HostRegister() {
                     <button
                       type="button"
                       onClick={() => setShowConfirmPassword(!showConfirmPassword)}
-                      className="absolute right-4 top-1/2 -translate-y-1/2 text-gray-400 hover:text-gray-600"
+                      className="absolute right-4 top-1/2 -translate-y-1/2 text-gray-400 hover:text-gray-600 p-1"
                     >
                       {showConfirmPassword ? <EyeOff className="w-5 h-5" /> : <Eye className="w-5 h-5" />}
                     </button>
@@ -426,13 +426,13 @@ export default function HostRegister() {
                     {t("hostRegister.phoneNumber")} *
                   </label>
                   <div className="relative">
-                    <Phone className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-gray-400" />
+                    <Phone className="absolute left-4 top-1/2 -translate-y-1/2 w-5 h-5 text-gray-400" />
                     <input
                       type="tel"
                       name="phone"
                       value={formData.phone}
                       onChange={handleChange}
-                      className={`w-full pl-[4rem] pr-4 py-3 border-2 rounded-xl focus:outline-none focus:ring-2 focus:ring-sptc-red-500 transition-all ${
+                      className={`w-full pl-12 pr-4 py-3 border-2 rounded-xl focus:outline-none focus:ring-2 focus:ring-sptc-red-500 transition-all ${
                         errors.phone ? 'border-red-500' : 'border-gray-200'
                       }`}
                       placeholder="+57 300 123 4567"
@@ -452,12 +452,12 @@ export default function HostRegister() {
                       {t("hostRegister.country")} *
                     </label>
                     <div className="relative">
-                      <MapPin className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-gray-400" />
+                      <MapPin className="absolute left-4 top-1/2 -translate-y-1/2 w-5 h-5 text-gray-400" />
                       <select
                         name="country"
                         value={formData.country}
                         onChange={handleChange}
-                        className="w-full pl-[4rem] pr-4 py-3 border-2 border-gray-200 rounded-xl focus:outline-none focus:ring-2 focus:ring-sptc-red-500 transition-all appearance-none bg-white"
+                        className="w-full pl-12 pr-4 py-3 border-2 border-gray-200 rounded-xl focus:outline-none focus:ring-2 focus:ring-sptc-red-500 transition-all appearance-none bg-white"
                       >
                         <option value="Colombia">Colombia</option>
                         <option value="Other">Other</option>
