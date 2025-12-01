@@ -117,10 +117,150 @@ export default function Home() {
               {/* Search Bar */}
               <div className="w-full max-w-[720px]" ref={searchBarRef}>
                 <div
-                  className="bg-white/95 backdrop-blur-sm rounded-[28px] shadow-2xl border border-white/50"
+                  className="bg-white/95 backdrop-blur-sm rounded-2xl md:rounded-[28px] shadow-2xl border border-white/50"
                 >
-                  {/* Main Row */}
-                  <div className="flex items-stretch">
+                  {/* Mobile Layout - Stacked */}
+                  <div className="md:hidden p-4 space-y-3">
+                    {/* Country - Mobile */}
+                    <div
+                      className="relative p-3 bg-gray-50 rounded-xl cursor-pointer"
+                      onClick={() => { setShowCountryPicker(!showCountryPicker); setShowRegionPicker(false); setShowGuestPicker(false); }}
+                    >
+                      <p className="text-[10px] font-bold text-sptc-red-600 uppercase tracking-wider mb-1">{getText("homepageSearch.country", language)}</p>
+                      <div className="flex items-center justify-between">
+                        <span className="text-sm font-medium text-gray-800">{country}</span>
+                        <svg className={`w-4 h-4 text-gray-400 transition-transform ${showCountryPicker ? 'rotate-180' : ''}`} fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                          <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M19 9l-7 7-7-7" />
+                        </svg>
+                      </div>
+                      {showCountryPicker && (
+                        <div className="absolute top-full left-0 right-0 mt-2 bg-white rounded-xl shadow-xl border border-gray-100 z-[9999]">
+                          <div className="p-2">
+                            <div
+                              onClick={(e) => { e.stopPropagation(); setCountry("Colombia"); setShowCountryPicker(false); }}
+                              className="flex items-center gap-3 px-3 py-2 rounded-lg hover:bg-sptc-red-50 cursor-pointer"
+                            >
+                              <span className="text-xl">🇨🇴</span>
+                              <span className="text-sm font-medium">Colombia</span>
+                            </div>
+                          </div>
+                        </div>
+                      )}
+                    </div>
+
+                    {/* Region - Mobile */}
+                    <div
+                      className="relative p-3 bg-gray-50 rounded-xl cursor-pointer"
+                      onClick={() => { setShowRegionPicker(!showRegionPicker); setShowCountryPicker(false); setShowGuestPicker(false); }}
+                    >
+                      <p className="text-[10px] font-bold text-sptc-red-600 uppercase tracking-wider mb-1">{getText("homepageSearch.region", language)}</p>
+                      <div className="flex items-center justify-between">
+                        <span className={`text-sm font-medium ${region ? 'text-gray-800' : 'text-gray-400'}`}>
+                          {region || getText("homepageSearch.whereTo", language)}
+                        </span>
+                        <svg className={`w-4 h-4 text-gray-400 transition-transform ${showRegionPicker ? 'rotate-180' : ''}`} fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                          <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M19 9l-7 7-7-7" />
+                        </svg>
+                      </div>
+                      {showRegionPicker && (
+                        <div className="absolute top-full left-0 right-0 mt-2 bg-white rounded-xl shadow-xl border border-gray-100 z-[9999] max-h-[200px] overflow-y-auto">
+                          <div className="p-2">
+                            {regions.map((r) => (
+                              <div
+                                key={r}
+                                onClick={(e) => { e.stopPropagation(); setRegion(r); setShowRegionPicker(false); }}
+                                className="px-3 py-2 rounded-lg hover:bg-sptc-red-50 cursor-pointer text-sm font-medium"
+                              >
+                                {r}
+                              </div>
+                            ))}
+                          </div>
+                        </div>
+                      )}
+                    </div>
+
+                    {/* Dates Row - Mobile */}
+                    <div className="grid grid-cols-2 gap-3">
+                      <div className="p-3 bg-gray-50 rounded-xl">
+                        <p className="text-[10px] font-bold text-sptc-red-600 uppercase tracking-wider mb-1">{getText("homepageSearch.checkIn", language)}</p>
+                        <input
+                          type="date"
+                          value={checkIn}
+                          onChange={(e) => setCheckIn(e.target.value)}
+                          min={new Date().toISOString().split('T')[0]}
+                          className="w-full text-sm font-medium text-gray-800 bg-transparent focus:outline-none"
+                        />
+                      </div>
+                      <div className="p-3 bg-gray-50 rounded-xl">
+                        <p className="text-[10px] font-bold text-sptc-red-600 uppercase tracking-wider mb-1">{getText("homepageSearch.checkOut", language)}</p>
+                        <input
+                          type="date"
+                          value={checkOut}
+                          onChange={(e) => setCheckOut(e.target.value)}
+                          min={checkIn || new Date().toISOString().split('T')[0]}
+                          className="w-full text-sm font-medium text-gray-800 bg-transparent focus:outline-none"
+                        />
+                      </div>
+                    </div>
+
+                    {/* Guests - Mobile */}
+                    <div
+                      className="relative p-3 bg-gray-50 rounded-xl cursor-pointer"
+                      onClick={() => { setShowGuestPicker(!showGuestPicker); setShowCountryPicker(false); setShowRegionPicker(false); }}
+                    >
+                      <p className="text-[10px] font-bold text-sptc-red-600 uppercase tracking-wider mb-1">{getText("homepageSearch.guests", language)}</p>
+                      <div className="flex items-center justify-between">
+                        <span className="text-sm font-medium text-gray-800">{adults + children} {getText("homepageSearch.guests", language)}</span>
+                        <svg className={`w-4 h-4 text-gray-400 transition-transform ${showGuestPicker ? 'rotate-180' : ''}`} fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                          <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M19 9l-7 7-7-7" />
+                        </svg>
+                      </div>
+                      {showGuestPicker && (
+                        <div className="absolute top-full left-0 right-0 mt-2 bg-white rounded-xl shadow-xl border border-gray-100 z-[9999] p-4">
+                          <div className="flex items-center justify-between mb-4">
+                            <span className="text-sm font-medium">{getText("homepageSearch.adults", language)}</span>
+                            <div className="flex items-center gap-3">
+                              <button
+                                onClick={(e) => { e.stopPropagation(); setAdults(Math.max(1, adults - 1)); }}
+                                className="w-8 h-8 rounded-full border-2 border-gray-200 flex items-center justify-center text-gray-500"
+                              >−</button>
+                              <span className="w-6 text-center font-bold">{adults}</span>
+                              <button
+                                onClick={(e) => { e.stopPropagation(); setAdults(Math.min(10, adults + 1)); }}
+                                className="w-8 h-8 rounded-full border-2 border-gray-200 flex items-center justify-center text-gray-500"
+                              >+</button>
+                            </div>
+                          </div>
+                          <div className="flex items-center justify-between">
+                            <span className="text-sm font-medium">{getText("homepageSearch.children", language)}</span>
+                            <div className="flex items-center gap-3">
+                              <button
+                                onClick={(e) => { e.stopPropagation(); setChildren(Math.max(0, children - 1)); }}
+                                className="w-8 h-8 rounded-full border-2 border-gray-200 flex items-center justify-center text-gray-500"
+                              >−</button>
+                              <span className="w-6 text-center font-bold">{children}</span>
+                              <button
+                                onClick={(e) => { e.stopPropagation(); setChildren(Math.min(10, children + 1)); }}
+                                className="w-8 h-8 rounded-full border-2 border-gray-200 flex items-center justify-center text-gray-500"
+                              >+</button>
+                            </div>
+                          </div>
+                        </div>
+                      )}
+                    </div>
+
+                    {/* Search Button - Mobile */}
+                    <Link
+                      href={`/search?country=${encodeURIComponent(country)}&region=${encodeURIComponent(region)}&checkIn=${checkIn}&checkOut=${checkOut}&adults=${adults}&children=${children}`}
+                      className="w-full py-4 bg-sptc-red-600 hover:bg-sptc-red-700 text-white font-semibold rounded-xl flex items-center justify-center gap-2"
+                    >
+                      <Search className="w-5 h-5" />
+                      <span>{getText("homepageSearch.search", language)}</span>
+                    </Link>
+                  </div>
+
+                  {/* Desktop Layout - Horizontal Row */}
+                  <div className="hidden md:flex items-stretch">
                     {/* Country */}
                     <div
                       className="relative flex-1 min-w-0 px-5 py-4 hover:bg-gray-50/80 transition-colors cursor-pointer border-r border-gray-100"
