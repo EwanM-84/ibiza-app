@@ -431,11 +431,12 @@ function ListingCard({
     || (listing.city ? `${listing.city}${listing.region ? `, ${listing.region}` : ""}` : "")
     || listing.location;
 
-  const hostName = listing.host_profiles
-    ? `${listing.host_profiles.first_name} ${listing.host_profiles.last_name}`
+  const hostProfile = listing.host_profiles?.[0];
+  const hostName = hostProfile
+    ? `${hostProfile.first_name} ${hostProfile.last_name}`
     : "Host";
 
-  const isVerified = listing.host_profiles?.verification_status === "approved";
+  const isVerified = hostProfile?.verification_status === "approved";
 
   const getTypeTranslation = (type: string) => {
     if (type === "country_house" || type === "Country House") return getText("searchPage.countryHouse", language);
