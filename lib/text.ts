@@ -637,7 +637,6 @@ export const text = {
       createFirstListing: "Create your first listing to start welcoming guests",
       completeVerificationFirst: "Complete your verification to start creating listings",
       perNight: "per night",
-      guests: "guests",
       active: "Active",
       paused: "Paused",
       edit: "Edit",

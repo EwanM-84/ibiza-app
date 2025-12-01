@@ -403,7 +403,7 @@ export default function PaymentPage() {
                     <div>
                       <label className="block text-sm font-semibold text-gray-700 mb-2 flex items-center gap-2">
                         {t("paymentPage.securityCode")}
-                        <Info className="w-4 h-4 text-gray-400 cursor-help" title="3 or 4 digit code on the back of your card" />
+                        <span title="3 or 4 digit code on the back of your card"><Info className="w-4 h-4 text-gray-400 cursor-help" /></span>
                       </label>
                       <div className="relative">
                         <input
