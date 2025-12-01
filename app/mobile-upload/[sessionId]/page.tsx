@@ -3,10 +3,14 @@
 import { useState, useRef, useEffect } from 'react';
 import { useParams } from 'next/navigation';
 import { Camera, CheckCircle, MapPin, AlertCircle, Upload } from 'lucide-react';
+import { useLanguage } from "@/contexts/LanguageContext";
+import { getText } from "@/lib/text";
 
 export default function MobilePhotoUpload() {
   const params = useParams();
   const sessionId = params.sessionId as string;
+  const { language } = useLanguage();
+  const t = (key: string) => getText(key, language);
 
   const [photos, setPhotos] = useState<number>(0);
   const [currentPhoto, setCurrentPhoto] = useState<string | null>(null);
@@ -52,11 +56,11 @@ export default function MobilePhotoUpload() {
         (error) => {
           console.error('Geolocation error:', error);
           if (error.code === 1) {
-            setLocationError('Location permission denied. Please enable location in your browser settings.');
+            setLocationError(t("mobileUpload.locationDenied"));
           } else if (error.code === 2) {
-            setLocationError('Location unavailable. Please check your device settings.');
+            setLocationError(t("mobileUpload.locationUnavailable"));
           } else {
-            setLocationError('Location request timed out. Please try again.');
+            setLocationError(t("mobileUpload.locationTimeout"));
           }
         },
         {
@@ -66,7 +70,7 @@ export default function MobilePhotoUpload() {
         }
       );
     } else {
-      setLocationError('Geolocation is not supported by your device');
+      setLocationError(t("mobileUpload.geolocationNotSupported"));
     }
   };
 
@@ -93,13 +97,13 @@ export default function MobilePhotoUpload() {
       console.error('Error message:', err.message);
 
       if (err.name === 'NotAllowedError' || err.name === 'PermissionDeniedError') {
-        setCameraError('Camera permission denied. Please allow camera access in your browser settings and refresh the page.');
+        setCameraError(t("mobileUpload.cameraDenied"));
       } else if (err.name === 'NotFoundError' || err.name === 'DevicesNotFoundError') {
-        setCameraError('No camera found on your device.');
+        setCameraError(t("mobileUpload.cameraNotFound"));
       } else if (err.name === 'NotReadableError' || err.name === 'TrackStartError') {
-        setCameraError('Camera is already in use by another app. Please close other apps and try again.');
+        setCameraError(t("mobileUpload.cameraInUse"));
       } else {
-        setCameraError(`Could not access camera: ${err.message}`);
+        setCameraError(`${t("mobileUpload.cameraError")}: ${err.message}`);
       }
     }
   };
@@ -153,7 +157,7 @@ export default function MobilePhotoUpload() {
 
   const uploadPhoto = async () => {
     if (!currentPhoto || !location) {
-      alert('Photo and location are required');
+      alert(t("mobileUpload.photoLocationRequired"));
       return;
     }
 
@@ -193,7 +197,7 @@ export default function MobilePhotoUpload() {
       }
     } catch (error: any) {
       console.error('Upload error:', error);
-      alert('Upload failed. Please try again.');
+      alert(t("mobileUpload.uploadFailed"));
     } finally {
       setUploading(false);
     }
@@ -236,13 +240,13 @@ export default function MobilePhotoUpload() {
             <div className="w-24 h-24 bg-green-500 rounded-full flex items-center justify-center mx-auto mb-6 animate-bounce">
               <CheckCircle className="w-14 h-14 text-white" />
             </div>
-            <h1 className="text-3xl font-bold text-gray-900 mb-4">All Photos Uploaded!</h1>
+            <h1 className="text-3xl font-bold text-gray-900 mb-4">{t("mobileUpload.allPhotosUploaded")}</h1>
             <p className="text-lg text-gray-600 mb-6">
-              Your {photos} photos have been successfully uploaded with GPS verification.
+              {t("mobileUpload.photosSuccessful").replace("{count}", photos.toString())}
             </p>
             <div className="bg-green-50 border-2 border-green-200 rounded-2xl p-6">
               <p className="text-green-800 font-semibold">
-                ✓ You can now close this page and return to the computer to continue.
+                ✓ {t("mobileUpload.canClosePage")}
               </p>
             </div>
           </div>
@@ -256,17 +260,17 @@ export default function MobilePhotoUpload() {
       <div className="max-w-2xl mx-auto">
         {/* Header */}
         <div className="bg-white rounded-3xl shadow-xl p-6 mb-6">
-          <h1 className="text-2xl font-bold text-gray-900 mb-2">Property Photos</h1>
-          <p className="text-gray-600">Take 2 photos of your property with GPS location</p>
+          <h1 className="text-2xl font-bold text-gray-900 mb-2">{t("mobileUpload.propertyPhotos")}</h1>
+          <p className="text-gray-600">{t("mobileUpload.takePhotosWithGps")}</p>
 
           {/* Permission Status */}
           {permissionsRequested && !location && !locationError && (
             <div className="mt-4 p-4 bg-blue-50 border-2 border-blue-200 rounded-xl">
               <p className="text-blue-900 text-sm font-semibold">
-                📍 Requesting location access...
+                📍 {t("mobileUpload.requestingLocation")}
               </p>
               <p className="text-blue-700 text-xs mt-1">
-                Please allow location access when prompted by your browser
+                {t("mobileUpload.allowLocationAccess")}
               </p>
             </div>
           )}
@@ -275,17 +279,17 @@ export default function MobilePhotoUpload() {
             <div className="flex items-center gap-2 text-sm">
               <MapPin className="w-4 h-4 text-green-600" />
               {location ? (
-                <span className="text-green-600 font-semibold">Location enabled</span>
+                <span className="text-green-600 font-semibold">{t("mobileUpload.locationEnabled")}</span>
               ) : locationError ? (
                 <span className="text-red-600">{locationError}</span>
               ) : (
-                <span className="text-gray-500">Getting location...</span>
+                <span className="text-gray-500">{t("mobileUpload.gettingLocation")}</span>
               )}
             </div>
 
             <div className="flex items-center gap-2 bg-sptc-red-100 text-sptc-red-700 px-4 py-2 rounded-full font-bold">
               <CheckCircle className="w-5 h-5" />
-              <span>{photos} / 2 photos</span>
+              <span>{photos} / 2 {t("mobileUpload.photos")}</span>
             </div>
           </div>
         </div>
@@ -296,17 +300,16 @@ export default function MobilePhotoUpload() {
             <div className="flex items-start gap-3">
               <AlertCircle className="w-6 h-6 text-red-600 flex-shrink-0 mt-1" />
               <div className="flex-1">
-                <h3 className="font-bold text-red-900 mb-1">Location Required</h3>
+                <h3 className="font-bold text-red-900 mb-1">{t("mobileUpload.locationRequired")}</h3>
                 <p className="text-red-700 text-sm mb-3">
-                  Please enable location services in your browser settings to continue.
-                  We need GPS coordinates to verify the property photos.
+                  {t("mobileUpload.enableLocation")}
                 </p>
                 {isDevelopment && !useFakeLocation && (
                   <button
                     onClick={useFakeLocationForDev}
                     className="px-4 py-2 bg-yellow-600 text-white font-semibold rounded-xl hover:bg-yellow-700 transition-all text-sm"
                   >
-                    Use Fake Location (Dev Only)
+                    {t("mobileUpload.useFakeLocation")}
                   </button>
                 )}
               </div>
@@ -318,7 +321,7 @@ export default function MobilePhotoUpload() {
         {useFakeLocation && (
           <div className="bg-yellow-50 border-2 border-yellow-200 rounded-2xl p-4 mb-6">
             <p className="text-yellow-900 text-sm font-semibold">
-              ⚠️ Development Mode: Using fake GPS coordinates (Bogotá, Colombia)
+              ⚠️ {t("mobileUpload.devModeWarning")}
             </p>
           </div>
         )}
@@ -329,9 +332,9 @@ export default function MobilePhotoUpload() {
             {useNativeCamera ? (
               <div className="flex flex-col items-center justify-center py-16">
                 <Camera className="w-20 h-20 text-sptc-red-600 mb-4" />
-                <h3 className="text-xl font-bold text-gray-900 mb-2">Take a Photo</h3>
+                <h3 className="text-xl font-bold text-gray-900 mb-2">{t("mobileUpload.takePhoto")}</h3>
                 <p className="text-gray-600 text-center mb-6">
-                  Take clear photos of your property from different angles
+                  {t("mobileUpload.clearPhotosInstruction")}
                 </p>
                 <button
                   onClick={openNativeCamera}
@@ -339,7 +342,7 @@ export default function MobilePhotoUpload() {
                   className="px-8 py-4 bg-sptc-red-600 text-white font-bold rounded-2xl hover:bg-sptc-red-700 transition-all disabled:opacity-50 disabled:cursor-not-allowed flex items-center gap-3"
                 >
                   <Camera className="w-6 h-6" />
-                  Take Photo
+                  {t("mobileUpload.takePhotoButton")}
                 </button>
 
                 {/* Hidden file input for native camera */}
@@ -360,22 +363,22 @@ export default function MobilePhotoUpload() {
                   }}
                   className="mt-4 text-sm text-gray-600 underline hover:text-gray-900"
                 >
-                  Use web camera instead
+                  {t("mobileUpload.useWebCamera")}
                 </button>
               </div>
             ) : !cameraActive ? (
               <div className="flex flex-col items-center justify-center py-16">
                 <Camera className="w-20 h-20 text-sptc-red-600 mb-4" />
-                <h3 className="text-xl font-bold text-gray-900 mb-2">Take a Photo</h3>
+                <h3 className="text-xl font-bold text-gray-900 mb-2">{t("mobileUpload.takePhoto")}</h3>
                 <p className="text-gray-600 text-center mb-6">
-                  Take clear photos of your property from different angles
+                  {t("mobileUpload.clearPhotosInstruction")}
                 </p>
                 <button
                   onClick={startCamera}
                   disabled={!location}
                   className="px-8 py-4 bg-sptc-red-600 text-white font-bold rounded-2xl hover:bg-sptc-red-700 transition-all disabled:opacity-50 disabled:cursor-not-allowed"
                 >
-                  Open Camera
+                  {t("mobileUpload.openCamera")}
                 </button>
                 {cameraError && (
                   <p className="text-red-600 text-sm mt-4">{cameraError}</p>
@@ -386,7 +389,7 @@ export default function MobilePhotoUpload() {
                   onClick={() => setUseNativeCamera(true)}
                   className="mt-4 text-sm text-gray-600 underline hover:text-gray-900"
                 >
-                  Use native camera instead
+                  {t("mobileUpload.useNativeCamera")}
                 </button>
               </div>
             ) : (
@@ -402,7 +405,7 @@ export default function MobilePhotoUpload() {
                   className="w-full py-4 bg-sptc-red-600 text-white font-bold rounded-2xl hover:bg-sptc-red-700 transition-all flex items-center justify-center gap-3"
                 >
                   <Camera className="w-6 h-6" />
-                  Capture Photo
+                  {t("mobileUpload.capturePhoto")}
                 </button>
               </div>
             )}
@@ -412,7 +415,7 @@ export default function MobilePhotoUpload() {
         {/* Photo Preview */}
         {currentPhoto && (
           <div className="bg-white rounded-3xl shadow-xl p-6 mb-6">
-            <h3 className="text-xl font-bold text-gray-900 mb-4">Photo Preview</h3>
+            <h3 className="text-xl font-bold text-gray-900 mb-4">{t("mobileUpload.photoPreview")}</h3>
             <img
               src={currentPhoto}
               alt="Captured photo"
@@ -424,7 +427,7 @@ export default function MobilePhotoUpload() {
                 onClick={retakePhoto}
                 className="flex-1 py-4 border-2 border-gray-300 text-gray-700 font-bold rounded-2xl hover:bg-gray-50 transition-all"
               >
-                Retake
+                {t("mobileUpload.retake")}
               </button>
               <button
                 onClick={uploadPhoto}
@@ -434,12 +437,12 @@ export default function MobilePhotoUpload() {
                 {uploading ? (
                   <>
                     <div className="w-5 h-5 border-3 border-white border-t-transparent rounded-full animate-spin" />
-                    Uploading...
+                    {t("mobileUpload.uploading")}
                   </>
                 ) : (
                   <>
                     <Upload className="w-5 h-5" />
-                    Upload Photo
+                    {t("mobileUpload.uploadPhoto")}
                   </>
                 )}
               </button>
@@ -452,7 +455,7 @@ export default function MobilePhotoUpload() {
           <div className="bg-green-50 border-2 border-green-200 rounded-2xl p-6 mb-6 animate-in fade-in duration-300">
             <div className="flex items-center gap-3">
               <CheckCircle className="w-6 h-6 text-green-600" />
-              <p className="text-green-900 font-bold">Photo uploaded successfully!</p>
+              <p className="text-green-900 font-bold">{t("mobileUpload.photoUploadSuccess")}</p>
             </div>
           </div>
         )}

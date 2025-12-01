@@ -4,6 +4,8 @@ import { useState } from "react";
 import { X, Mail, Eye, EyeOff, Loader2 } from "lucide-react";
 import { useRouter } from "next/navigation";
 import { createClientComponentClient } from '@supabase/auth-helpers-nextjs';
+import { useLanguage } from "@/contexts/LanguageContext";
+import { getText } from "@/lib/text";
 
 interface LoginModalProps {
   isOpen: boolean;
@@ -14,6 +16,8 @@ interface LoginModalProps {
 export default function LoginModal({ isOpen, onClose, initialMode = "client" }: LoginModalProps) {
   const router = useRouter();
   const supabase = createClientComponentClient();
+  const { language } = useLanguage();
+  const t = (key: string) => getText(key, language);
   const [mode, setMode] = useState<"client" | "host" | "admin">(initialMode);
   const [isSignup, setIsSignup] = useState(false);
   const [email, setEmail] = useState("");
@@ -45,7 +49,7 @@ export default function LoginModal({ isOpen, onClose, initialMode = "client" }: 
 
       if (authError) {
         console.error("Login error:", authError);
-        setError(authError.message || "Invalid email or password");
+        setError(authError.message || t("loginModal.invalidCredentials"));
         setLoading(false);
         return;
       }
@@ -74,7 +78,7 @@ export default function LoginModal({ isOpen, onClose, initialMode = "client" }: 
       }
     } catch (err: any) {
       console.error("Login error:", err);
-      setError(err.message || "An error occurred during login");
+      setError(err.message || t("loginModal.errorOccurred"));
     } finally {
       setLoading(false);
     }
@@ -107,14 +111,14 @@ export default function LoginModal({ isOpen, onClose, initialMode = "client" }: 
         {/* Header */}
         <div className="px-12 pt-12 pb-8 border-b border-sptc-gray-200">
           <h2 className="text-3xl font-display font-bold text-sptc-red-500 mb-2">
-            {mode === "admin" ? "Admin Access" : isSignup ? "Join SPTC.Rural" : "Welcome Back"}
+            {mode === "admin" ? t("loginModal.adminAccess") : isSignup ? t("loginModal.joinSptc") : t("loginModal.welcomeBack")}
           </h2>
           <p className="text-sptc-gray-600 text-base">
             {mode === "admin"
-              ? "Secure access to administration"
+              ? t("loginModal.secureAccess")
               : isSignup
-              ? `Create your ${mode === "host" ? "host" : "traveler"} account`
-              : `Sign in to continue your journey`
+              ? (mode === "host" ? t("loginModal.createHostAccount") : t("loginModal.createTravelerAccount"))
+              : t("loginModal.signInContinue")
             }
           </p>
         </div>
@@ -132,7 +136,7 @@ export default function LoginModal({ isOpen, onClose, initialMode = "client" }: 
                     : "text-sptc-gray-500 hover:text-sptc-gray-700"
                 }`}
               >
-                Traveler
+                {t("loginModal.traveler")}
                 {mode === "client" && (
                   <div className="absolute bottom-0 left-0 right-0 h-0.5 bg-sptc-red-600"></div>
                 )}
@@ -145,7 +149,7 @@ export default function LoginModal({ isOpen, onClose, initialMode = "client" }: 
                     : "text-sptc-gray-500 hover:text-sptc-gray-700"
                 }`}
               >
-                Host
+                {t("loginModal.host")}
                 {mode === "host" && (
                   <div className="absolute bottom-0 left-0 right-0 h-0.5 bg-sptc-red-600"></div>
                 )}
@@ -158,14 +162,14 @@ export default function LoginModal({ isOpen, onClose, initialMode = "client" }: 
             {isSignup && (
               <div>
                 <label className="block text-xs font-bold text-sptc-red-500 mb-3 uppercase tracking-wider">
-                  Full Name
+                  {t("loginModal.fullName")}
                 </label>
                 <input
                   type="text"
                   value={name}
                   onChange={(e) => setName(e.target.value)}
                   className="w-full px-0 py-3 border-0 border-b-2 border-sptc-gray-300 focus:outline-none focus:border-sptc-red-600 transition-colors bg-transparent text-base"
-                  placeholder="John Doe"
+                  placeholder={t("loginModal.namePlaceholder")}
                   required
                 />
               </div>
@@ -174,14 +178,14 @@ export default function LoginModal({ isOpen, onClose, initialMode = "client" }: 
             {/* Email field */}
             <div>
               <label className="block text-xs font-bold text-sptc-red-500 mb-3 uppercase tracking-wider">
-                Email Address
+                {t("loginModal.emailAddress")}
               </label>
               <input
                 type="email"
                 value={email}
                 onChange={(e) => setEmail(e.target.value)}
                 className="w-full px-0 py-3 border-0 border-b-2 border-sptc-gray-300 focus:outline-none focus:border-sptc-red-600 transition-colors bg-transparent text-base"
-                placeholder="you@example.com"
+                placeholder={t("loginModal.emailPlaceholder")}
                 required
               />
             </div>
@@ -189,7 +193,7 @@ export default function LoginModal({ isOpen, onClose, initialMode = "client" }: 
             {/* Password field */}
             <div>
               <label className="block text-xs font-bold text-sptc-red-500 mb-3 uppercase tracking-wider">
-                Password
+                {t("loginModal.password")}
               </label>
               <div className="relative">
                 <input
@@ -225,7 +229,7 @@ export default function LoginModal({ isOpen, onClose, initialMode = "client" }: 
             {!isSignup && mode !== "admin" && (
               <div className="text-right -mt-2">
                 <button type="button" className="text-xs text-sptc-gray-600 hover:text-sptc-red-600 font-semibold uppercase tracking-wider transition-colors">
-                  Forgot password?
+                  {t("loginModal.forgotPassword")}
                 </button>
               </div>
             )}
@@ -239,10 +243,10 @@ export default function LoginModal({ isOpen, onClose, initialMode = "client" }: 
               {loading ? (
                 <>
                   <Loader2 className="w-5 h-5 animate-spin" />
-                  Signing in...
+                  {t("loginModal.signingIn")}
                 </>
               ) : (
-                isSignup ? "Create Account" : "Sign In"
+                isSignup ? t("loginModal.createAccount") : t("loginModal.signIn")
               )}
             </button>
           </form>
@@ -255,7 +259,7 @@ export default function LoginModal({ isOpen, onClose, initialMode = "client" }: 
                   <div className="w-full border-t border-sptc-gray-200"></div>
                 </div>
                 <div className="relative flex justify-center text-xs">
-                  <span className="px-4 text-sptc-gray-500 uppercase tracking-wider font-semibold" style={{ background: "radial-gradient(circle at top left, #F5EBE0 0%, #E8DDD0 40%, #DED0BD 100%)" }}>Or continue with</span>
+                  <span className="px-4 text-sptc-gray-500 uppercase tracking-wider font-semibold" style={{ background: "radial-gradient(circle at top left, #F5EBE0 0%, #E8DDD0 40%, #DED0BD 100%)" }}>{t("loginModal.orContinueWith")}</span>
                 </div>
               </div>
 
@@ -301,7 +305,7 @@ export default function LoginModal({ isOpen, onClose, initialMode = "client" }: 
           {/* Toggle between login and signup (not for admin) */}
           {mode !== "admin" && (
             <div className="mt-8 pt-6 border-t border-sptc-gray-200 text-center text-sm text-sptc-red-500">
-              {isSignup ? "Already have an account?" : "New to SPTC.Rural?"}{" "}
+              {isSignup ? t("loginModal.alreadyHaveAccount") : t("loginModal.newToSptc")}{" "}
               {/* For hosts, redirect to full registration page */}
               {mode === "host" && !isSignup ? (
                 <button
@@ -311,14 +315,14 @@ export default function LoginModal({ isOpen, onClose, initialMode = "client" }: 
                   }}
                   className="text-sptc-red-600 hover:text-sptc-red-700 font-bold transition-colors uppercase tracking-wider text-xs"
                 >
-                  Become a Host →
+                  {t("loginModal.becomeHost")} →
                 </button>
               ) : (
                 <button
                   onClick={() => setIsSignup(!isSignup)}
                   className="text-sptc-red-600 hover:text-sptc-red-700 font-bold transition-colors uppercase tracking-wider text-xs"
                 >
-                  {isSignup ? "Sign in" : "Create account"}
+                  {isSignup ? t("loginModal.signIn") : t("loginModal.createAccount")}
                 </button>
               )}
             </div>

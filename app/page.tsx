@@ -1,19 +1,73 @@
 "use client";
 
-import { useState } from "react";
+import { useState, useEffect, useRef } from "react";
 import Link from "next/link";
 import { Search, Star, Heart, Award, Shield, TreePine, Home as HomeIcon, Mail, Phone, MapPin, Facebook, Instagram, Twitter, Users, DollarSign, Sprout, GraduationCap, Lightbulb, TrendingUp, CheckCircle } from "lucide-react";
 import AccommodationMap from "@/components/AccommodationMap";
 import { useLanguage } from "@/contexts/LanguageContext";
 import { getText } from "@/lib/text";
+import { createClientComponentClient } from "@supabase/auth-helpers-nextjs";
+
+interface MapListing {
+  id: string;
+  title: string;
+  price_per_night: number;
+  latitude?: number | null;
+  longitude?: number | null;
+  images?: string[];
+  rating?: number;
+}
 
 export default function Home() {
   const { language } = useLanguage();
+  const [country, setCountry] = useState("Colombia");
+  const [region, setRegion] = useState("");
   const [checkIn, setCheckIn] = useState("");
   const [checkOut, setCheckOut] = useState("");
   const [adults, setAdults] = useState(2);
   const [children, setChildren] = useState(0);
   const [showGuestPicker, setShowGuestPicker] = useState(false);
+  const [showCountryPicker, setShowCountryPicker] = useState(false);
+  const [showRegionPicker, setShowRegionPicker] = useState(false);
+  const [mapListings, setMapListings] = useState<MapListing[]>([]);
+  const searchBarRef = useRef<HTMLDivElement>(null);
+
+  const supabase = createClientComponentClient();
+
+  // Close dropdowns when clicking outside
+  useEffect(() => {
+    const handleClickOutside = (event: MouseEvent) => {
+      if (searchBarRef.current && !searchBarRef.current.contains(event.target as Node)) {
+        setShowCountryPicker(false);
+        setShowRegionPicker(false);
+        setShowGuestPicker(false);
+      }
+    };
+
+    document.addEventListener('mousedown', handleClickOutside);
+    return () => document.removeEventListener('mousedown', handleClickOutside);
+  }, []);
+
+  useEffect(() => {
+    const fetchListings = async () => {
+      const { data } = await supabase
+        .from("listings")
+        .select("id, title, price_per_night, latitude, longitude, images, rating")
+        .eq("status", "active")
+        .eq("available", true);
+
+      if (data) setMapListings(data);
+    };
+    fetchListings();
+  }, []);
+
+  const regions = [
+    "Fusagasugá",
+    "North Andean Region",
+    "Cundinamarca",
+    "Boyacá",
+    "Santander"
+  ];
 
   return (
     <div
@@ -56,152 +110,213 @@ export default function Home() {
                 {getText("hero.heroDescription", language)}
               </p>
 
-              {/* Booking bar */}
-              <div
-                className="bg-white rounded-2xl sm:rounded-3xl p-3 sm:p-5 w-full max-w-[900px]"
-                style={{
-                  boxShadow: "0 24px 60px rgba(0,0,0,0.08)",
-                  border: "1px solid rgba(0,0,0,0.04)",
-                }}
-              >
-                <div className="flex flex-col sm:flex-row items-stretch sm:items-end gap-3 sm:gap-6">
-                  <div className="flex-1 min-w-0 sm:min-w-[160px]">
-                    <label
-                      className="block text-[11px] font-semibold text-gray-500 uppercase tracking-wider mb-2"
-                      style={{ fontFamily: '"Inter", sans-serif' }}
+              {/* Search Bar */}
+              <div className="w-full max-w-[720px]" ref={searchBarRef}>
+                <div
+                  className="bg-white/95 backdrop-blur-sm rounded-[28px] shadow-2xl border border-white/50"
+                >
+                  {/* Main Row */}
+                  <div className="flex items-stretch">
+                    {/* Country */}
+                    <div
+                      className="relative flex-1 min-w-0 px-5 py-4 hover:bg-gray-50/80 transition-colors cursor-pointer border-r border-gray-100"
+                      onClick={() => { setShowCountryPicker(!showCountryPicker); setShowRegionPicker(false); setShowGuestPicker(false); }}
                     >
-                      {getText("hero.checkIn", language)}
-                    </label>
-                    <div className="relative">
+                      <p className="text-[11px] font-bold text-sptc-red-600 uppercase tracking-wider mb-1">{getText("homepageSearch.country", language)}</p>
+                      <div className="flex items-center justify-between">
+                        <span className="text-[15px] font-medium text-gray-800 truncate">{country}</span>
+                        <svg className={`w-4 h-4 text-gray-400 transition-transform duration-200 ${showCountryPicker ? 'rotate-180' : ''}`} fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                          <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M19 9l-7 7-7-7" />
+                        </svg>
+                      </div>
+                      {showCountryPicker && (
+                        <div className="absolute top-full left-0 mt-2 bg-white rounded-2xl shadow-2xl border border-gray-100 min-w-[200px] z-[9999] overflow-hidden animate-in fade-in slide-in-from-top-2 duration-200">
+                          <div className="p-2">
+                            <div
+                              onClick={(e) => { e.stopPropagation(); setCountry("Colombia"); setShowCountryPicker(false); }}
+                              className="flex items-center gap-3 px-4 py-3 rounded-xl hover:bg-gradient-to-r hover:from-sptc-red-50 hover:to-transparent cursor-pointer transition-all group"
+                            >
+                              <span className="text-2xl">🇨🇴</span>
+                              <div className="flex-1">
+                                <p className="text-sm font-semibold text-gray-900 group-hover:text-sptc-red-600 transition-colors">Colombia</p>
+                                <p className="text-xs text-gray-400">{getText("homepageSearch.southAmerica", language)}</p>
+                              </div>
+                              {country === "Colombia" && (
+                                <svg className="w-5 h-5 text-sptc-red-500" fill="currentColor" viewBox="0 0 20 20">
+                                  <path fillRule="evenodd" d="M16.707 5.293a1 1 0 010 1.414l-8 8a1 1 0 01-1.414 0l-4-4a1 1 0 011.414-1.414L8 12.586l7.293-7.293a1 1 0 011.414 0z" clipRule="evenodd" />
+                                </svg>
+                              )}
+                            </div>
+                          </div>
+                        </div>
+                      )}
+                    </div>
+
+                    {/* Region */}
+                    <div
+                      className="relative flex-1 min-w-0 px-5 py-4 hover:bg-gray-50/80 transition-colors cursor-pointer border-r border-gray-100"
+                      onClick={() => { setShowRegionPicker(!showRegionPicker); setShowCountryPicker(false); setShowGuestPicker(false); }}
+                    >
+                      <p className="text-[11px] font-bold text-sptc-red-600 uppercase tracking-wider mb-1">{getText("homepageSearch.region", language)}</p>
+                      <div className="flex items-center justify-between">
+                        <span className={`text-[15px] font-medium truncate ${region ? 'text-gray-800' : 'text-gray-400'}`}>
+                          {region || getText("homepageSearch.whereTo", language)}
+                        </span>
+                        <svg className={`w-4 h-4 text-gray-400 transition-transform duration-200 ${showRegionPicker ? 'rotate-180' : ''}`} fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                          <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M19 9l-7 7-7-7" />
+                        </svg>
+                      </div>
+                      {showRegionPicker && (
+                        <div className="absolute top-full left-0 mt-2 bg-white rounded-2xl shadow-2xl border border-gray-100 min-w-[280px] z-[9999] overflow-hidden">
+                          <div className="p-2 max-h-[300px] overflow-y-auto">
+                            {regions.map((r, index) => (
+                              <div
+                                key={r}
+                                onClick={(e) => { e.stopPropagation(); setRegion(r); setShowRegionPicker(false); }}
+                                className="flex items-center gap-3 px-4 py-3 rounded-xl hover:bg-gradient-to-r hover:from-sptc-red-50 hover:to-transparent cursor-pointer transition-all group"
+                              >
+                                <div className="w-10 h-10 rounded-xl bg-gradient-to-br from-sptc-yellow-100 to-sptc-yellow-200 flex items-center justify-center">
+                                  <MapPin className="w-5 h-5 text-sptc-yellow-600" />
+                                </div>
+                                <div className="flex-1">
+                                  <p className="text-sm font-semibold text-gray-900 group-hover:text-sptc-red-600 transition-colors">{r}</p>
+                                  <p className="text-xs text-gray-400">Colombia</p>
+                                </div>
+                                {region === r && (
+                                  <svg className="w-5 h-5 text-sptc-red-500" fill="currentColor" viewBox="0 0 20 20">
+                                    <path fillRule="evenodd" d="M16.707 5.293a1 1 0 010 1.414l-8 8a1 1 0 01-1.414 0l-4-4a1 1 0 011.414-1.414L8 12.586l7.293-7.293a1 1 0 011.414 0z" clipRule="evenodd" />
+                                  </svg>
+                                )}
+                              </div>
+                            ))}
+                          </div>
+                        </div>
+                      )}
+                    </div>
+
+                    {/* Check-in */}
+                    <div className="flex-1 min-w-0 px-5 py-4 hover:bg-gray-50/80 transition-colors cursor-pointer border-r border-gray-100">
+                      <p className="text-[11px] font-bold text-sptc-red-600 uppercase tracking-wider mb-1">{getText("homepageSearch.checkIn", language)}</p>
                       <input
                         type="date"
                         value={checkIn}
                         onChange={(e) => setCheckIn(e.target.value)}
                         min={new Date().toISOString().split('T')[0]}
-                        className="w-full text-base text-gray-900 bg-white border border-gray-200 rounded-xl px-4 py-3 focus:outline-none focus:ring-2 focus:ring-red-500/60 hover:border-gray-300 transition-colors cursor-pointer"
-                        style={{ fontFamily: '"Inter", sans-serif' }}
-                        placeholder={getText("hero.selectDate", language)}
+                        className="w-full text-[15px] font-medium text-gray-800 bg-transparent focus:outline-none cursor-pointer"
                       />
                     </div>
-                  </div>
 
-                  <div className="flex-1 min-w-0 sm:min-w-[160px]">
-                    <label
-                      className="block text-[11px] font-semibold text-gray-500 uppercase tracking-wider mb-2"
-                      style={{ fontFamily: '"Inter", sans-serif' }}
-                    >
-                      {getText("hero.checkOut", language)}
-                    </label>
-                    <div className="relative">
+                    {/* Check-out */}
+                    <div className="flex-1 min-w-0 px-5 py-4 hover:bg-gray-50/80 transition-colors cursor-pointer border-r border-gray-100">
+                      <p className="text-[11px] font-bold text-sptc-red-600 uppercase tracking-wider mb-1">{getText("homepageSearch.checkOut", language)}</p>
                       <input
                         type="date"
                         value={checkOut}
                         onChange={(e) => setCheckOut(e.target.value)}
                         min={checkIn || new Date().toISOString().split('T')[0]}
-                        className="w-full text-base text-gray-900 bg-white border border-gray-200 rounded-xl px-4 py-3 focus:outline-none focus:ring-2 focus:ring-red-500/60 hover:border-gray-300 transition-colors cursor-pointer"
-                        style={{ fontFamily: '"Inter", sans-serif' }}
-                        placeholder={getText("hero.selectDate", language)}
+                        className="w-full text-[15px] font-medium text-gray-800 bg-transparent focus:outline-none cursor-pointer"
                       />
                     </div>
-                  </div>
 
-                  <div className="flex-1 min-w-0 sm:min-w-[180px] relative">
-                    <label
-                      className="block text-[11px] font-semibold text-gray-500 uppercase tracking-wider mb-2"
-                      style={{ fontFamily: '"Inter", sans-serif' }}
-                    >
-                      {getText("hero.guests", language)}
-                    </label>
+                    {/* Guests */}
                     <div
-                      onClick={() => setShowGuestPicker(!showGuestPicker)}
-                      className="w-full text-base text-gray-900 bg-transparent border border-gray-200 rounded-xl px-4 py-3 cursor-pointer hover:border-gray-300 transition-colors flex items-center justify-between"
-                      style={{ fontFamily: '"Inter", sans-serif' }}
+                      className="relative flex-1 min-w-0 px-5 py-4 hover:bg-gray-50/80 transition-colors cursor-pointer z-[100]"
+                      onClick={() => { setShowGuestPicker(!showGuestPicker); setShowCountryPicker(false); setShowRegionPicker(false); }}
                     >
-                      <span suppressHydrationWarning>
-                        {adults + children} {adults + children === 1 ? getText("hero.guest", language) : getText("hero.guestsPlural", language)}
-                      </span>
-                      <svg className={`w-4 h-4 text-gray-400 transition-transform ${showGuestPicker ? 'rotate-180' : ''}`} fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                        <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M19 9l-7 7-7-7" />
-                      </svg>
+                      <p className="text-[11px] font-bold text-sptc-red-600 uppercase tracking-wider mb-1">{getText("homepageSearch.guests", language)}</p>
+                      <div className="flex items-center justify-between">
+                        <span className="text-[15px] font-medium text-gray-800">
+                          {getText("homepageSearch.guests", language)}
+                        </span>
+                        <svg className={`w-4 h-4 text-gray-400 transition-transform duration-200 ${showGuestPicker ? 'rotate-180' : ''}`} fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                          <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M19 9l-7 7-7-7" />
+                        </svg>
+                      </div>
+
+                      {/* Guest Dropdown */}
+                      {showGuestPicker && (
+                        <div className="absolute top-full right-0 mt-2 bg-white rounded-2xl shadow-2xl z-[9999] border border-gray-100 min-w-[300px] overflow-hidden">
+                          <div className="p-6">
+                            {/* Adults */}
+                            <div className="flex items-center justify-between mb-6">
+                              <div className="flex items-center gap-3">
+                                <div className="w-10 h-10 rounded-xl bg-gradient-to-br from-sptc-red-100 to-sptc-red-200 flex items-center justify-center">
+                                  <Users className="w-5 h-5 text-sptc-red-600" />
+                                </div>
+                                <div>
+                                  <p className="text-sm font-semibold text-gray-900">{getText("homepageSearch.adults", language)}</p>
+                                  <p className="text-xs text-gray-400">{getText("homepageSearch.ages12Plus", language)}</p>
+                                </div>
+                              </div>
+                              <div className="flex items-center gap-3">
+                                <button
+                                  onClick={(e) => { e.stopPropagation(); setAdults(Math.max(1, adults - 1)); }}
+                                  className="w-10 h-10 rounded-xl border-2 border-gray-200 hover:border-sptc-red-500 hover:bg-sptc-red-50 transition-all flex items-center justify-center disabled:opacity-30 disabled:hover:border-gray-200 disabled:hover:bg-transparent text-gray-500 hover:text-sptc-red-500 text-xl font-medium"
+                                  disabled={adults <= 1}
+                                >−</button>
+                                <span className="w-8 text-center font-bold text-gray-900 text-lg" suppressHydrationWarning>{adults}</span>
+                                <button
+                                  onClick={(e) => { e.stopPropagation(); setAdults(Math.min(10, adults + 1)); }}
+                                  className="w-10 h-10 rounded-xl border-2 border-gray-200 hover:border-sptc-red-500 hover:bg-sptc-red-50 transition-all flex items-center justify-center text-gray-500 hover:text-sptc-red-500 text-xl font-medium"
+                                >+</button>
+                              </div>
+                            </div>
+
+                            {/* Divider */}
+                            <div className="border-t border-gray-100 my-4"></div>
+
+                            {/* Children */}
+                            <div className="flex items-center justify-between">
+                              <div className="flex items-center gap-3">
+                                <div className="w-10 h-10 rounded-xl bg-gradient-to-br from-sptc-yellow-100 to-sptc-yellow-200 flex items-center justify-center">
+                                  <svg className="w-5 h-5 text-sptc-yellow-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 4.354a4 4 0 110 5.292M15 21H3v-1a6 6 0 0112 0v1zm0 0h6v-1a6 6 0 00-9-5.197M13 7a4 4 0 11-8 0 4 4 0 018 0z" />
+                                  </svg>
+                                </div>
+                                <div>
+                                  <p className="text-sm font-semibold text-gray-900">{getText("homepageSearch.children", language)}</p>
+                                  <p className="text-xs text-gray-400">{getText("homepageSearch.ages0to11", language)}</p>
+                                </div>
+                              </div>
+                              <div className="flex items-center gap-3">
+                                <button
+                                  onClick={(e) => { e.stopPropagation(); setChildren(Math.max(0, children - 1)); }}
+                                  className="w-10 h-10 rounded-xl border-2 border-gray-200 hover:border-sptc-red-500 hover:bg-sptc-red-50 transition-all flex items-center justify-center disabled:opacity-30 disabled:hover:border-gray-200 disabled:hover:bg-transparent text-gray-500 hover:text-sptc-red-500 text-xl font-medium"
+                                  disabled={children <= 0}
+                                >−</button>
+                                <span className="w-8 text-center font-bold text-gray-900 text-lg" suppressHydrationWarning>{children}</span>
+                                <button
+                                  onClick={(e) => { e.stopPropagation(); setChildren(Math.min(10, children + 1)); }}
+                                  className="w-10 h-10 rounded-xl border-2 border-gray-200 hover:border-sptc-red-500 hover:bg-sptc-red-50 transition-all flex items-center justify-center text-gray-500 hover:text-sptc-red-500 text-xl font-medium"
+                                >+</button>
+                              </div>
+                            </div>
+                          </div>
+                        </div>
+                      )}
                     </div>
 
-                    {/* Guest Picker Dropdown */}
-                    {showGuestPicker && (
-                      <div className="absolute top-full left-0 right-0 mt-2 bg-white rounded-2xl shadow-[0_10px_40px_rgba(0,0,0,0.15)] p-6 z-50 border border-gray-100 min-w-[280px]">
-                        {/* Adults */}
-                        <div className="flex items-center justify-between mb-6 pb-6 border-b border-gray-100">
-                          <div>
-                            <p className="text-sm font-medium text-gray-900" style={{ fontFamily: '"Inter", sans-serif' }}>{getText("hero.adults", language)}</p>
-                            <p className="text-xs text-gray-500 mt-1" style={{ fontFamily: '"Inter", sans-serif' }}>{getText("hero.agesAdult", language)}</p>
-                          </div>
-                          <div className="flex items-center gap-3">
-                            <button
-                              onClick={(e) => { e.stopPropagation(); setAdults(Math.max(1, adults - 1)); }}
-                              className="w-9 h-9 rounded-full border-2 border-gray-300 hover:border-gray-900 transition-colors flex items-center justify-center disabled:opacity-30 disabled:cursor-not-allowed"
-                              disabled={adults <= 1}
-                            >
-                              <span className="text-gray-600 text-lg font-light">−</span>
-                            </button>
-                            <span className="w-8 text-center text-base font-light text-gray-900" style={{ fontFamily: '"Inter", sans-serif' }} suppressHydrationWarning>{adults}</span>
-                            <button
-                              onClick={(e) => { e.stopPropagation(); setAdults(Math.min(10, adults + 1)); }}
-                              className="w-9 h-9 rounded-full border-2 border-gray-300 hover:border-gray-900 transition-colors flex items-center justify-center"
-                            >
-                              <span className="text-gray-600 text-lg font-light">+</span>
-                            </button>
-                          </div>
-                        </div>
-
-                        {/* Children */}
-                        <div className="flex items-center justify-between">
-                          <div>
-                            <p className="text-sm font-medium text-gray-900" style={{ fontFamily: '"Inter", sans-serif' }}>{getText("hero.children", language)}</p>
-                            <p className="text-xs text-gray-500 mt-1" style={{ fontFamily: '"Inter", sans-serif' }}>{getText("hero.agesChild", language)}</p>
-                          </div>
-                          <div className="flex items-center gap-3">
-                            <button
-                              onClick={(e) => { e.stopPropagation(); setChildren(Math.max(0, children - 1)); }}
-                              className="w-9 h-9 rounded-full border-2 border-gray-300 hover:border-gray-900 transition-colors flex items-center justify-center disabled:opacity-30 disabled:cursor-not-allowed"
-                              disabled={children <= 0}
-                            >
-                              <span className="text-gray-600 text-lg font-light">−</span>
-                            </button>
-                            <span className="w-8 text-center text-base font-light text-gray-900" style={{ fontFamily: '"Inter", sans-serif' }} suppressHydrationWarning>{children}</span>
-                            <button
-                              onClick={(e) => { e.stopPropagation(); setChildren(Math.min(10, children + 1)); }}
-                              className="w-9 h-9 rounded-full border-2 border-gray-300 hover:border-gray-900 transition-colors flex items-center justify-center"
-                            >
-                              <span className="text-gray-600 text-lg font-light">+</span>
-                            </button>
-                          </div>
-                        </div>
-                      </div>
-                    )}
+                    {/* Search Button */}
+                    <div className="flex items-center pr-2">
+                      <Link
+                        href={`/search?country=${encodeURIComponent(country)}&region=${encodeURIComponent(region)}&checkIn=${checkIn}&checkOut=${checkOut}&adults=${adults}&children=${children}`}
+                        className="h-12 px-6 bg-sptc-red-600 hover:bg-sptc-red-700 text-white font-semibold rounded-2xl transition-all flex items-center gap-2 shadow-lg shadow-red-500/25 hover:shadow-xl hover:shadow-red-500/30"
+                      >
+                        <Search className="w-5 h-5" />
+                        <span>{getText("homepageSearch.search", language)}</span>
+                      </Link>
+                    </div>
                   </div>
-
-                  <Link
-                    href={`/search?location=Fusagasugá&checkIn=${checkIn}&checkOut=${checkOut}&adults=${adults}&children=${children}`}
-                    className="w-full sm:w-auto whitespace-nowrap px-6 sm:px-10 py-3 bg-gradient-to-br from-red-600 via-red-700 to-red-800 hover:from-red-700 hover:via-red-800 hover:to-red-900 text-white font-medium rounded-xl sm:rounded-2xl transition-all shadow-[0_8px_30px_rgba(220,38,38,0.35)] hover:shadow-[0_12px_40px_rgba(220,38,38,0.45)] transform hover:scale-[1.02] flex items-center justify-center gap-2"
-                    style={{
-                      fontFamily: '"Inter", sans-serif',
-                      letterSpacing: "0.02em",
-                    }}
-                  >
-                    <Search className="w-5 h-5" />
-                    <span className="text-sm">
-                      {getText("hero.search", language)}
-                    </span>
-                  </Link>
                 </div>
               </div>
 
               {/* Trust line */}
-              <div className="flex items-center gap-2 pt-4 text-xs md:text-sm text-gray-500">
+              <div className="flex items-center gap-2 pt-4 text-xs md:text-sm text-gray-500 relative z-[-1]">
                 <span className="text-green-500">✓</span>
                 <span
                   style={{ fontFamily: '"Inter", sans-serif', opacity: 0.9 }}
                 >
-                  Every booking supports local community projects
+                  {getText("homepageSearch.everyBookingSupports", language)}
                 </span>
               </div>
             </div>
@@ -276,7 +391,7 @@ export default function Home() {
               {getText("map.subtitle", language)}
             </p>
           </div>
-          <AccommodationMap />
+          <AccommodationMap listings={mapListings} />
         </div>
       </section>
 
@@ -702,13 +817,22 @@ export default function Home() {
                   </div>
                 </div>
 
-                <a
-                  href="/community"
-                  className="inline-flex items-center justify-center gap-2 px-8 py-4 bg-gradient-to-r from-green-600 to-green-700 text-white font-bold rounded-2xl hover:from-green-700 hover:to-green-800 transition-all shadow-lg hover:shadow-xl"
-                >
-                  <span>{getText("treeCounter.learnMore", language)}</span>
-                  <TreePine className="w-5 h-5" />
-                </a>
+                <div className="flex flex-wrap gap-4">
+                  <a
+                    href="/community"
+                    className="inline-flex items-center justify-center gap-2 px-8 py-4 bg-gradient-to-r from-green-600 to-green-700 text-white font-bold rounded-2xl hover:from-green-700 hover:to-green-800 transition-all shadow-lg hover:shadow-xl"
+                  >
+                    <span>{getText("treeCounter.learnMore", language)}</span>
+                    <TreePine className="w-5 h-5" />
+                  </a>
+                  <a
+                    href="/plant-a-tree"
+                    className="inline-flex items-center justify-center gap-2 px-8 py-4 bg-gradient-to-r from-sptc-red-600 to-sptc-red-700 text-white font-bold rounded-2xl hover:from-sptc-red-700 hover:to-sptc-red-800 transition-all shadow-lg hover:shadow-xl"
+                  >
+                    <TreePine className="w-5 h-5" />
+                    <span>{getText("homepageSearch.plantATree", language)}</span>
+                  </a>
+                </div>
               </div>
             </div>
           </div>

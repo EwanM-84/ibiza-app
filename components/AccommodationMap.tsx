@@ -1,88 +1,35 @@
 "use client";
 
 import { useEffect, useRef, useState } from "react";
+import Link from "next/link";
 
-interface Property {
+interface Listing {
   id: string;
   title: string;
-  price: string;
-  lat: number;
-  lng: number;
-  image: string;
-  rating: string;
+  price_per_night: number;
+  latitude?: number | null;
+  longitude?: number | null;
+  images?: string[];
+  rating?: number;
 }
 
-const properties: Property[] = [
-  {
-    id: "1",
-    title: "Coffee Farm Cottage",
-    price: "$45",
-    lat: 4.3369,
-    lng: -74.3644,
-    image: "https://images.unsplash.com/photo-1602391833977-358a52198938?w=400&q=80",
-    rating: "4.9",
-  },
-  {
-    id: "2",
-    title: "Mountain View Villa",
-    price: "$65",
-    lat: 4.3450,
-    lng: -74.3550,
-    image: "https://images.unsplash.com/photo-1542314831-068cd1dbfeeb?w=400&q=80",
-    rating: "4.8",
-  },
-  {
-    id: "3",
-    title: "Traditional Finca",
-    price: "$55",
-    lat: 4.3280,
-    lng: -74.3720,
-    image: "https://images.unsplash.com/photo-1571896349842-33c89424de2d?w=400&q=80",
-    rating: "5.0",
-  },
-  {
-    id: "4",
-    title: "Boutique Eco Lodge",
-    price: "$85",
-    lat: 4.3400,
-    lng: -74.3500,
-    image: "https://images.unsplash.com/photo-1566073771259-6a8506099945?w=400&q=80",
-    rating: "4.9",
-  },
-  {
-    id: "5",
-    title: "Riverside Cabin",
-    price: "$50",
-    lat: 4.3320,
-    lng: -74.3680,
-    image: "https://images.unsplash.com/photo-1582268611958-ebfd161ef9cf?w=400&q=80",
-    rating: "4.7",
-  },
-  {
-    id: "6",
-    title: "Colonial Hacienda",
-    price: "$95",
-    lat: 4.3380,
-    lng: -74.3600,
-    image: "https://images.unsplash.com/photo-1587061949409-02df41d5e562?w=400&q=80",
-    rating: "5.0",
-  },
-  {
-    id: "7",
-    title: "Modern Loft",
-    price: "$70",
-    lat: 4.3360,
-    lng: -74.3620,
-    image: "https://images.unsplash.com/photo-1600596542815-ffad4c1539a9?w=400&q=80",
-    rating: "4.8",
-  },
-];
+interface AccommodationMapProps {
+  listings?: Listing[];
+}
 
-export default function AccommodationMap() {
+// Default center for Fusagasugá, Colombia
+const DEFAULT_CENTER = { lat: 4.3369, lng: -74.3644 };
+
+export default function AccommodationMap({ listings = [] }: AccommodationMapProps) {
   const mapRef = useRef<HTMLDivElement>(null);
   const [map, setMap] = useState<google.maps.Map | null>(null);
-  const [selectedProperty, setSelectedProperty] = useState<Property | null>(null);
+  const [selectedListing, setSelectedListing] = useState<Listing | null>(null);
   const [error, setError] = useState<string | null>(null);
+
+  // Filter listings with valid coordinates
+  const listingsWithCoords = listings.filter(
+    l => l.latitude && l.longitude && l.latitude !== 0 && l.longitude !== 0
+  );
 
   useEffect(() => {
     const apiKey = process.env.NEXT_PUBLIC_GOOGLE_MAPS_API_KEY;
@@ -131,8 +78,16 @@ export default function AccommodationMap() {
       if (!mapRef.current) return;
 
       try {
+        // Calculate center based on listings or use default
+        let center = DEFAULT_CENTER;
+        if (listingsWithCoords.length > 0) {
+          const avgLat = listingsWithCoords.reduce((sum, l) => sum + (l.latitude || 0), 0) / listingsWithCoords.length;
+          const avgLng = listingsWithCoords.reduce((sum, l) => sum + (l.longitude || 0), 0) / listingsWithCoords.length;
+          center = { lat: avgLat, lng: avgLng };
+        }
+
         const mapInstance = new google.maps.Map(mapRef.current, {
-          center: { lat: 4.3369, lng: -74.3644 },
+          center,
           zoom: 13,
           styles: [
             {
@@ -152,8 +107,8 @@ export default function AccommodationMap() {
 
         setMap(mapInstance);
 
-        // Add Booking.com-style speech bubble markers
-        properties.forEach((property) => {
+        // Add Booking.com-style speech bubble markers for real listings
+        listingsWithCoords.forEach((listing) => {
           // Create custom speech bubble marker with SVG
           const svgMarker = {
             path: 'M 0,0 L 50,0 L 50,30 L 27,30 L 25,35 L 23,30 L 0,30 Z',
@@ -168,11 +123,11 @@ export default function AccommodationMap() {
 
           const marker = new google.maps.Marker({
             map: mapInstance,
-            position: { lat: property.lat, lng: property.lng },
-            title: property.title,
+            position: { lat: listing.latitude!, lng: listing.longitude! },
+            title: listing.title,
             icon: svgMarker,
             label: {
-              text: property.price,
+              text: `$${listing.price_per_night}`,
               color: '#FFFFFF',
               fontSize: '13px',
               fontWeight: 'bold',
@@ -180,17 +135,26 @@ export default function AccommodationMap() {
           });
 
           marker.addListener("click", () => {
-            setSelectedProperty(property);
-            mapInstance.panTo({ lat: property.lat, lng: property.lng });
+            setSelectedListing(listing);
+            mapInstance.panTo({ lat: listing.latitude!, lng: listing.longitude! });
           });
         });
+
+        // Fit bounds if multiple listings
+        if (listingsWithCoords.length > 1) {
+          const bounds = new google.maps.LatLngBounds();
+          listingsWithCoords.forEach(listing => {
+            bounds.extend({ lat: listing.latitude!, lng: listing.longitude! });
+          });
+          mapInstance.fitBounds(bounds);
+        }
       } catch (error) {
         setError("Failed to render map");
       }
     };
 
     initMap();
-  }, []);
+  }, [listings.length]);
 
   if (error) {
     return (
@@ -228,39 +192,44 @@ export default function AccommodationMap() {
         style={{ minHeight: "600px" }}
       />
 
-      {selectedProperty && (
+      {selectedListing && (
         <div className="absolute bottom-6 left-1/2 transform -translate-x-1/2 w-full max-w-sm px-4">
           <div className="bg-white rounded-3xl shadow-ios-2xl p-4 animate-fade-in">
             <button
-              onClick={() => setSelectedProperty(null)}
-              className="absolute top-4 right-4 w-8 h-8 bg-sptc-gray-100 rounded-full flex items-center justify-center hover:bg-sptc-gray-200 transition-colors"
+              onClick={() => setSelectedListing(null)}
+              className="absolute top-4 right-4 w-8 h-8 bg-sptc-gray-100 rounded-full flex items-center justify-center hover:bg-sptc-gray-200 transition-colors z-10"
             >
               <span className="text-sptc-gray-700 text-lg font-bold">&times;</span>
             </button>
 
             <div className="flex space-x-4">
               <img
-                src={selectedProperty.image}
-                alt={selectedProperty.title}
+                src={selectedListing.images?.[0] || "https://images.unsplash.com/photo-1582268611958-ebfd161ef9cf?w=400&q=80"}
+                alt={selectedListing.title}
                 className="w-24 h-24 object-cover rounded-2xl flex-shrink-0"
               />
               <div className="flex-1 min-w-0">
                 <h3 className="font-bold text-lg text-gray-900 truncate mb-1">
-                  {selectedProperty.title}
+                  {selectedListing.title}
                 </h3>
-                <div className="flex items-center space-x-2 mb-2">
-                  <span className="text-sm font-semibold text-gray-900">★ {selectedProperty.rating}</span>
-                </div>
+                {selectedListing.rating && (
+                  <div className="flex items-center space-x-2 mb-2">
+                    <span className="text-sm font-semibold text-gray-900">★ {selectedListing.rating}</span>
+                  </div>
+                )}
                 <p className="text-gray-900">
-                  <span className="font-bold text-xl">{selectedProperty.price}</span>
+                  <span className="font-bold text-xl">${selectedListing.price_per_night}</span>
                   <span className="text-gray-600"> / night</span>
                 </p>
               </div>
             </div>
 
-            <button className="w-full mt-4 bg-gradient-to-r from-sptc-red-600 to-sptc-red-700 text-white font-bold py-3 rounded-xl hover:from-sptc-red-700 hover:to-sptc-red-800 transition-all shadow-lg hover:shadow-xl">
+            <Link
+              href={`/listing/${selectedListing.id}`}
+              className="block w-full mt-4 bg-gradient-to-r from-sptc-red-600 to-sptc-red-700 text-white font-bold py-3 rounded-xl hover:from-sptc-red-700 hover:to-sptc-red-800 transition-all shadow-lg hover:shadow-xl text-center"
+            >
               View details
-            </button>
+            </Link>
           </div>
         </div>
       )}

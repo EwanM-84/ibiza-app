@@ -4,7 +4,9 @@ import Link from "next/link";
 import { User, Globe, Sparkles } from "lucide-react";
 import { getText } from "@/lib/text";
 import { useLanguage } from "@/contexts/LanguageContext";
-import { useState } from "react";
+import { useState, useEffect } from "react";
+import { useRouter } from "next/navigation";
+import { createClientComponentClient } from "@supabase/auth-helpers-nextjs";
 import LoginModal from "./LoginModal";
 
 export default function Navigation() {
@@ -13,6 +15,51 @@ export default function Navigation() {
   const [showLoginModal, setShowLoginModal] = useState(false);
   const [loginMode, setLoginMode] = useState<"client" | "host" | "admin">("client");
   const [showMobileMenu, setShowMobileMenu] = useState(false);
+  const [isLoggedIn, setIsLoggedIn] = useState(false);
+  const [userInitial, setUserInitial] = useState<string | null>(null);
+  const router = useRouter();
+  const supabase = createClientComponentClient();
+
+  useEffect(() => {
+    const checkAuth = async () => {
+      const { data: { session } } = await supabase.auth.getSession();
+      if (session?.user) {
+        setIsLoggedIn(true);
+        const { data: profile } = await supabase
+          .from('host_profiles')
+          .select('first_name')
+          .eq('user_id', session.user.id)
+          .single();
+        if (profile?.first_name) {
+          setUserInitial(profile.first_name.charAt(0).toUpperCase());
+        }
+      } else {
+        setIsLoggedIn(false);
+        setUserInitial(null);
+      }
+    };
+    checkAuth();
+
+    const { data: { subscription } } = supabase.auth.onAuthStateChange((event, session) => {
+      if (session?.user) {
+        setIsLoggedIn(true);
+      } else {
+        setIsLoggedIn(false);
+        setUserInitial(null);
+      }
+    });
+
+    return () => subscription.unsubscribe();
+  }, [supabase]);
+
+  const handleUserIconClick = () => {
+    if (isLoggedIn) {
+      router.push('/host/dashboard');
+    } else {
+      setLoginMode("client");
+      setShowLoginModal(true);
+    }
+  };
   return (
     <nav
       className="relative z-50 px-4 pt-4"
@@ -102,15 +149,18 @@ export default function Navigation() {
               </div>
 
               <button
-                onClick={() => {
-                  setLoginMode("client");
-                  setShowLoginModal(true);
-                }}
+                onClick={handleUserIconClick}
                 className="p-3 hover:bg-sptc-gray-100 rounded-2xl transition-all duration-200 hover:scale-105 active:scale-95"
-                aria-label="Login"
-                title="Login"
+                aria-label={isLoggedIn ? "Dashboard" : "Login"}
+                title={isLoggedIn ? "Go to Dashboard" : "Login"}
               >
-                <User className="w-5 h-5 text-sptc-gray-600" />
+                {isLoggedIn && userInitial ? (
+                  <div className="w-6 h-6 bg-gradient-to-br from-sptc-red-500 to-sptc-red-600 rounded-full flex items-center justify-center text-white font-bold text-sm">
+                    {userInitial}
+                  </div>
+                ) : (
+                  <User className="w-5 h-5 text-sptc-gray-600" />
+                )}
               </button>
 
               {/* Mobile Menu Button */}

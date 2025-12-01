@@ -229,7 +229,7 @@ export default function HostOnboarding() {
   };
 
   const steps = [
-    { number: 1, title: "Identity Verification", subtitle: "Verify with MetaMap", icon: Shield },
+    { number: 1, title: getText("hostOnboardingPage.identityVerification", language), subtitle: getText("hostOnboardingPage.verifyWithMetamap", language), icon: Shield },
     { number: 2, title: getText("hostOnboarding.step3Title", language), subtitle: getText("hostOnboarding.step3Subtitle", language), icon: HomeIcon },
     { number: 3, title: getText("hostOnboarding.step4Title", language), subtitle: getText("hostOnboarding.step4Subtitle", language), icon: CheckCircle },
   ];
@@ -318,10 +318,10 @@ export default function HostOnboarding() {
             <div className="space-y-8">
               <div>
                 <h2 className="text-4xl font-bold text-gray-900 mb-3" style={{ fontFamily: '"DM Serif Display", serif' }}>
-                  Identity Verification
+                  {getText("hostOnboardingPage.identityVerification", language)}
                 </h2>
                 <p className="text-lg text-gray-600">
-                  Verify your identity with MetaMap - fast, secure, and designed for Colombia
+                  {getText("hostOnboardingPage.verifyDescription", language)}
                 </p>
               </div>
 
@@ -331,32 +331,32 @@ export default function HostOnboarding() {
                     <div className="w-24 h-24 bg-green-500 rounded-full flex items-center justify-center shadow-xl">
                       <CheckCircle className="w-14 h-14 text-white" strokeWidth={3} />
                     </div>
-                    <h3 className="text-3xl font-bold text-gray-900">Verification Complete!</h3>
+                    <h3 className="text-3xl font-bold text-gray-900">{getText("hostOnboardingPage.verificationComplete", language)}</h3>
                     <p className="text-lg text-gray-600 max-w-md text-center">
-                      Your identity has been successfully verified. You can now proceed to the next step.
+                      {getText("hostOnboardingPage.verificationSuccess", language)}
                     </p>
                   </div>
 
                   <div className="bg-green-50 border border-green-200 rounded-2xl p-6">
                     <h4 className="font-bold text-green-900 mb-3 flex items-center gap-2">
                       <CheckCircle className="w-5 h-5" />
-                      Verification Details
+                      {getText("hostOnboardingPage.verificationDetails", language)}
                     </h4>
                     <div className="space-y-2 text-sm text-green-800">
                       <div className="flex items-center justify-between">
-                        <span>Verification ID:</span>
+                        <span>{getText("hostOnboardingPage.verificationId", language)}:</span>
                         <span className="font-mono font-semibold">{metamapData?.verificationId?.substring(0, 12)}...</span>
                       </div>
                       <div className="flex items-center justify-between">
-                        <span>Status:</span>
+                        <span>{getText("hostOnboardingPage.status", language)}:</span>
                         <span className="font-semibold capitalize">{metamapData?.status || 'Verified'}</span>
                       </div>
                       <div className="flex items-center justify-between">
-                        <span>Identity Status:</span>
+                        <span>{getText("hostOnboardingPage.identityStatus", language)}:</span>
                         <span className="font-semibold capitalize">{metamapData?.identityStatus || 'Verified'}</span>
                       </div>
                       <div className="flex items-center justify-between">
-                        <span>Selfie Status:</span>
+                        <span>{getText("hostOnboardingPage.selfieStatus", language)}:</span>
                         <span className="font-semibold capitalize">{metamapData?.selfieStatus || 'Verified'}</span>
                       </div>
                     </div>
@@ -378,7 +378,7 @@ export default function HostOnboarding() {
                 <h2 className="text-4xl font-bold text-gray-900 mb-3" style={{ fontFamily: '"DM Serif Display", serif' }}>
                   {getText("hostOnboarding.propertyPhotos", language)}
                 </h2>
-                <p className="text-lg text-gray-600">Scan the QR code with your mobile phone to take photos with GPS location</p>
+                <p className="text-lg text-gray-600">{getText("hostOnboarding.scanQRDescription", language)}</p>
               </div>
 
               {/* QR Code Section */}
@@ -401,39 +401,39 @@ export default function HostOnboarding() {
                         <div className="w-12 h-12 bg-sptc-red-600 rounded-full flex items-center justify-center">
                           <Smartphone className="w-6 h-6 text-white" />
                         </div>
-                        <h3 className="text-2xl font-bold text-gray-900">Scan with your phone</h3>
+                        <h3 className="text-2xl font-bold text-gray-900">{getText("hostOnboardingPage.scanWithPhone", language)}</h3>
                       </div>
 
                       <ol className="space-y-3 text-gray-700">
                         <li className="flex gap-3">
                           <span className="flex-shrink-0 w-8 h-8 bg-sptc-red-600 text-white font-bold rounded-full flex items-center justify-center text-sm">1</span>
-                          <span>Open your phone's camera app</span>
+                          <span>{getText("hostOnboardingPage.step1Camera", language)}</span>
                         </li>
                         <li className="flex gap-3">
                           <span className="flex-shrink-0 w-8 h-8 bg-sptc-red-600 text-white font-bold rounded-full flex items-center justify-center text-sm">2</span>
-                          <span>Point it at the QR code above</span>
+                          <span>{getText("hostOnboardingPage.step2Point", language)}</span>
                         </li>
                         <li className="flex gap-3">
                           <span className="flex-shrink-0 w-8 h-8 bg-sptc-red-600 text-white font-bold rounded-full flex items-center justify-center text-sm">3</span>
-                          <span>Tap the link that appears</span>
+                          <span>{getText("hostOnboardingPage.step3Tap", language)}</span>
                         </li>
                         <li className="flex gap-3">
                           <span className="flex-shrink-0 w-8 h-8 bg-sptc-red-600 text-white font-bold rounded-full flex items-center justify-center text-sm">4</span>
-                          <span>Take 2 photos of your property</span>
+                          <span>{getText("hostOnboardingPage.step4Photos", language)}</span>
                         </li>
                         <li className="flex gap-3">
                           <span className="flex-shrink-0 w-8 h-8 bg-sptc-red-600 text-white font-bold rounded-full flex items-center justify-center text-sm">5</span>
-                          <span>Photos will appear here automatically</span>
+                          <span>{getText("hostOnboardingPage.step5Auto", language)}</span>
                         </li>
                       </ol>
 
                       <div className="mt-6 flex items-center gap-2 bg-white border border-gray-200 px-4 py-3 rounded-xl">
-                        <span className="text-sm text-gray-600 font-semibold">Photos uploaded:</span>
+                        <span className="text-sm text-gray-600 font-semibold">{getText("hostOnboardingPage.photosUploaded", language)}:</span>
                         <span className="text-2xl font-bold text-sptc-red-600">{sessionPhotos.length} / 2</span>
                         {sessionPhotos.length < 2 && (
                           <div className="ml-2 flex items-center gap-2 text-blue-600">
                             <div className="w-4 h-4 border-2 border-blue-600 border-t-transparent rounded-full animate-spin"></div>
-                            <span className="text-sm">Syncing...</span>
+                            <span className="text-sm">{getText("hostOnboardingPage.syncing", language)}</span>
                           </div>
                         )}
                       </div>
@@ -450,8 +450,8 @@ export default function HostOnboarding() {
                       <CheckCircle className="w-7 h-7 text-white" />
                     </div>
                     <div>
-                      <h3 className="text-xl font-bold text-green-900">All Photos Received!</h3>
-                      <p className="text-green-700">Your property photos have been uploaded with GPS verification. You can continue to the next step.</p>
+                      <h3 className="text-xl font-bold text-green-900">{getText("hostOnboardingPage.allPhotosReceived", language)}</h3>
+                      <p className="text-green-700">{getText("hostOnboardingPage.photosReceivedMessage", language)}</p>
                     </div>
                   </div>
                 </div>
@@ -483,8 +483,8 @@ export default function HostOnboarding() {
                             <div className="w-10 h-10 border-3 border-gray-300 border-t-sptc-red-500 rounded-full animate-spin"></div>
                           </div>
                           <div className="text-center">
-                            <p className="text-base font-bold text-gray-700 mb-1">Photo {index + 1}</p>
-                            <p className="text-xs text-gray-500">Waiting for upload from phone...</p>
+                            <p className="text-base font-bold text-gray-700 mb-1">{getText("hostOnboardingPage.photos", language)} {index + 1}</p>
+                            <p className="text-xs text-gray-500">{getText("hostOnboardingPage.waitingUpload", language)}</p>
                           </div>
                         </div>
                       )}
@@ -496,8 +496,8 @@ export default function HostOnboarding() {
               <div className="bg-blue-50 border border-blue-200 rounded-2xl p-6 flex gap-4">
                 <MapPin className="w-6 h-6 text-blue-600 flex-shrink-0 mt-1" />
                 <div>
-                  <h4 className="font-bold text-blue-900 mb-1">Automatic GPS verification</h4>
-                  <p className="text-sm text-blue-800">Photos taken on your mobile phone automatically include GPS coordinates, proving the property location is authentic.</p>
+                  <h4 className="font-bold text-blue-900 mb-1">{getText("hostOnboardingPage.autoGpsVerification", language)}</h4>
+                  <p className="text-sm text-blue-800">{getText("hostOnboardingPage.gpsVerificationMessage", language)}</p>
                 </div>
               </div>
             </div>
@@ -550,13 +550,13 @@ export default function HostOnboarding() {
                   </h3>
                   <div className="space-y-4 mb-6">
                     <div className="flex items-center justify-between p-4 bg-gray-50 rounded-xl">
-                      <span className="text-gray-600 font-medium">Photos:</span>
+                      <span className="text-gray-600 font-medium">{getText("hostOnboardingPage.photos", language)}:</span>
                       <span className="font-bold text-gray-900">
                         {sessionPhotos.length} {getText("hostOnboarding.photosUploaded", language)}
                       </span>
                     </div>
                     <div className="flex items-center justify-between p-4 bg-gray-50 rounded-xl">
-                      <span className="text-gray-600 font-medium">Location:</span>
+                      <span className="text-gray-600 font-medium">{getText("hostOnboardingPage.location", language)}:</span>
                       <span className="font-bold text-green-600 flex items-center gap-2">
                         {getText("hostOnboarding.locationVerified", language)}
                         <MapPin className="w-6 h-6" />
@@ -570,7 +570,7 @@ export default function HostOnboarding() {
                           <img src={photo.photo_url} alt={`Property ${index + 1}`} className="w-full h-32 object-cover" />
                           <div className="absolute bottom-0 left-0 right-0 bg-black bg-opacity-50 text-white text-xs p-2">
                             <MapPin className="w-3 h-3 inline mr-1" />
-                            GPS Verified
+                            {getText("hostOnboardingPage.gpsVerified", language)}
                           </div>
                         </div>
                       ))}
@@ -596,11 +596,11 @@ export default function HostOnboarding() {
               <button
                 onClick={() => {
                   if (currentStep === 1 && !metamapVerified) {
-                    alert("Please complete your identity verification with MetaMap");
+                    alert(getText("hostOnboardingPage.completeVerification", language));
                     return;
                   }
                   if (currentStep === 2 && sessionPhotos.length < 2) {
-                    alert("Please upload 2 photos of your property");
+                    alert(getText("hostOnboardingPage.uploadPhotosMessage", language));
                     return;
                   }
                   setCurrentStep(currentStep + 1);
@@ -630,15 +630,15 @@ export default function HostOnboarding() {
         <div className="mt-12 flex items-center justify-center gap-8 text-sm text-gray-500">
           <div className="flex items-center gap-2">
             <Shield className="w-5 h-5" />
-            <span>Bank-level security</span>
+            <span>{getText("hostOnboardingPage.bankLevelSecurity", language)}</span>
           </div>
           <div className="flex items-center gap-2">
             <CheckCircle className="w-5 h-5" />
-            <span>Verified hosts only</span>
+            <span>{getText("hostOnboardingPage.verifiedHostsOnly", language)}</span>
           </div>
           <div className="flex items-center gap-2">
             <MapPin className="w-5 h-5" />
-            <span>Location verified</span>
+            <span>{getText("hostOnboardingPage.locationVerifiedTrust", language)}</span>
           </div>
         </div>
       </div>

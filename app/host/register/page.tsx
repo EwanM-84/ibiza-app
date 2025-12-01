@@ -12,6 +12,7 @@ import { supabase } from "@/lib/supabaseClient";
 
 export default function HostRegister() {
   const { language } = useLanguage();
+  const t = (key: string) => getText(key, language);
   const router = useRouter();
 
   // Scroll to top on mount
@@ -60,23 +61,23 @@ export default function HostRegister() {
     const newErrors: Record<string, string> = {};
 
     if (!formData.firstName.trim()) {
-      newErrors.firstName = "First name is required";
+      newErrors.firstName = t("hostRegister.firstNameRequired");
     }
     if (!formData.lastName.trim()) {
-      newErrors.lastName = "Last name is required";
+      newErrors.lastName = t("hostRegister.lastNameRequired");
     }
     if (!formData.email.trim()) {
-      newErrors.email = "Email is required";
+      newErrors.email = t("hostRegister.emailRequired");
     } else if (!/\S+@\S+\.\S+/.test(formData.email)) {
-      newErrors.email = "Email is invalid";
+      newErrors.email = t("hostRegister.emailInvalid");
     }
     if (!formData.password) {
-      newErrors.password = "Password is required";
+      newErrors.password = t("hostRegister.passwordRequired");
     } else if (formData.password.length < 8) {
-      newErrors.password = "Password must be at least 8 characters";
+      newErrors.password = t("hostRegister.passwordMinLength");
     }
     if (formData.password !== formData.confirmPassword) {
-      newErrors.confirmPassword = "Passwords do not match";
+      newErrors.confirmPassword = t("hostRegister.passwordsNoMatch");
     }
 
     setErrors(newErrors);
@@ -87,17 +88,17 @@ export default function HostRegister() {
     const newErrors: Record<string, string> = {};
 
     if (!formData.phone.trim()) {
-      newErrors.phone = "Phone number is required";
+      newErrors.phone = t("hostRegister.phoneRequired");
     }
     if (!formData.city.trim()) {
-      newErrors.city = "City is required";
+      newErrors.city = t("hostRegister.cityRequired");
     }
     if (!formData.dateOfBirth) {
-      newErrors.dateOfBirth = "Date of birth is required";
+      newErrors.dateOfBirth = t("hostRegister.dobRequired");
     } else {
       const age = new Date().getFullYear() - new Date(formData.dateOfBirth).getFullYear();
       if (age < 18) {
-        newErrors.dateOfBirth = "You must be at least 18 years old";
+        newErrors.dateOfBirth = t("hostRegister.mustBe18");
       }
     }
 
@@ -109,13 +110,13 @@ export default function HostRegister() {
     const newErrors: Record<string, string> = {};
 
     if (!formData.agreeTerms) {
-      newErrors.agreeTerms = "You must agree to the Terms & Conditions";
+      newErrors.agreeTerms = t("hostRegister.mustAgreeTerms");
     }
     if (!formData.agreeBackgroundCheck) {
-      newErrors.agreeBackgroundCheck = "Background check consent is required";
+      newErrors.agreeBackgroundCheck = t("hostRegister.mustAgreeBackground");
     }
     if (!formData.agreeDataProcessing) {
-      newErrors.agreeDataProcessing = "Data processing consent is required";
+      newErrors.agreeDataProcessing = t("hostRegister.mustAgreeData");
     }
 
     setErrors(newErrors);
@@ -169,7 +170,7 @@ export default function HostRegister() {
 
     } catch (error: any) {
       console.error('Registration error:', error);
-      setErrors({ submit: error.message || 'Registration failed. Please try again.' });
+      setErrors({ submit: error.message || t("hostRegister.registrationFailed") });
       setIsSubmitting(false);
     }
   };
@@ -185,10 +186,10 @@ export default function HostRegister() {
     if (/\d/.test(password)) strength++;
     if (/[^a-zA-Z0-9]/.test(password)) strength++;
 
-    if (strength <= 2) return { strength, label: 'Weak', color: 'text-red-600 bg-red-100' };
-    if (strength <= 3) return { strength, label: 'Fair', color: 'text-yellow-600 bg-yellow-100' };
-    if (strength <= 4) return { strength, label: 'Good', color: 'text-blue-600 bg-blue-100' };
-    return { strength, label: 'Strong', color: 'text-green-600 bg-green-100' };
+    if (strength <= 2) return { strength, label: t("hostRegister.weak"), color: 'text-red-600 bg-red-100' };
+    if (strength <= 3) return { strength, label: t("hostRegister.fair"), color: 'text-yellow-600 bg-yellow-100' };
+    if (strength <= 4) return { strength, label: t("hostRegister.good"), color: 'text-blue-600 bg-blue-100' };
+    return { strength, label: t("hostRegister.strong"), color: 'text-green-600 bg-green-100' };
   };
 
   const pwdStrength = passwordStrength();
@@ -202,10 +203,10 @@ export default function HostRegister() {
             <Shield className="w-8 h-8 text-white" />
           </div>
           <h1 className="text-4xl md:text-5xl font-bold text-gray-900 mb-3" style={{ fontFamily: '"DM Serif Display", serif' }}>
-            Become a Host
+            {t("hostRegister.title")}
           </h1>
           <p className="text-lg md:text-xl text-gray-600 max-w-2xl mx-auto">
-            Join our community of verified hosts and share authentic Colombian experiences
+            {t("hostRegister.subtitle")}
           </p>
         </div>
 
@@ -239,15 +240,15 @@ export default function HostRegister() {
               <div className="space-y-6">
                 <div>
                   <h2 className="text-3xl font-bold text-gray-900 mb-2" style={{ fontFamily: '"DM Serif Display", serif' }}>
-                    Basic Information
+                    {t("hostRegister.basicInformation")}
                   </h2>
-                  <p className="text-gray-600">Let's start with the basics</p>
+                  <p className="text-gray-600">{t("hostRegister.letsStart")}</p>
                 </div>
 
                 <div className="grid md:grid-cols-2 gap-5">
                   <div>
                     <label className="block text-sm font-bold text-gray-700 mb-2">
-                      First Name *
+                      {t("hostRegister.firstName")} *
                     </label>
                     <div className="relative">
                       <input
@@ -271,7 +272,7 @@ export default function HostRegister() {
 
                   <div>
                     <label className="block text-sm font-bold text-gray-700 mb-2">
-                      Last Name *
+                      {t("hostRegister.lastName")} *
                     </label>
                     <div className="relative">
                       <input
@@ -296,7 +297,7 @@ export default function HostRegister() {
 
                 <div>
                   <label className="block text-sm font-bold text-gray-700 mb-2">
-                    Email Address *
+                    {t("hostRegister.emailAddress")} *
                   </label>
                   <div className="relative">
                     <input
@@ -320,7 +321,7 @@ export default function HostRegister() {
 
                 <div>
                   <label className="block text-sm font-bold text-gray-700 mb-2">
-                    Password *
+                    {t("hostRegister.password")} *
                   </label>
                   <div className="relative">
                     <Lock className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-gray-400" />
@@ -371,7 +372,7 @@ export default function HostRegister() {
 
                 <div>
                   <label className="block text-sm font-bold text-gray-700 mb-2">
-                    Confirm Password *
+                    {t("hostRegister.confirmPassword")} *
                   </label>
                   <div className="relative">
                     <Lock className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-gray-400" />
@@ -404,7 +405,7 @@ export default function HostRegister() {
                 <div className="bg-blue-50 border border-blue-200 rounded-xl p-4 flex gap-3">
                   <Shield className="w-5 h-5 text-blue-600 flex-shrink-0 mt-0.5" />
                   <p className="text-sm text-blue-800">
-                    Your password should be at least 8 characters long and include uppercase, lowercase, numbers, and special characters.
+                    {t("hostRegister.passwordTip")}
                   </p>
                 </div>
               </div>
@@ -415,14 +416,14 @@ export default function HostRegister() {
               <div className="space-y-6">
                 <div>
                   <h2 className="text-3xl font-bold text-gray-900 mb-2" style={{ fontFamily: '"DM Serif Display", serif' }}>
-                    Contact Details
+                    {t("hostRegister.contactDetails")}
                   </h2>
-                  <p className="text-gray-600">How can we reach you?</p>
+                  <p className="text-gray-600">{t("hostRegister.howCanWeReach")}</p>
                 </div>
 
                 <div>
                   <label className="block text-sm font-bold text-gray-700 mb-2">
-                    Phone Number *
+                    {t("hostRegister.phoneNumber")} *
                   </label>
                   <div className="relative">
                     <Phone className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-gray-400" />
@@ -448,7 +449,7 @@ export default function HostRegister() {
                 <div className="grid md:grid-cols-2 gap-5">
                   <div>
                     <label className="block text-sm font-bold text-gray-700 mb-2">
-                      Country *
+                      {t("hostRegister.country")} *
                     </label>
                     <div className="relative">
                       <MapPin className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-gray-400" />
@@ -466,7 +467,7 @@ export default function HostRegister() {
 
                   <div>
                     <label className="block text-sm font-bold text-gray-700 mb-2">
-                      City *
+                      {t("hostRegister.city")} *
                     </label>
                     <input
                       type="text"
@@ -489,7 +490,7 @@ export default function HostRegister() {
 
                 <div>
                   <label className="block text-sm font-bold text-gray-700 mb-2">
-                    Date of Birth *
+                    {t("hostRegister.dateOfBirth")} *
                   </label>
                   <input
                     type="date"
@@ -512,7 +513,7 @@ export default function HostRegister() {
                 <div className="bg-purple-50 border border-purple-200 rounded-xl p-4 flex gap-3">
                   <Shield className="w-5 h-5 text-purple-600 flex-shrink-0 mt-0.5" />
                   <p className="text-sm text-purple-800">
-                    You must be at least 18 years old to become a host. Your information will be verified.
+                    {t("hostRegister.ageTip")}
                   </p>
                 </div>
               </div>
@@ -523,9 +524,9 @@ export default function HostRegister() {
               <div className="space-y-6">
                 <div>
                   <h2 className="text-3xl font-bold text-gray-900 mb-2" style={{ fontFamily: '"DM Serif Display", serif' }}>
-                    Terms & Verification
+                    {t("hostRegister.termsVerification")}
                   </h2>
-                  <p className="text-gray-600">Please review and accept the following</p>
+                  <p className="text-gray-600">{t("hostRegister.pleaseReviewAccept")}</p>
                 </div>
 
                 <div className="space-y-4">
@@ -543,10 +544,10 @@ export default function HostRegister() {
                       <div className="flex-1">
                         <div className="flex items-center gap-2 mb-1">
                           <FileText className="w-5 h-5 text-gray-600" />
-                          <span className="font-bold text-gray-900">Terms & Conditions *</span>
+                          <span className="font-bold text-gray-900">{t("hostRegister.termsConditions")} *</span>
                         </div>
                         <p className="text-sm text-gray-600">
-                          I agree to SPTC Rural's <a href="/terms" className="text-sptc-red-600 hover:underline">Terms of Service</a> and <a href="/privacy" className="text-sptc-red-600 hover:underline">Privacy Policy</a>
+                          {t("hostRegister.agreeToTerms")}
                         </p>
                       </div>
                     </label>
@@ -566,10 +567,10 @@ export default function HostRegister() {
                       <div className="flex-1">
                         <div className="flex items-center gap-2 mb-1">
                           <Shield className="w-5 h-5 text-gray-600" />
-                          <span className="font-bold text-gray-900">Background Check Consent *</span>
+                          <span className="font-bold text-gray-900">{t("hostRegister.backgroundCheckConsent")} *</span>
                         </div>
                         <p className="text-sm text-gray-600">
-                          I consent to SPTC Rural conducting background checks including identity verification, criminal record checks, and property ownership verification
+                          {t("hostRegister.backgroundCheckText")}
                         </p>
                       </div>
                     </label>
@@ -589,10 +590,10 @@ export default function HostRegister() {
                       <div className="flex-1">
                         <div className="flex items-center gap-2 mb-1">
                           <Camera className="w-5 h-5 text-gray-600" />
-                          <span className="font-bold text-gray-900">Biometric Data Processing *</span>
+                          <span className="font-bold text-gray-900">{t("hostRegister.biometricDataProcessing")} *</span>
                         </div>
                         <p className="text-sm text-gray-600">
-                          I consent to the processing of my biometric data (facial recognition, ID document scanning) for identity verification purposes
+                          {t("hostRegister.biometricDataText")}
                         </p>
                       </div>
                     </label>
@@ -609,24 +610,24 @@ export default function HostRegister() {
                 <div className="bg-gradient-to-r from-green-50 to-teal-50 border border-green-200 rounded-xl p-5">
                   <h4 className="font-bold text-gray-900 mb-3 flex items-center gap-2">
                     <CheckCircle className="w-5 h-5 text-green-600" />
-                    Next Steps After Registration
+                    {t("hostRegister.nextStepsTitle")}
                   </h4>
                   <ul className="space-y-2 text-sm text-gray-700">
                     <li className="flex items-center gap-2">
                       <div className="w-1.5 h-1.5 bg-green-600 rounded-full" />
-                      Upload your government-issued ID (passport or national ID card)
+                      {t("hostRegister.nextStep1")}
                     </li>
                     <li className="flex items-center gap-2">
                       <div className="w-1.5 h-1.5 bg-green-600 rounded-full" />
-                      Complete facial recognition verification
+                      {t("hostRegister.nextStep2")}
                     </li>
                     <li className="flex items-center gap-2">
                       <div className="w-1.5 h-1.5 bg-green-600 rounded-full" />
-                      Upload property photos with GPS verification
+                      {t("hostRegister.nextStep3")}
                     </li>
                     <li className="flex items-center gap-2">
                       <div className="w-1.5 h-1.5 bg-green-600 rounded-full" />
-                      Wait 24-48 hours for verification approval
+                      {t("hostRegister.nextStep4")}
                     </li>
                   </ul>
                 </div>
@@ -644,7 +645,7 @@ export default function HostRegister() {
                   }}
                   className="px-6 py-3 border-2 border-gray-300 text-gray-700 font-bold rounded-xl hover:border-gray-400 hover:bg-gray-50 transition-all"
                 >
-                  Back
+                  {t("hostRegister.back")}
                 </button>
               ) : (
                 <button
@@ -652,7 +653,7 @@ export default function HostRegister() {
                   onClick={() => router.push('/')}
                   className="px-6 py-3 border-2 border-gray-300 text-gray-700 font-bold rounded-xl hover:border-gray-400 hover:bg-gray-50 transition-all"
                 >
-                  Cancel
+                  {t("hostRegister.cancel")}
                 </button>
               )}
 
@@ -662,7 +663,7 @@ export default function HostRegister() {
                   onClick={handleNext}
                   className="flex items-center gap-2 px-8 py-3 bg-gradient-to-r from-sptc-red-600 to-sptc-red-700 text-white font-bold rounded-xl hover:from-sptc-red-700 hover:to-sptc-red-800 transition-all shadow-lg transform hover:scale-105"
                 >
-                  Continue
+                  {t("hostRegister.continue")}
                   <ArrowRight className="w-5 h-5" />
                 </button>
               ) : (
@@ -674,11 +675,11 @@ export default function HostRegister() {
                   {isSubmitting ? (
                     <>
                       <div className="w-5 h-5 border-2 border-white border-t-transparent rounded-full animate-spin" />
-                      Creating Account...
+                      {t("hostRegister.creatingAccount")}
                     </>
                   ) : (
                     <>
-                      Create Account
+                      {t("hostRegister.createAccount")}
                       <CheckCircle className="w-5 h-5" />
                     </>
                   )}
@@ -692,15 +693,15 @@ export default function HostRegister() {
         <div className="mt-8 flex items-center justify-center gap-8 text-sm text-gray-500">
           <div className="flex items-center gap-2">
             <Shield className="w-5 h-5" />
-            <span>256-bit encryption</span>
+            <span>{t("hostRegister.encryption")}</span>
           </div>
           <div className="flex items-center gap-2">
             <CheckCircle className="w-5 h-5" />
-            <span>ID verified</span>
+            <span>{t("hostRegister.idVerified")}</span>
           </div>
           <div className="flex items-center gap-2">
             <Camera className="w-5 h-5" />
-            <span>Biometric security</span>
+            <span>{t("hostRegister.biometricSecurity")}</span>
           </div>
         </div>
       </div>

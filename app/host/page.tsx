@@ -3,10 +3,14 @@
 import { useEffect } from 'react';
 import { useRouter } from 'next/navigation';
 import { createClientComponentClient } from '@supabase/auth-helpers-nextjs';
+import { useLanguage } from "@/contexts/LanguageContext";
+import { getText } from "@/lib/text";
 
 export default function HostPage() {
   const router = useRouter();
   const supabase = createClientComponentClient();
+  const { language } = useLanguage();
+  const t = (key: string) => getText(key, language);
 
   useEffect(() => {
     checkAuthAndRedirect();
@@ -45,7 +49,7 @@ export default function HostPage() {
     <div className="min-h-screen bg-gradient-to-br from-sptc-red-50 to-orange-50 flex items-center justify-center">
       <div className="text-center">
         <div className="w-16 h-16 border-4 border-sptc-red-600 border-t-transparent rounded-full animate-spin mx-auto mb-4" />
-        <p className="text-gray-600">Loading...</p>
+        <p className="text-gray-600">{t("hostPage.loading")}</p>
       </div>
     </div>
   );
