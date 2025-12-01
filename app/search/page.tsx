@@ -51,7 +51,7 @@ interface Listing {
     first_name: string;
     last_name: string;
     verification_status: string;
-  };
+  }[] | null;
 }
 
 function SearchResultsContent() {
