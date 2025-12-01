@@ -30,6 +30,7 @@ export default function Home() {
   const [showCountryPicker, setShowCountryPicker] = useState(false);
   const [showRegionPicker, setShowRegionPicker] = useState(false);
   const [mapListings, setMapListings] = useState<MapListing[]>([]);
+  const [featuredListings, setFeaturedListings] = useState<any[]>([]);
   const searchBarRef = useRef<HTMLDivElement>(null);
 
   const supabase = createClientComponentClient();
@@ -52,11 +53,14 @@ export default function Home() {
     const fetchListings = async () => {
       const { data } = await supabase
         .from("listings")
-        .select("id, title, price_per_night, latitude, longitude, images, rating")
+        .select("id, title, price_per_night, latitude, longitude, images, rating, location, address, city, region")
         .eq("status", "active")
         .eq("available", true);
 
-      if (data) setMapListings(data);
+      if (data) {
+        setMapListings(data);
+        setFeaturedListings(data.slice(0, 4)); // First 4 for featured
+      }
     };
     fetchListings();
   }, []);
@@ -840,249 +844,61 @@ export default function Home() {
       </section>
 
       {/* FEATURED STAYS */}
-      <section className="py-20 px-4" style={{ backgroundColor: "#E8DDD0" }}>
-        <div className="max-w-[1400px] mx-auto">
-          <div className="mb-12">
-            <h2 className="text-4xl lg:text-5xl font-bold text-gray-900 mb-4">
-              {getText("featuredStays.title", language)}
-            </h2>
-            <p className="text-xl text-gray-600">
-              {getText("featuredStays.subtitle", language)}
-            </p>
-          </div>
+      {featuredListings.length > 0 && (
+        <section className="py-20 px-4" style={{ backgroundColor: "#E8DDD0" }}>
+          <div className="max-w-[1400px] mx-auto">
+            <div className="mb-12">
+              <h2 className="text-4xl lg:text-5xl font-bold text-gray-900 mb-4">
+                {getText("featuredStays.title", language)}
+              </h2>
+              <p className="text-xl text-gray-600">
+                {getText("featuredStays.subtitle", language)}
+              </p>
+            </div>
 
-          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
-            <PropertyCard
-              image="https://images.unsplash.com/photo-1602391833977-358a52198938?w=800&q=80"
-              title="Coffee Farm Cottage"
-              location="Coffee Region"
-              price="$45"
-              rating="4.9"
-              reviews="127"
-            />
-            <PropertyCard
-              image="https://images.unsplash.com/photo-1542314831-068cd1dbfeeb?w=800&q=80"
-              title="Mountain View Villa"
-              location="Andean hills"
-              price="$65"
-              rating="4.8"
-              reviews="89"
-            />
-            <PropertyCard
-              image="https://images.unsplash.com/photo-1571896349842-33c89424de2d?w=800&q=80"
-              title="Traditional Finca"
-              location="Near Silvania"
-              price="$55"
-              rating="5.0"
-              reviews="203"
-            />
-            <PropertyCard
-              image="https://images.unsplash.com/photo-1566073771259-6a8506099945?w=800&q=80"
-              title="Boutique Eco Lodge"
-              location="Coffee Region"
-              price="$85"
-              rating="4.9"
-              reviews="156"
-            />
+            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
+              {featuredListings.map((listing) => (
+                <Link key={listing.id} href={`/listing/${listing.id}`}>
+                  <PropertyCard
+                    image={listing.images?.[0] || "https://images.unsplash.com/photo-1582268611958-ebfd161ef9cf?w=800&q=80"}
+                    title={listing.title}
+                    location={listing.address || listing.city || listing.location || "Colombia"}
+                    price={`$${listing.price_per_night}`}
+                    rating={listing.rating?.toString() || "5.0"}
+                    reviews="0"
+                  />
+                </Link>
+              ))}
+            </div>
           </div>
-        </div>
-      </section>
+        </section>
+      )}
 
       {/* MORE STAYS */}
-      <section className="py-20 px-4" style={{ background: "radial-gradient(circle at top left, #F5EBE0 0%, #E8DDD0 40%, #DED0BD 100%)" }}>
-        <div className="max-w-[1400px] mx-auto">
-          <h2 className="text-4xl lg:text-5xl font-bold text-gray-900 mb-12">
-            {getText("moreStays.title", language)}
-          </h2>
+      {mapListings.length > 4 && (
+        <section className="py-20 px-4" style={{ background: "radial-gradient(circle at top left, #F5EBE0 0%, #E8DDD0 40%, #DED0BD 100%)" }}>
+          <div className="max-w-[1400px] mx-auto">
+            <h2 className="text-4xl lg:text-5xl font-bold text-gray-900 mb-12">
+              {getText("moreStays.title", language)}
+            </h2>
 
-          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-            <PropertyCard
-              image="https://images.unsplash.com/photo-1582268611958-ebfd161ef9cf?w=800&q=80"
-              title="Riverside cabin"
-              location="Magdalena River, Tolima"
-              price="$50"
-              rating="4.7"
-              reviews="64"
-            />
-            <PropertyCard
-              image="https://images.unsplash.com/photo-1587061949409-02df41d5e562?w=800&q=80"
-              title="Colonial hacienda"
-              location="Villa de Leyva, Boyacá"
-              price="$95"
-              rating="5.0"
-              reviews="178"
-            />
-            <PropertyCard
-              image="https://images.unsplash.com/photo-1600596542815-ffad4c1539a9?w=800&q=80"
-              title="Modern loft"
-              location="Salento, Quindío"
-              price="$70"
-              rating="4.8"
-              reviews="92"
-            />
-            <PropertyCard
-              image="https://images.unsplash.com/photo-1542314831-068cd1dbfeeb?w=800&q=80"
-              title="Mountain retreat"
-              location="Cocora Valley, Quindío"
-              price="$85"
-              rating="4.9"
-              reviews="127"
-            />
-            <PropertyCard
-              image="https://images.unsplash.com/photo-1571896349842-33c89424de2d?w=800&q=80"
-              title="Traditional finca"
-              location="Manizales, Caldas"
-              price="$55"
-              rating="4.6"
-              reviews="89"
-            />
-            <PropertyCard
-              image="https://images.unsplash.com/photo-1566073771259-6a8506099945?w=800&q=80"
-              title="Eco lodge"
-              location="Tayrona, Magdalena"
-              price="$110"
-              rating="5.0"
-              reviews="203"
-            />
-            <PropertyCard
-              image="https://images.unsplash.com/photo-1509099863731-ef4bff19e808?w=800&q=80"
-              title="Colonial house"
-              location="Barichara, Santander"
-              price="$65"
-              rating="4.8"
-              reviews="145"
-            />
-            <PropertyCard
-              image="https://images.unsplash.com/photo-1598970605070-ffb66fba595b?w=800&q=80"
-              title="Coffee plantation"
-              location="Armenia, Quindío"
-              price="$75"
-              rating="4.9"
-              reviews="156"
-            />
-            <PropertyCard
-              image="https://images.unsplash.com/photo-1545243424-0ce743321e11?w=800&q=80"
-              title="Farm stay"
-              location="Pereira, Risaralda"
-              price="$60"
-              rating="4.7"
-              reviews="98"
-            />
-            <PropertyCard
-              image="https://images.unsplash.com/photo-1567620905732-2d1ec7ab7445?w=800&q=80"
-              title="Valley villa"
-              location="Cauca Valley"
-              price="$80"
-              rating="4.8"
-              reviews="112"
-            />
-            <PropertyCard
-              image="https://images.unsplash.com/photo-1602391833977-358a52198938?w=800&q=80"
-              title="Rural cottage"
-              location="Jardín, Antioquia"
-              price="$55"
-              rating="4.6"
-              reviews="73"
-            />
-            <PropertyCard
-              image="https://images.unsplash.com/photo-1564013799919-ab600027ffc6?w=800&q=80"
-              title="Modern farmhouse"
-              location="Guatapé, Antioquia"
-              price="$90"
-              rating="4.9"
-              reviews="167"
-            />
-            <PropertyCard
-              image="https://images.unsplash.com/photo-1580587771525-78b9dba3b914?w=800&q=80"
-              title="Lakeside cabin"
-              location="Guatapé Lake, Antioquia"
-              price="$70"
-              rating="4.7"
-              reviews="134"
-            />
-            <PropertyCard
-              image="https://images.unsplash.com/photo-1512917774080-9991f1c4c750?w=800&q=80"
-              title="Hilltop villa"
-              location="San Gil, Santander"
-              price="$95"
-              rating="5.0"
-              reviews="189"
-            />
-            <PropertyCard
-              image="https://images.unsplash.com/photo-1600585154340-be6161a56a0c?w=800&q=80"
-              title="Country estate"
-              location="Popayán, Cauca"
-              price="$85"
-              rating="4.8"
-              reviews="121"
-            />
-            <PropertyCard
-              image="https://images.unsplash.com/photo-1613490493576-7fde63acd811?w=800&q=80"
-              title="Jungle retreat"
-              location="Leticia, Amazonas"
-              price="$120"
-              rating="4.9"
-              reviews="156"
-            />
-            <PropertyCard
-              image="https://images.unsplash.com/photo-1600607687939-ce8a6c25118c?w=800&q=80"
-              title="Bamboo house"
-              location="Filandia, Quindío"
-              price="$65"
-              rating="4.7"
-              reviews="94"
-            />
-            <PropertyCard
-              image="https://images.unsplash.com/photo-1600047509807-ba8f99d2cdde?w=800&q=80"
-              title="Farmstay cottage"
-              location="Santa Rosa de Cabal, Risaralda"
-              price="$55"
-              rating="4.6"
-              reviews="81"
-            />
-            <PropertyCard
-              image="https://images.unsplash.com/photo-1600566753190-17f0baa2a6c3?w=800&q=80"
-              title="Mountain lodge"
-              location="Los Nevados, Caldas"
-              price="$100"
-              rating="4.9"
-              reviews="178"
-            />
-            <PropertyCard
-              image="https://images.unsplash.com/photo-1600607687644-c7171b42498f?w=800&q=80"
-              title="Heritage home"
-              location="Mompox, Bolívar"
-              price="$75"
-              rating="4.8"
-              reviews="143"
-            />
-            <PropertyCard
-              image="https://images.unsplash.com/photo-1600607687920-4e2a09cf159d?w=800&q=80"
-              title="River house"
-              location="Honda, Tolima"
-              price="$60"
-              rating="4.7"
-              reviews="107"
-            />
-            <PropertyCard
-              image="https://images.unsplash.com/photo-1600607687939-ce8a6c25118c?w=800&q=80"
-              title="Countryside villa"
-              location="Rionegro, Antioquia"
-              price="$80"
-              rating="4.8"
-              reviews="129"
-            />
-            <PropertyCard
-              image="https://images.unsplash.com/photo-1600566753086-00f18fb6b3ea?w=800&q=80"
-              title="Tropical bungalow"
-              location="Cartagena countryside, Bolívar"
-              price="$90"
-              rating="4.9"
-              reviews="152"
-            />
+            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+              {mapListings.slice(4).map((listing) => (
+                <Link key={listing.id} href={`/listing/${listing.id}`}>
+                  <PropertyCard
+                    image={listing.images?.[0] || "https://images.unsplash.com/photo-1582268611958-ebfd161ef9cf?w=800&q=80"}
+                    title={listing.title}
+                    location={(listing as any).address || (listing as any).city || (listing as any).location || "Colombia"}
+                    price={`$${listing.price_per_night}`}
+                    rating={listing.rating?.toString() || "5.0"}
+                    reviews="0"
+                  />
+                </Link>
+              ))}
+            </div>
           </div>
-        </div>
-      </section>
+        </section>
+      )}
 
       {/* CTA: BECOME A HOST */}
       <section className="relative py-32 px-4 overflow-hidden">
