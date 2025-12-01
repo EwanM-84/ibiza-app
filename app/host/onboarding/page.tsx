@@ -31,6 +31,7 @@ export default function HostOnboarding() {
   const [photoSessionId, setPhotoSessionId] = useState<string | null>(null);
   const [photoSessionUrl, setPhotoSessionUrl] = useState<string | null>(null);
   const [sessionPhotos, setSessionPhotos] = useState<any[]>([]);
+  const [isSyncing, setIsSyncing] = useState(false);
 
   const handleIDUpload = (e: React.ChangeEvent<HTMLInputElement>) => {
     if (e.target.files && e.target.files[0]) {
@@ -111,16 +112,16 @@ export default function HostOnboarding() {
     }
   }, [currentStep]);
 
-  // Poll for photos every 2 seconds when on Step 2
+  // Poll for photos every 3 seconds when on Step 2 (stop once we have 2 photos)
   useEffect(() => {
-    if (currentStep === 2 && photoSessionId) {
+    if (currentStep === 2 && photoSessionId && sessionPhotos.length < 2) {
       const interval = setInterval(() => {
         fetchSessionPhotos();
-      }, 2000);
+      }, 3000);
 
       return () => clearInterval(interval);
     }
-  }, [currentStep, photoSessionId]);
+  }, [currentStep, photoSessionId, sessionPhotos.length]);
 
   const createPhotoSession = async () => {
     try {
@@ -162,12 +163,10 @@ export default function HostOnboarding() {
   const fetchSessionPhotos = async () => {
     if (!photoSessionId) return;
 
+    setIsSyncing(true);
     try {
       const response = await fetch(`/api/photo-session/${photoSessionId}`);
       const data = await response.json();
-
-      console.log('📷 Fetching photos for session:', photoSessionId);
-      console.log('📷 Response:', data);
 
       if (data.success && data.photos && data.photos.length > 0) {
         console.log('📷 Found', data.photos.length, 'photos');
@@ -185,11 +184,11 @@ export default function HostOnboarding() {
         }));
 
         setPropertyPhotos(updatedPhotos);
-      } else if (!data.success) {
-        console.error('📷 Session fetch failed:', data.error);
       }
     } catch (error) {
       console.error('Error fetching session photos:', error);
+    } finally {
+      setIsSyncing(false);
     }
   };
 
@@ -431,9 +430,21 @@ export default function HostOnboarding() {
                         <span className="text-sm text-gray-600 font-semibold">{getText("hostOnboardingPage.photosUploaded", language)}:</span>
                         <span className="text-2xl font-bold text-sptc-red-600">{sessionPhotos.length} / 2</span>
                         {sessionPhotos.length < 2 && (
-                          <div className="ml-2 flex items-center gap-2 text-blue-600">
-                            <div className="w-4 h-4 border-2 border-blue-600 border-t-transparent rounded-full animate-spin"></div>
-                            <span className="text-sm">{getText("hostOnboardingPage.syncing", language)}</span>
+                          <div className="ml-2 flex items-center gap-2 text-gray-500">
+                            {isSyncing ? (
+                              <>
+                                <div className="w-4 h-4 border-2 border-blue-600 border-t-transparent rounded-full animate-spin"></div>
+                                <span className="text-sm text-blue-600">{getText("hostOnboardingPage.syncing", language)}</span>
+                              </>
+                            ) : (
+                              <span className="text-sm">{language === 'es' ? 'Esperando fotos...' : 'Waiting for photos...'}</span>
+                            )}
+                          </div>
+                        )}
+                        {sessionPhotos.length >= 2 && (
+                          <div className="ml-2 flex items-center gap-2 text-green-600">
+                            <CheckCircle className="w-4 h-4" />
+                            <span className="text-sm font-semibold">{language === 'es' ? 'Completo' : 'Complete'}</span>
                           </div>
                         )}
                       </div>
@@ -480,7 +491,7 @@ export default function HostOnboarding() {
                       ) : (
                         <div className="flex flex-col items-center gap-4 py-12">
                           <div className="w-16 h-16 bg-gray-100 rounded-full flex items-center justify-center">
-                            <div className="w-10 h-10 border-3 border-gray-300 border-t-sptc-red-500 rounded-full animate-spin"></div>
+                            <Camera className="w-8 h-8 text-gray-400" />
                           </div>
                           <div className="text-center">
                             <p className="text-base font-bold text-gray-700 mb-1">{getText("hostOnboardingPage.photos", language)} {index + 1}</p>

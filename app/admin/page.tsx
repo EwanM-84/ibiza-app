@@ -18,7 +18,11 @@ import {
   Plus,
   Save,
   X,
-  GripVertical,
+  Edit,
+  MapPin,
+  Bed,
+  Bath,
+  User,
 } from "lucide-react";
 import { getText } from "@/lib/text";
 import { useLanguage } from "@/contexts/LanguageContext";
@@ -41,14 +45,8 @@ export default function AdminDashboard() {
                 {getText("admin.title", language)}
               </h1>
               <p className="text-red-100 mt-2 text-lg">
-                Comprehensive platform management and analytics
+                Manage listings, bookings, users, and content
               </p>
-            </div>
-            <div className="hidden lg:flex items-center space-x-4">
-              <div className="bg-white bg-opacity-20 backdrop-blur-sm rounded-xl px-4 py-2 text-white">
-                <p className="text-xs uppercase tracking-wide opacity-90">Last Updated</p>
-                <p className="text-sm font-semibold">Just now</p>
-              </div>
             </div>
           </div>
         </div>
@@ -58,77 +56,27 @@ export default function AdminDashboard() {
         {/* Navigation Tabs */}
         <div className="bg-white rounded-2xl shadow-lg mb-8 p-1.5 border border-gray-100">
           <div className="flex space-x-1 overflow-x-auto">
-            <button
-              onClick={() => setActiveTab("listings")}
-              className={`flex items-center space-x-2 px-6 py-3.5 rounded-xl font-semibold transition-all whitespace-nowrap ${
-                activeTab === "listings"
-                  ? "bg-gradient-to-r from-sptc-red to-red-600 text-white shadow-lg shadow-red-200"
-                  : "text-gray-600 hover:bg-gray-50 hover:text-gray-900"
-              }`}
-            >
-              <Home className="w-4 h-4" />
-              <span>{getText("admin.listings", language)}</span>
-            </button>
-
-            <button
-              onClick={() => setActiveTab("bookings")}
-              className={`flex items-center space-x-2 px-6 py-3.5 rounded-xl font-semibold transition-all whitespace-nowrap ${
-                activeTab === "bookings"
-                  ? "bg-gradient-to-r from-sptc-red to-red-600 text-white shadow-lg shadow-red-200"
-                  : "text-gray-600 hover:bg-gray-50 hover:text-gray-900"
-              }`}
-            >
-              <Calendar className="w-4 h-4" />
-              <span>{getText("admin.bookings", language)}</span>
-            </button>
-
-            <button
-              onClick={() => setActiveTab("users")}
-              className={`flex items-center space-x-2 px-6 py-3.5 rounded-xl font-semibold transition-all whitespace-nowrap ${
-                activeTab === "users"
-                  ? "bg-gradient-to-r from-sptc-red to-red-600 text-white shadow-lg shadow-red-200"
-                  : "text-gray-600 hover:bg-gray-50 hover:text-gray-900"
-              }`}
-            >
-              <Users className="w-4 h-4" />
-              <span>{getText("admin.users", language)}</span>
-            </button>
-
-            <button
-              onClick={() => setActiveTab("funds")}
-              className={`flex items-center space-x-2 px-6 py-3.5 rounded-xl font-semibold transition-all whitespace-nowrap ${
-                activeTab === "funds"
-                  ? "bg-gradient-to-r from-sptc-red to-red-600 text-white shadow-lg shadow-red-200"
-                  : "text-gray-600 hover:bg-gray-50 hover:text-gray-900"
-              }`}
-            >
-              <DollarSign className="w-4 h-4" />
-              <span>{getText("admin.funds", language)}</span>
-            </button>
-
-            <button
-              onClick={() => setActiveTab("images")}
-              className={`flex items-center space-x-2 px-6 py-3.5 rounded-xl font-semibold transition-all whitespace-nowrap ${
-                activeTab === "images"
-                  ? "bg-gradient-to-r from-sptc-red to-red-600 text-white shadow-lg shadow-red-200"
-                  : "text-gray-600 hover:bg-gray-50 hover:text-gray-900"
-              }`}
-            >
-              <ImageIcon className="w-4 h-4" />
-              <span>Images</span>
-            </button>
-
-            <button
-              onClick={() => setActiveTab("content")}
-              className={`flex items-center space-x-2 px-6 py-3.5 rounded-xl font-semibold transition-all whitespace-nowrap ${
-                activeTab === "content"
-                  ? "bg-gradient-to-r from-sptc-red to-red-600 text-white shadow-lg shadow-red-200"
-                  : "text-gray-600 hover:bg-gray-50 hover:text-gray-900"
-              }`}
-            >
-              <FileEdit className="w-4 h-4" />
-              <span>Homepage Content</span>
-            </button>
+            {[
+              { key: "listings", icon: Home, label: "Listings" },
+              { key: "bookings", icon: Calendar, label: "Bookings" },
+              { key: "users", icon: Users, label: "Users & Hosts" },
+              { key: "funds", icon: DollarSign, label: "Funds" },
+              { key: "images", icon: ImageIcon, label: "Images" },
+              { key: "content", icon: FileEdit, label: "Homepage" },
+            ].map((tab) => (
+              <button
+                key={tab.key}
+                onClick={() => setActiveTab(tab.key as Tab)}
+                className={`flex items-center space-x-2 px-6 py-3.5 rounded-xl font-semibold transition-all whitespace-nowrap ${
+                  activeTab === tab.key
+                    ? "bg-gradient-to-r from-sptc-red to-red-600 text-white shadow-lg"
+                    : "text-gray-600 hover:bg-gray-50"
+                }`}
+              >
+                <tab.icon className="w-4 h-4" />
+                <span>{tab.label}</span>
+              </button>
+            ))}
           </div>
         </div>
 
@@ -143,1239 +91,1144 @@ export default function AdminDashboard() {
   );
 }
 
+// ============================================================================
+// LISTINGS TAB - Create, View, Edit Listings
+// ============================================================================
 function ListingsTab() {
-  return (
-    <div className="space-y-6">
-      <div className="grid sm:grid-cols-2 lg:grid-cols-4 gap-4">
-        <StatCard
-          title="Total Listings"
-          value="24"
-          icon={<Home className="w-5 h-5" />}
-          trend="+3 this month"
-        />
-        <StatCard
-          title="Active"
-          value="18"
-          icon={<CheckCircle className="w-5 h-5" />}
-          trend="75% occupancy"
-        />
-        <StatCard
-          title="Pending Review"
-          value="6"
-          icon={<Clock className="w-5 h-5" />}
-          trend="Requires action"
-        />
-        <StatCard
-          title="Avg Price"
-          value="$45"
-          icon={<TrendingUp className="w-5 h-5" />}
-          trend="per night"
-        />
-      </div>
+  const supabase = createClientComponentClient();
+  const [listings, setListings] = useState<any[]>([]);
+  const [hosts, setHosts] = useState<any[]>([]);
+  const [loading, setLoading] = useState(true);
+  const [error, setError] = useState<string | null>(null);
+  const [showForm, setShowForm] = useState(false);
+  const [editingListing, setEditingListing] = useState<any>(null);
+  const [saving, setSaving] = useState(false);
 
-      <div className="bg-white rounded-2xl shadow-lg p-6 border border-gray-100">
-        <div className="flex items-center justify-between mb-6">
-          <h3 className="text-xl font-bold text-gray-900">Recent Listings</h3>
-          <button className="px-4 py-2 bg-gradient-to-r from-sptc-red to-red-600 text-white rounded-xl text-sm font-semibold hover:shadow-lg transition-all">
-            View All
-          </button>
-        </div>
-        <div className="space-y-3">
-          <ListingItem
-            title="Coffee Farm Cottage"
-            host="Maria Rodriguez"
-            price="$40/night"
-            status="active"
-          />
-          <ListingItem
-            title="Mountain View Cabin"
-            host="Carlos Gomez"
-            price="$55/night"
-            status="active"
-          />
-          <ListingItem
-            title="Traditional Adobe House"
-            host="Ana Martinez"
-            price="$35/night"
-            status="pending"
-          />
-        </div>
-      </div>
-    </div>
-  );
-}
+  const [form, setForm] = useState({
+    title: "",
+    description: "",
+    property_type: "house",
+    bedrooms: 1,
+    bathrooms: 1,
+    max_guests: 2,
+    location: "",
+    city: "",
+    region: "",
+    price_per_night: 50,
+    cleaning_fee: 0,
+    amenities: [] as string[],
+    images: [] as string[],
+    status: "active",
+    host_profile_id: "",
+  });
 
-function BookingsTab() {
-  return (
-    <div className="space-y-6">
-      <div className="grid sm:grid-cols-2 lg:grid-cols-4 gap-4">
-        <StatCard
-          title="Total Bookings"
-          value="142"
-          icon={<Calendar className="w-5 h-5" />}
-          trend="+12 this month"
-        />
-        <StatCard
-          title="Upcoming"
-          value="23"
-          icon={<Clock className="w-5 h-5" />}
-          trend="Next 30 days"
-        />
-        <StatCard
-          title="Revenue"
-          value="$6,340"
-          icon={<DollarSign className="w-5 h-5" />}
-          trend="+18% vs last month"
-        />
-        <StatCard
-          title="Avg Stay"
-          value="3.5"
-          icon={<TrendingUp className="w-5 h-5" />}
-          trend="nights"
-        />
-      </div>
+  useEffect(() => {
+    fetchData();
+  }, []);
 
-      <div className="bg-white rounded-2xl shadow-lg p-6 border border-gray-100">
-        <div className="flex items-center justify-between mb-6">
-          <h3 className="text-xl font-bold text-gray-900">Recent Bookings</h3>
-          <button className="px-4 py-2 bg-gradient-to-r from-sptc-red to-red-600 text-white rounded-xl text-sm font-semibold hover:shadow-lg transition-all">
-            View All
-          </button>
-        </div>
-        <div className="space-y-3">
-          <BookingItem
-            guest="John Smith"
-            listing="Coffee Farm Cottage"
-            dates="Jan 15-18, 2025"
-            total="$120"
-            status="confirmed"
-          />
-          <BookingItem
-            guest="Emma Wilson"
-            listing="Mountain View Cabin"
-            dates="Jan 20-23, 2025"
-            total="$165"
-            status="confirmed"
-          />
-          <BookingItem
-            guest="David Brown"
-            listing="Traditional Adobe House"
-            dates="Jan 25-27, 2025"
-            total="$70"
-            status="pending"
-          />
-        </div>
-      </div>
-    </div>
-  );
-}
+  const fetchData = async () => {
+    setLoading(true);
+    setError(null);
+    try {
+      const [listingsRes, hostsRes] = await Promise.all([
+        supabase.from('listings').select('*, host_profiles(first_name, last_name)').order('created_at', { ascending: false }),
+        supabase.from('host_profiles').select('id, first_name, last_name')
+      ]);
 
-function UsersTab() {
-  return (
-    <div className="space-y-6">
-      <div className="grid sm:grid-cols-2 lg:grid-cols-4 gap-4">
-        <StatCard
-          title="Total Users"
-          value="387"
-          icon={<Users className="w-5 h-5" />}
-          trend="+45 this month"
-        />
-        <StatCard
-          title="Hosts"
-          value="24"
-          icon={<Home className="w-5 h-5" />}
-          trend="18 verified"
-        />
-        <StatCard
-          title="Guests"
-          value="363"
-          icon={<Users className="w-5 h-5" />}
-          trend="142 bookings"
-        />
-        <StatCard
-          title="Verification Queue"
-          value="6"
-          icon={<Clock className="w-5 h-5" />}
-          trend="Requires review"
-        />
-      </div>
+      if (listingsRes.error) {
+        console.error('Listings error:', listingsRes.error);
+        setError(`Listings: ${listingsRes.error.message}`);
+      }
+      if (hostsRes.error) {
+        console.error('Hosts error:', hostsRes.error);
+        setError(prev => prev ? `${prev}, Hosts: ${hostsRes.error.message}` : `Hosts: ${hostsRes.error.message}`);
+      }
 
-      <div className="grid md:grid-cols-2 gap-6">
-        <div className="bg-white rounded-2xl shadow-lg p-6 border border-gray-100">
-          <div className="flex items-center justify-between mb-6">
-            <h3 className="text-xl font-bold text-gray-900">Host Verification Queue</h3>
-            <span className="px-3 py-1 bg-gradient-to-r from-yellow-500 to-yellow-600 text-white rounded-full text-xs font-bold">
-              Action Required
-            </span>
-          </div>
-          <div className="space-y-3">
-            <VerificationItem
-              name="Ana Martinez"
-              submitted="2 hours ago"
-              status="pending"
-            />
-            <VerificationItem
-              name="Luis Hernandez"
-              submitted="5 hours ago"
-              status="pending"
-            />
-            <VerificationItem
-              name="Sofia Garcia"
-              submitted="1 day ago"
-              status="reviewing"
-            />
-          </div>
-        </div>
-
-        <div className="bg-white rounded-2xl shadow-lg p-6 border border-gray-100">
-          <div className="flex items-center justify-between mb-6">
-            <h3 className="text-xl font-bold text-gray-900">Verified Hosts</h3>
-            <span className="px-3 py-1 bg-gradient-to-r from-green-500 to-green-600 text-white rounded-full text-xs font-bold">
-              18 Active
-            </span>
-          </div>
-          <div className="space-y-3">
-            <VerificationItem
-              name="Maria Rodriguez"
-              submitted="Verified"
-              status="verified"
-            />
-            <VerificationItem
-              name="Carlos Gomez"
-              submitted="Verified"
-              status="verified"
-            />
-            <VerificationItem
-              name="Isabel Torres"
-              submitted="Verified"
-              status="verified"
-            />
-          </div>
-        </div>
-      </div>
-    </div>
-  );
-}
-
-function FundsTab() {
-  return (
-    <div className="space-y-6">
-      <div className="grid sm:grid-cols-2 lg:grid-cols-4 gap-4">
-        <StatCard
-          title="Total Revenue"
-          value="$6,340"
-          icon={<DollarSign className="w-5 h-5" />}
-          trend="This month"
-        />
-        <StatCard
-          title="Platform Fee"
-          value="$951"
-          icon={<TrendingUp className="w-5 h-5" />}
-          trend="15% of total"
-        />
-        <StatCard
-          title="Host Payouts"
-          value="$5,389"
-          icon={<CheckCircle className="w-5 h-5" />}
-          trend="85% to hosts"
-        />
-        <StatCard
-          title="Community Fund"
-          value="$951"
-          icon={<Users className="w-5 h-5" />}
-          trend="For local projects"
-        />
-      </div>
-
-      <div className="bg-white rounded-2xl shadow-lg p-6 border border-gray-100">
-        <div className="flex items-center justify-between mb-6">
-          <h3 className="text-xl font-bold text-gray-900">Platform Fee Breakdown (15%)</h3>
-          <div className="px-3 py-1 bg-gradient-to-r from-purple-500 to-purple-600 text-white rounded-full text-xs font-bold">
-            $951 Total
-          </div>
-        </div>
-        <div className="space-y-4">
-          <div className="group flex items-center justify-between p-5 bg-gradient-to-r from-red-50 to-white rounded-xl border border-red-100 hover:shadow-md transition-all cursor-pointer">
-            <div className="flex items-center space-x-4">
-              <div className="w-12 h-12 bg-gradient-to-br from-sptc-red to-red-600 rounded-xl flex items-center justify-center shadow-md">
-                <Users className="w-5 h-5 text-white" />
-              </div>
-              <div>
-                <p className="font-semibold text-gray-900">
-                  Community Projects Fund
-                </p>
-                <p className="text-sm text-gray-600">
-                  Direct funding for local development
-                </p>
-              </div>
-            </div>
-            <div className="text-right">
-              <p className="text-2xl font-bold text-sptc-red">$570.60</p>
-              <p className="text-sm font-medium text-gray-600">60% of platform fee</p>
-            </div>
-          </div>
-
-          <div className="group flex items-center justify-between p-5 bg-gradient-to-r from-blue-50 to-white rounded-xl border border-blue-100 hover:shadow-md transition-all cursor-pointer">
-            <div className="flex items-center space-x-4">
-              <div className="w-12 h-12 bg-gradient-to-br from-blue-500 to-blue-600 rounded-xl flex items-center justify-center shadow-md">
-                <TrendingUp className="w-5 h-5 text-white" />
-              </div>
-              <div>
-                <p className="font-semibold text-gray-900">
-                  Operations & Support
-                </p>
-                <p className="text-sm text-gray-600">
-                  Platform maintenance, customer support
-                </p>
-              </div>
-            </div>
-            <div className="text-right">
-              <p className="text-2xl font-bold text-blue-600">
-                $380.40
-              </p>
-              <p className="text-sm font-medium text-gray-600">40% of platform fee</p>
-            </div>
-          </div>
-        </div>
-      </div>
-
-      <div className="bg-gradient-to-br from-blue-50 to-indigo-50 rounded-2xl shadow-lg p-6 border border-blue-200">
-        <div className="flex items-start space-x-4">
-          <div className="w-12 h-12 bg-gradient-to-br from-blue-500 to-blue-600 rounded-xl flex items-center justify-center shadow-md flex-shrink-0">
-            <CheckCircle className="w-6 h-6 text-white" />
-          </div>
-          <div className="flex-1">
-            <h3 className="text-xl font-bold text-gray-900 mb-3">
-              Stripe Integration Status
-            </h3>
-            <div className="space-y-3 text-gray-700">
-              <p className="font-medium">
-                Stripe will be integrated to handle:
-              </p>
-              <ul className="space-y-2.5 ml-4">
-                <li className="flex items-start">
-                  <CheckCircle className="w-4 h-4 text-green-600 mr-2 mt-0.5 flex-shrink-0" />
-                  <span>Guest payment processing via Stripe Checkout</span>
-                </li>
-                <li className="flex items-start">
-                  <CheckCircle className="w-4 h-4 text-green-600 mr-2 mt-0.5 flex-shrink-0" />
-                  <span>Automatic 15% platform fee calculation</span>
-                </li>
-                <li className="flex items-start">
-                  <CheckCircle className="w-4 h-4 text-green-600 mr-2 mt-0.5 flex-shrink-0" />
-                  <span>Host payout distribution (85% of booking total)</span>
-                </li>
-                <li className="flex items-start">
-                  <CheckCircle className="w-4 h-4 text-green-600 mr-2 mt-0.5 flex-shrink-0" />
-                  <span>Community fund allocation tracking</span>
-                </li>
-                <li className="flex items-start">
-                  <CheckCircle className="w-4 h-4 text-green-600 mr-2 mt-0.5 flex-shrink-0" />
-                  <span>Webhook handlers for payment events</span>
-                </li>
-              </ul>
-              <div className="mt-5 p-4 bg-white rounded-xl border border-blue-200 shadow-sm">
-                <p className="text-sm font-semibold text-gray-800 flex items-center">
-                  <Clock className="w-4 h-4 mr-2 text-blue-600" />
-                  Next Steps: Configure Stripe Connect for host payouts and set up webhook endpoints
-                </p>
-              </div>
-            </div>
-          </div>
-        </div>
-      </div>
-    </div>
-  );
-}
-
-function StatCard({
-  title,
-  value,
-  icon,
-  trend,
-}: {
-  title: string;
-  value: string;
-  icon: React.ReactNode;
-  trend: string;
-}) {
-  return (
-    <div className="bg-white rounded-2xl shadow-lg p-6 border border-gray-100 hover:shadow-xl transition-all duration-300 hover:border-sptc-red">
-      <div className="flex items-start justify-between mb-4">
-        <div className="p-3 bg-gradient-to-br from-sptc-red to-red-600 rounded-xl text-white shadow-lg">
-          {icon}
-        </div>
-        <div className="text-right">
-          <p className="text-xs font-semibold text-gray-500 uppercase tracking-wide mb-1">{title}</p>
-        </div>
-      </div>
-      <div className="space-y-1">
-        <p className="text-3xl font-bold text-gray-900 tracking-tight">{value}</p>
-        <div className="flex items-center space-x-1">
-          <TrendingUp className="w-3.5 h-3.5 text-green-500" />
-          <p className="text-sm font-medium text-gray-600">{trend}</p>
-        </div>
-      </div>
-    </div>
-  );
-}
-
-function ListingItem({
-  title,
-  host,
-  price,
-  status,
-}: {
-  title: string;
-  host: string;
-  price: string;
-  status: string;
-}) {
-  return (
-    <div className="group flex items-center justify-between p-5 bg-gradient-to-r from-white to-gray-50 rounded-xl hover:from-gray-50 hover:to-white transition-all duration-200 border border-gray-100 hover:border-sptc-red hover:shadow-md cursor-pointer">
-      <div className="flex items-center space-x-4">
-        <div className="w-12 h-12 bg-gradient-to-br from-gray-100 to-gray-200 rounded-xl flex items-center justify-center group-hover:from-sptc-red group-hover:to-red-600 transition-all duration-200">
-          <Home className="w-5 h-5 text-gray-600 group-hover:text-white transition-colors" />
-        </div>
-        <div>
-          <p className="font-semibold text-gray-900 group-hover:text-sptc-red transition-colors">{title}</p>
-          <p className="text-sm text-gray-500">Host: {host}</p>
-        </div>
-      </div>
-      <div className="flex items-center space-x-4">
-        <span className="text-lg font-bold text-gray-900">{price}</span>
-        <span
-          className={`px-4 py-1.5 rounded-full text-xs font-bold uppercase tracking-wide ${
-            status === "active"
-              ? "bg-gradient-to-r from-green-500 to-green-600 text-white shadow-sm"
-              : "bg-gradient-to-r from-yellow-500 to-yellow-600 text-white shadow-sm"
-          }`}
-        >
-          {status}
-        </span>
-      </div>
-    </div>
-  );
-}
-
-function BookingItem({
-  guest,
-  listing,
-  dates,
-  total,
-  status,
-}: {
-  guest: string;
-  listing: string;
-  dates: string;
-  total: string;
-  status: string;
-}) {
-  return (
-    <div className="group flex items-center justify-between p-5 bg-gradient-to-r from-white to-gray-50 rounded-xl hover:from-gray-50 hover:to-white transition-all duration-200 border border-gray-100 hover:border-sptc-red hover:shadow-md cursor-pointer">
-      <div className="flex items-center space-x-4">
-        <div className="w-12 h-12 bg-gradient-to-br from-blue-100 to-blue-200 rounded-xl flex items-center justify-center group-hover:from-sptc-red group-hover:to-red-600 transition-all duration-200">
-          <Calendar className="w-5 h-5 text-blue-600 group-hover:text-white transition-colors" />
-        </div>
-        <div>
-          <p className="font-semibold text-gray-900 group-hover:text-sptc-red transition-colors">{guest}</p>
-          <p className="text-sm text-gray-600">{listing}</p>
-          <p className="text-xs text-gray-400 mt-0.5 flex items-center">
-            <Clock className="w-3 h-3 mr-1" />
-            {dates}
-          </p>
-        </div>
-      </div>
-      <div className="flex items-center space-x-4">
-        <span className="text-lg font-bold text-gray-900">{total}</span>
-        <span
-          className={`px-4 py-1.5 rounded-full text-xs font-bold uppercase tracking-wide ${
-            status === "confirmed"
-              ? "bg-gradient-to-r from-green-500 to-green-600 text-white shadow-sm"
-              : "bg-gradient-to-r from-yellow-500 to-yellow-600 text-white shadow-sm"
-          }`}
-        >
-          {status}
-        </span>
-      </div>
-    </div>
-  );
-}
-
-function VerificationItem({
-  name,
-  submitted,
-  status,
-}: {
-  name: string;
-  submitted: string;
-  status: string;
-}) {
-  return (
-    <div className="group flex items-center justify-between p-5 bg-gradient-to-r from-white to-gray-50 rounded-xl hover:from-gray-50 hover:to-white transition-all duration-200 border border-gray-100 hover:border-sptc-red hover:shadow-md cursor-pointer">
-      <div className="flex items-center space-x-4">
-        <div className={`w-12 h-12 rounded-xl flex items-center justify-center transition-all duration-200 ${
-          status === "verified"
-            ? "bg-gradient-to-br from-green-100 to-green-200 group-hover:from-green-500 group-hover:to-green-600"
-            : status === "reviewing"
-            ? "bg-gradient-to-br from-blue-100 to-blue-200 group-hover:from-blue-500 group-hover:to-blue-600"
-            : "bg-gradient-to-br from-yellow-100 to-yellow-200 group-hover:from-yellow-500 group-hover:to-yellow-600"
-        }`}>
-          <Users className={`w-5 h-5 transition-colors ${
-            status === "verified"
-              ? "text-green-600 group-hover:text-white"
-              : status === "reviewing"
-              ? "text-blue-600 group-hover:text-white"
-              : "text-yellow-600 group-hover:text-white"
-          }`} />
-        </div>
-        <div>
-          <p className="font-semibold text-gray-900 group-hover:text-sptc-red transition-colors">{name}</p>
-          <p className="text-sm text-gray-500">{submitted}</p>
-        </div>
-      </div>
-      <span
-        className={`px-4 py-1.5 rounded-full text-xs font-bold uppercase tracking-wide shadow-sm ${
-          status === "verified"
-            ? "bg-gradient-to-r from-green-500 to-green-600 text-white"
-            : status === "reviewing"
-            ? "bg-gradient-to-r from-blue-500 to-blue-600 text-white"
-            : "bg-gradient-to-r from-yellow-500 to-yellow-600 text-white"
-        }`}
-      >
-        {status}
-      </span>
-    </div>
-  );
-}
-
-function ImagesTab() {
-  const [selectedCategory, setSelectedCategory] = useState<"all" | "hero" | "listings" | "users">("all");
-  const [images, setImages] = useState([
-    { id: 1, url: "/images/hero/hero-1.jpg", category: "hero", name: "Hero Image 1", size: "2.4 MB", uploaded: "2025-01-10" },
-    { id: 2, url: "/images/hero/hero-2.jpg", category: "hero", name: "Hero Image 2", size: "3.1 MB", uploaded: "2025-01-10" },
-    { id: 3, url: "/images/hero/hero-3.jpg", category: "hero", name: "Hero Image 3", size: "2.8 MB", uploaded: "2025-01-10" },
-    { id: 4, url: "/placeholder-listing.jpg", category: "listings", name: "Coffee Farm Cottage", size: "1.5 MB", uploaded: "2025-01-08" },
-    { id: 5, url: "/placeholder-listing-2.jpg", category: "listings", name: "Mountain View Cabin", size: "1.8 MB", uploaded: "2025-01-07" },
-    { id: 6, url: "/placeholder-listing-3.jpg", category: "listings", name: "Traditional Adobe House", size: "1.6 MB", uploaded: "2025-01-06" },
-  ]);
-
-  const filteredImages = selectedCategory === "all"
-    ? images
-    : images.filter(img => img.category === selectedCategory);
-
-  const handleFileUpload = (e: React.ChangeEvent<HTMLInputElement>) => {
-    const files = e.target.files;
-    if (!files) return;
-
-    Array.from(files).forEach((file) => {
-      const reader = new FileReader();
-      reader.onload = (e) => {
-        const newImage = {
-          id: Date.now() + Math.random(),
-          url: e.target?.result as string,
-          category: "listings" as const,
-          name: file.name,
-          size: `${(file.size / 1024 / 1024).toFixed(1)} MB`,
-          uploaded: new Date().toISOString().split('T')[0]
-        };
-        setImages(prev => [...prev, newImage]);
-      };
-      reader.readAsDataURL(file);
-    });
-  };
-
-  const handleDeleteImage = (id: number) => {
-    if (confirm('Are you sure you want to delete this image?')) {
-      setImages(prev => prev.filter(img => img.id !== id));
+      setListings(listingsRes.data || []);
+      setHosts(hostsRes.data || []);
+    } catch (err: any) {
+      setError(err.message);
     }
+    setLoading(false);
   };
+
+  const resetForm = () => {
+    setForm({
+      title: "", description: "", property_type: "house", bedrooms: 1, bathrooms: 1,
+      max_guests: 2, location: "", city: "", region: "", price_per_night: 50,
+      cleaning_fee: 0, amenities: [], images: [], status: "active", host_profile_id: ""
+    });
+    setEditingListing(null);
+  };
+
+  const handleEdit = (listing: any) => {
+    setForm({
+      title: listing.title || "",
+      description: listing.description || "",
+      property_type: listing.property_type || "house",
+      bedrooms: listing.bedrooms || 1,
+      bathrooms: listing.bathrooms || 1,
+      max_guests: listing.max_guests || 2,
+      location: listing.location || "",
+      city: listing.city || "",
+      region: listing.region || "",
+      price_per_night: listing.price_per_night || 50,
+      cleaning_fee: listing.cleaning_fee || 0,
+      amenities: listing.amenities || [],
+      images: listing.images || [],
+      status: listing.status || "active",
+      host_profile_id: listing.host_profile_id || "",
+    });
+    setEditingListing(listing);
+    setShowForm(true);
+  };
+
+  const handleSave = async () => {
+    if (!form.title || !form.location || !form.host_profile_id) {
+      alert("Please fill in title, location, and select a host");
+      return;
+    }
+    setSaving(true);
+
+    const data = {
+      ...form,
+      amenities: form.amenities,
+      images: form.images,
+    };
+
+    if (editingListing) {
+      await supabase.from('listings').update(data).eq('id', editingListing.id);
+    } else {
+      await supabase.from('listings').insert(data);
+    }
+
+    setSaving(false);
+    setShowForm(false);
+    resetForm();
+    fetchData();
+  };
+
+  const handleDelete = async (id: string) => {
+    if (!confirm("Delete this listing?")) return;
+    await supabase.from('listings').delete().eq('id', id);
+    fetchData();
+  };
+
+  const addImageUrl = () => {
+    const url = prompt("Enter image URL:");
+    if (url) setForm({ ...form, images: [...form.images, url] });
+  };
+
+  if (loading) return <LoadingSpinner />;
 
   return (
     <div className="space-y-6">
-      {/* Stats */}
-      <div className="grid sm:grid-cols-2 lg:grid-cols-4 gap-4">
-        <StatCard
-          title="Total Images"
-          value="487"
-          icon={<ImageIcon className="w-5 h-5" />}
-          trend="+23 this week"
-        />
-        <StatCard
-          title="Hero Images"
-          value="3"
-          icon={<ImageIcon className="w-5 h-5" />}
-          trend="Homepage slider"
-        />
-        <StatCard
-          title="Listing Images"
-          value="458"
-          icon={<Home className="w-5 h-5" />}
-          trend="Property photos"
-        />
-        <StatCard
-          title="Storage Used"
-          value="1.2 GB"
-          icon={<Upload className="w-5 h-5" />}
-          trend="of 10 GB"
-        />
-      </div>
-
-      {/* Upload Section */}
-      <div className="bg-gradient-to-br from-purple-50 to-pink-50 rounded-2xl shadow-lg p-8 border border-purple-200">
-        <div className="flex items-start space-x-4">
-          <div className="w-16 h-16 bg-gradient-to-br from-purple-500 to-purple-600 rounded-xl flex items-center justify-center shadow-lg flex-shrink-0">
-            <Upload className="w-8 h-8 text-white" />
-          </div>
-          <div className="flex-1">
-            <h3 className="text-xl font-bold text-gray-900 mb-2">Upload New Images</h3>
-            <p className="text-gray-700 mb-4">
-              Click to browse and select images. Supported formats: JPG, PNG, WebP (max 5MB)
-            </p>
-            <div className="flex items-center space-x-3">
-              <label className="px-6 py-3 bg-gradient-to-r from-purple-500 to-purple-600 text-white rounded-xl font-semibold hover:shadow-xl transition-all cursor-pointer">
-                Choose Files
-                <input
-                  type="file"
-                  multiple
-                  accept="image/*"
-                  onChange={handleFileUpload}
-                  className="hidden"
-                />
-              </label>
-              <span className="text-sm text-gray-600">Select one or more images</span>
-            </div>
-          </div>
+      {/* Error Message */}
+      {error && (
+        <div className="bg-red-50 border border-red-200 rounded-xl p-4">
+          <p className="text-red-700 font-semibold">Database Error</p>
+          <p className="text-red-600 text-sm">{error}</p>
+          <p className="text-red-500 text-xs mt-2">Run FIX_ADMIN_RLS.sql in Supabase SQL Editor to fix permissions.</p>
         </div>
-      </div>
+      )}
 
-      {/* Category Filter */}
-      <div className="bg-white rounded-2xl shadow-lg p-6 border border-gray-100">
-        <div className="flex items-center justify-between mb-6">
-          <h3 className="text-xl font-bold text-gray-900">Image Gallery</h3>
-          <div className="flex items-center space-x-2">
-            <button
-              onClick={() => setSelectedCategory("all")}
-              className={`px-4 py-2 rounded-xl text-sm font-semibold transition-all ${
-                selectedCategory === "all"
-                  ? "bg-gradient-to-r from-sptc-red to-red-600 text-white shadow-md"
-                  : "bg-gray-100 text-gray-600 hover:bg-gray-200"
-              }`}
-            >
-              All ({images.length})
-            </button>
-            <button
-              onClick={() => setSelectedCategory("hero")}
-              className={`px-4 py-2 rounded-xl text-sm font-semibold transition-all ${
-                selectedCategory === "hero"
-                  ? "bg-gradient-to-r from-sptc-red to-red-600 text-white shadow-md"
-                  : "bg-gray-100 text-gray-600 hover:bg-gray-200"
-              }`}
-            >
-              Hero (3)
-            </button>
-            <button
-              onClick={() => setSelectedCategory("listings")}
-              className={`px-4 py-2 rounded-xl text-sm font-semibold transition-all ${
-                selectedCategory === "listings"
-                  ? "bg-gradient-to-r from-sptc-red to-red-600 text-white shadow-md"
-                  : "bg-gray-100 text-gray-600 hover:bg-gray-200"
-              }`}
-            >
-              Listings (3)
-            </button>
-          </div>
-        </div>
-
-        {/* Image Grid */}
-        <div className="grid sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-4">
-          {filteredImages.map((image) => (
-            <ImageCard key={image.id} image={image} onDelete={handleDeleteImage} />
-          ))}
-        </div>
-      </div>
-    </div>
-  );
-}
-
-function ImageCard({ image, onDelete }: { image: any; onDelete: (id: number) => void }) {
-  const [showPreview, setShowPreview] = useState(false);
-
-  const handleView = () => {
-    setShowPreview(true);
-  };
-
-  const handleDownload = () => {
-    const link = document.createElement('a');
-    link.href = image.url;
-    link.download = image.name;
-    link.click();
-  };
-
-  return (
-    <React.Fragment>
-      <div className="group relative bg-white rounded-xl overflow-hidden border border-gray-200 hover:border-sptc-red hover:shadow-xl transition-all duration-300">
-        {/* Image */}
-        <div className="aspect-[4/3] bg-gray-100 relative overflow-hidden">
-          {image.url.startsWith('data:') || image.url.startsWith('/images/') ? (
-            <img
-              src={image.url}
-              alt={image.name}
-              className="absolute inset-0 w-full h-full object-cover"
-              onError={(e) => {
-                const target = e.target as HTMLImageElement;
-                target.style.display = 'none';
-                target.parentElement?.querySelector('.fallback-icon')?.classList.remove('hidden');
-              }}
-            />
-          ) : null}
-          <div className="fallback-icon absolute inset-0 bg-gradient-to-br from-gray-200 to-gray-300 flex items-center justify-center">
-            <ImageIcon className="w-12 h-12 text-gray-400" />
-          </div>
-          {/* Overlay on hover */}
-          <div className="absolute inset-0 bg-black bg-opacity-0 group-hover:bg-opacity-60 transition-all duration-300 flex items-center justify-center opacity-0 group-hover:opacity-100">
-            <div className="flex items-center space-x-2">
-              <button
-                onClick={handleView}
-                className="p-3 bg-white rounded-xl hover:bg-gray-100 transition-colors"
-                title="View image"
-              >
-                <Eye className="w-5 h-5 text-gray-900" />
-              </button>
-              <button
-                onClick={handleDownload}
-                className="p-3 bg-white rounded-xl hover:bg-gray-100 transition-colors"
-                title="Download image"
-              >
-                <Download className="w-5 h-5 text-gray-900" />
-              </button>
-              <button
-                onClick={() => onDelete(image.id)}
-                className="p-3 bg-red-500 rounded-xl hover:bg-red-600 transition-colors"
-                title="Delete image"
-              >
-                <Trash2 className="w-5 h-5 text-white" />
-              </button>
-            </div>
-          </div>
-        </div>
-
-        {/* Info */}
-        <div className="p-4">
-          <div className="flex items-start justify-between mb-2">
-            <div className="flex-1 min-w-0">
-              <p className="font-semibold text-gray-900 truncate">{image.name}</p>
-              <p className="text-xs text-gray-500">{image.size}</p>
-            </div>
-            <span className={`px-2 py-1 rounded-lg text-xs font-bold uppercase ${
-              image.category === "hero"
-                ? "bg-purple-100 text-purple-700"
-                : image.category === "listings"
-                ? "bg-blue-100 text-blue-700"
-                : "bg-gray-100 text-gray-700"
-            }`}>
-              {image.category}
-            </span>
-          </div>
-          <p className="text-xs text-gray-400">Uploaded: {image.uploaded}</p>
-        </div>
-      </div>
-
-      {/* Preview Modal */}
-      {showPreview && (
-        <div
-          className="fixed inset-0 bg-black bg-opacity-90 z-50 flex items-center justify-center p-4"
-          onClick={() => setShowPreview(false)}
+      {/* Add New Button */}
+      <div className="flex justify-between items-center">
+        <h2 className="text-2xl font-bold text-gray-900">Manage Listings ({listings.length})</h2>
+        <button
+          onClick={() => { resetForm(); setShowForm(true); }}
+          className="flex items-center gap-2 px-6 py-3 bg-gradient-to-r from-sptc-red to-red-600 text-white rounded-xl font-semibold hover:shadow-lg"
         >
-          <div className="relative max-w-6xl max-h-[90vh]">
-            <button
-              onClick={() => setShowPreview(false)}
-              className="absolute -top-12 right-0 text-white hover:text-gray-300 text-4xl font-bold"
-            >
-              ×
-            </button>
-            <img
-              src={image.url}
-              alt={image.name}
-              className="max-w-full max-h-[85vh] object-contain rounded-lg"
-            />
-            <div className="absolute bottom-0 left-0 right-0 bg-black bg-opacity-75 text-white p-4 rounded-b-lg">
-              <p className="font-semibold">{image.name}</p>
-              <p className="text-sm text-gray-300">{image.size} • Uploaded: {image.uploaded}</p>
+          <Plus className="w-5 h-5" />
+          Add New Listing
+        </button>
+      </div>
+
+      {/* Form Modal */}
+      {showForm && (
+        <div className="fixed inset-0 bg-black/50 z-50 flex items-center justify-center p-4">
+          <div className="bg-white rounded-2xl max-w-4xl w-full max-h-[90vh] overflow-y-auto p-6">
+            <div className="flex justify-between items-center mb-6">
+              <h3 className="text-2xl font-bold">{editingListing ? "Edit Listing" : "Create New Listing"}</h3>
+              <button onClick={() => { setShowForm(false); resetForm(); }} className="p-2 hover:bg-gray-100 rounded-lg">
+                <X className="w-6 h-6" />
+              </button>
+            </div>
+
+            <div className="grid md:grid-cols-2 gap-4">
+              <div className="md:col-span-2">
+                <label className="block text-sm font-semibold mb-1">Host *</label>
+                <select
+                  value={form.host_profile_id}
+                  onChange={(e) => setForm({ ...form, host_profile_id: e.target.value })}
+                  className="w-full px-4 py-2 border rounded-xl"
+                >
+                  <option value="">Select a host...</option>
+                  {hosts.map((h) => (
+                    <option key={h.id} value={h.id}>{h.first_name} {h.last_name}</option>
+                  ))}
+                </select>
+              </div>
+
+              <div className="md:col-span-2">
+                <label className="block text-sm font-semibold mb-1">Title *</label>
+                <input
+                  type="text"
+                  value={form.title}
+                  onChange={(e) => setForm({ ...form, title: e.target.value })}
+                  className="w-full px-4 py-2 border rounded-xl"
+                  placeholder="Beautiful Mountain Cabin"
+                />
+              </div>
+
+              <div className="md:col-span-2">
+                <label className="block text-sm font-semibold mb-1">Description</label>
+                <textarea
+                  value={form.description}
+                  onChange={(e) => setForm({ ...form, description: e.target.value })}
+                  className="w-full px-4 py-2 border rounded-xl"
+                  rows={3}
+                  placeholder="Describe the property..."
+                />
+              </div>
+
+              <div>
+                <label className="block text-sm font-semibold mb-1">Property Type</label>
+                <select
+                  value={form.property_type}
+                  onChange={(e) => setForm({ ...form, property_type: e.target.value })}
+                  className="w-full px-4 py-2 border rounded-xl"
+                >
+                  {["house", "apartment", "cabin", "farm", "room", "villa", "cottage", "other"].map((t) => (
+                    <option key={t} value={t}>{t.charAt(0).toUpperCase() + t.slice(1)}</option>
+                  ))}
+                </select>
+              </div>
+
+              <div>
+                <label className="block text-sm font-semibold mb-1">Status</label>
+                <select
+                  value={form.status}
+                  onChange={(e) => setForm({ ...form, status: e.target.value })}
+                  className="w-full px-4 py-2 border rounded-xl"
+                >
+                  {["active", "pending", "inactive", "suspended"].map((s) => (
+                    <option key={s} value={s}>{s.charAt(0).toUpperCase() + s.slice(1)}</option>
+                  ))}
+                </select>
+              </div>
+
+              <div>
+                <label className="block text-sm font-semibold mb-1">Bedrooms</label>
+                <input type="number" value={form.bedrooms} onChange={(e) => setForm({ ...form, bedrooms: parseInt(e.target.value) })} className="w-full px-4 py-2 border rounded-xl" min="0" />
+              </div>
+
+              <div>
+                <label className="block text-sm font-semibold mb-1">Bathrooms</label>
+                <input type="number" value={form.bathrooms} onChange={(e) => setForm({ ...form, bathrooms: parseInt(e.target.value) })} className="w-full px-4 py-2 border rounded-xl" min="0" />
+              </div>
+
+              <div>
+                <label className="block text-sm font-semibold mb-1">Max Guests</label>
+                <input type="number" value={form.max_guests} onChange={(e) => setForm({ ...form, max_guests: parseInt(e.target.value) })} className="w-full px-4 py-2 border rounded-xl" min="1" />
+              </div>
+
+              <div>
+                <label className="block text-sm font-semibold mb-1">Price per Night ($)</label>
+                <input type="number" value={form.price_per_night} onChange={(e) => setForm({ ...form, price_per_night: parseFloat(e.target.value) })} className="w-full px-4 py-2 border rounded-xl" min="0" />
+              </div>
+
+              <div>
+                <label className="block text-sm font-semibold mb-1">Location *</label>
+                <input type="text" value={form.location} onChange={(e) => setForm({ ...form, location: e.target.value })} className="w-full px-4 py-2 border rounded-xl" placeholder="San Agustin" />
+              </div>
+
+              <div>
+                <label className="block text-sm font-semibold mb-1">City</label>
+                <input type="text" value={form.city} onChange={(e) => setForm({ ...form, city: e.target.value })} className="w-full px-4 py-2 border rounded-xl" placeholder="Huila" />
+              </div>
+
+              <div>
+                <label className="block text-sm font-semibold mb-1">Region</label>
+                <input type="text" value={form.region} onChange={(e) => setForm({ ...form, region: e.target.value })} className="w-full px-4 py-2 border rounded-xl" placeholder="Coffee Region" />
+              </div>
+
+              <div>
+                <label className="block text-sm font-semibold mb-1">Cleaning Fee ($)</label>
+                <input type="number" value={form.cleaning_fee} onChange={(e) => setForm({ ...form, cleaning_fee: parseFloat(e.target.value) })} className="w-full px-4 py-2 border rounded-xl" min="0" />
+              </div>
+
+              <div className="md:col-span-2">
+                <label className="block text-sm font-semibold mb-1">Images</label>
+                <div className="flex flex-wrap gap-2 mb-2">
+                  {form.images.map((img, i) => (
+                    <div key={i} className="relative">
+                      <img src={img} alt="" className="w-20 h-20 object-cover rounded-lg" />
+                      <button
+                        onClick={() => setForm({ ...form, images: form.images.filter((_, idx) => idx !== i) })}
+                        className="absolute -top-2 -right-2 bg-red-500 text-white rounded-full w-5 h-5 flex items-center justify-center text-xs"
+                      >×</button>
+                    </div>
+                  ))}
+                </div>
+                <button type="button" onClick={addImageUrl} className="px-4 py-2 bg-gray-100 rounded-lg text-sm hover:bg-gray-200">
+                  + Add Image URL
+                </button>
+              </div>
+            </div>
+
+            <div className="flex justify-end gap-3 mt-6">
+              <button onClick={() => { setShowForm(false); resetForm(); }} className="px-6 py-2 bg-gray-200 rounded-xl font-semibold">Cancel</button>
+              <button onClick={handleSave} disabled={saving} className="px-6 py-2 bg-sptc-red text-white rounded-xl font-semibold disabled:opacity-50">
+                {saving ? "Saving..." : editingListing ? "Update Listing" : "Create Listing"}
+              </button>
             </div>
           </div>
         </div>
       )}
-    </React.Fragment>
+
+      {/* Listings Grid */}
+      {listings.length === 0 ? (
+        <EmptyState icon={Home} title="No listings yet" description="Click 'Add New Listing' to create your first property listing" />
+      ) : (
+        <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-4">
+          {listings.map((listing) => (
+            <div key={listing.id} className="bg-white rounded-xl shadow-lg overflow-hidden border border-gray-100">
+              <div className="h-40 bg-gray-200 relative">
+                {listing.images?.[0] ? (
+                  <img src={listing.images[0]} alt={listing.title} className="w-full h-full object-cover" />
+                ) : (
+                  <div className="w-full h-full flex items-center justify-center"><Home className="w-12 h-12 text-gray-400" /></div>
+                )}
+                <span className={`absolute top-2 right-2 px-2 py-1 rounded-full text-xs font-bold ${
+                  listing.status === "active" ? "bg-green-500 text-white" : "bg-yellow-500 text-white"
+                }`}>{listing.status}</span>
+              </div>
+              <div className="p-4">
+                <h3 className="font-bold text-lg truncate">{listing.title}</h3>
+                <p className="text-sm text-gray-500 flex items-center gap-1"><MapPin className="w-4 h-4" />{listing.location || listing.city}</p>
+                <div className="flex items-center gap-3 mt-2 text-sm text-gray-600">
+                  <span className="flex items-center gap-1"><Bed className="w-4 h-4" />{listing.bedrooms}</span>
+                  <span className="flex items-center gap-1"><Bath className="w-4 h-4" />{listing.bathrooms}</span>
+                  <span className="flex items-center gap-1"><User className="w-4 h-4" />{listing.max_guests}</span>
+                </div>
+                <p className="text-xl font-bold text-sptc-red mt-2">${listing.price_per_night}<span className="text-sm font-normal text-gray-500">/night</span></p>
+                <p className="text-xs text-gray-400 mt-1">Host: {listing.host_profiles?.first_name} {listing.host_profiles?.last_name}</p>
+                <div className="flex gap-2 mt-3">
+                  <button onClick={() => handleEdit(listing)} className="flex-1 px-3 py-2 bg-blue-500 text-white rounded-lg text-sm font-semibold flex items-center justify-center gap-1">
+                    <Edit className="w-4 h-4" /> Edit
+                  </button>
+                  <button onClick={() => handleDelete(listing.id)} className="px-3 py-2 bg-red-500 text-white rounded-lg text-sm">
+                    <Trash2 className="w-4 h-4" />
+                  </button>
+                </div>
+              </div>
+            </div>
+          ))}
+        </div>
+      )}
+    </div>
   );
 }
 
-// Homepage Content Management Tab
+// ============================================================================
+// BOOKINGS TAB
+// ============================================================================
+function BookingsTab() {
+  const supabase = createClientComponentClient();
+  const [bookings, setBookings] = useState<any[]>([]);
+  const [listings, setListings] = useState<any[]>([]);
+  const [loading, setLoading] = useState(true);
+  const [error, setError] = useState<string | null>(null);
+  const [showForm, setShowForm] = useState(false);
+  const [saving, setSaving] = useState(false);
+
+  const [form, setForm] = useState({
+    listing_id: "",
+    check_in: "",
+    check_out: "",
+    number_of_guests: 1,
+    total_price: 0,
+    status: "confirmed",
+  });
+
+  useEffect(() => { fetchData(); }, []);
+
+  const fetchData = async () => {
+    setLoading(true);
+    setError(null);
+    try {
+      const [bookingsRes, listingsRes] = await Promise.all([
+        supabase.from('bookings').select('*, listings(title, price_per_night)').order('created_at', { ascending: false }),
+        supabase.from('listings').select('id, title, price_per_night')
+      ]);
+      if (bookingsRes.error) setError(`Bookings: ${bookingsRes.error.message}`);
+      if (listingsRes.error) setError(prev => prev ? `${prev}, Listings: ${listingsRes.error.message}` : `Listings: ${listingsRes.error.message}`);
+      setBookings(bookingsRes.data || []);
+      setListings(listingsRes.data || []);
+    } catch (err: any) {
+      setError(err.message);
+    }
+    setLoading(false);
+  };
+
+  const handleSave = async () => {
+    if (!form.listing_id || !form.check_in || !form.check_out) {
+      alert("Please fill all required fields");
+      return;
+    }
+    setSaving(true);
+    await supabase.from('bookings').insert(form);
+    setSaving(false);
+    setShowForm(false);
+    setForm({ listing_id: "", check_in: "", check_out: "", number_of_guests: 1, total_price: 0, status: "confirmed" });
+    fetchData();
+  };
+
+  const updateStatus = async (id: string, status: string) => {
+    await supabase.from('bookings').update({ status }).eq('id', id);
+    fetchData();
+  };
+
+  const formatDate = (d: string) => new Date(d).toLocaleDateString('en-US', { month: 'short', day: 'numeric', year: 'numeric' });
+
+  if (loading) return <LoadingSpinner />;
+
+  return (
+    <div className="space-y-6">
+      {error && (
+        <div className="bg-red-50 border border-red-200 rounded-xl p-4">
+          <p className="text-red-700 font-semibold">Database Error</p>
+          <p className="text-red-600 text-sm">{error}</p>
+          <p className="text-red-500 text-xs mt-2">Run FIX_ADMIN_RLS.sql in Supabase SQL Editor to fix permissions.</p>
+        </div>
+      )}
+      <div className="flex justify-between items-center">
+        <h2 className="text-2xl font-bold">Manage Bookings ({bookings.length})</h2>
+        <button onClick={() => setShowForm(true)} className="flex items-center gap-2 px-6 py-3 bg-sptc-red text-white rounded-xl font-semibold">
+          <Plus className="w-5 h-5" /> Add Booking
+        </button>
+      </div>
+
+      {showForm && (
+        <div className="fixed inset-0 bg-black/50 z-50 flex items-center justify-center p-4">
+          <div className="bg-white rounded-2xl max-w-lg w-full p-6">
+            <div className="flex justify-between items-center mb-6">
+              <h3 className="text-xl font-bold">Create Booking</h3>
+              <button onClick={() => setShowForm(false)}><X className="w-6 h-6" /></button>
+            </div>
+            <div className="space-y-4">
+              <div>
+                <label className="block text-sm font-semibold mb-1">Listing *</label>
+                <select value={form.listing_id} onChange={(e) => setForm({ ...form, listing_id: e.target.value })} className="w-full px-4 py-2 border rounded-xl">
+                  <option value="">Select listing...</option>
+                  {listings.map((l) => <option key={l.id} value={l.id}>{l.title} - ${l.price_per_night}/night</option>)}
+                </select>
+              </div>
+              <div className="grid grid-cols-2 gap-4">
+                <div>
+                  <label className="block text-sm font-semibold mb-1">Check-in *</label>
+                  <input type="date" value={form.check_in} onChange={(e) => setForm({ ...form, check_in: e.target.value })} className="w-full px-4 py-2 border rounded-xl" />
+                </div>
+                <div>
+                  <label className="block text-sm font-semibold mb-1">Check-out *</label>
+                  <input type="date" value={form.check_out} onChange={(e) => setForm({ ...form, check_out: e.target.value })} className="w-full px-4 py-2 border rounded-xl" />
+                </div>
+              </div>
+              <div className="grid grid-cols-2 gap-4">
+                <div>
+                  <label className="block text-sm font-semibold mb-1">Guests</label>
+                  <input type="number" value={form.number_of_guests} onChange={(e) => setForm({ ...form, number_of_guests: parseInt(e.target.value) })} className="w-full px-4 py-2 border rounded-xl" min="1" />
+                </div>
+                <div>
+                  <label className="block text-sm font-semibold mb-1">Total Price ($)</label>
+                  <input type="number" value={form.total_price} onChange={(e) => setForm({ ...form, total_price: parseFloat(e.target.value) })} className="w-full px-4 py-2 border rounded-xl" min="0" />
+                </div>
+              </div>
+            </div>
+            <div className="flex justify-end gap-3 mt-6">
+              <button onClick={() => setShowForm(false)} className="px-6 py-2 bg-gray-200 rounded-xl">Cancel</button>
+              <button onClick={handleSave} disabled={saving} className="px-6 py-2 bg-sptc-red text-white rounded-xl disabled:opacity-50">
+                {saving ? "Saving..." : "Create Booking"}
+              </button>
+            </div>
+          </div>
+        </div>
+      )}
+
+      {bookings.length === 0 ? (
+        <EmptyState icon={Calendar} title="No bookings yet" description="Bookings will appear here when guests make reservations" />
+      ) : (
+        <div className="bg-white rounded-xl shadow-lg overflow-hidden">
+          <table className="w-full">
+            <thead className="bg-gray-50">
+              <tr>
+                <th className="px-4 py-3 text-left text-sm font-semibold">Listing</th>
+                <th className="px-4 py-3 text-left text-sm font-semibold">Dates</th>
+                <th className="px-4 py-3 text-left text-sm font-semibold">Guests</th>
+                <th className="px-4 py-3 text-left text-sm font-semibold">Total</th>
+                <th className="px-4 py-3 text-left text-sm font-semibold">Status</th>
+              </tr>
+            </thead>
+            <tbody className="divide-y">
+              {bookings.map((b) => (
+                <tr key={b.id} className="hover:bg-gray-50">
+                  <td className="px-4 py-3 font-medium">{b.listings?.title || "Unknown"}</td>
+                  <td className="px-4 py-3 text-sm">{formatDate(b.check_in)} - {formatDate(b.check_out)}</td>
+                  <td className="px-4 py-3">{b.number_of_guests}</td>
+                  <td className="px-4 py-3 font-bold">${b.total_price}</td>
+                  <td className="px-4 py-3">
+                    <select
+                      value={b.status}
+                      onChange={(e) => updateStatus(b.id, e.target.value)}
+                      className={`px-3 py-1 rounded-full text-xs font-bold ${
+                        b.status === "confirmed" ? "bg-green-100 text-green-700" :
+                        b.status === "completed" ? "bg-blue-100 text-blue-700" :
+                        b.status === "cancelled" ? "bg-red-100 text-red-700" : "bg-yellow-100 text-yellow-700"
+                      }`}
+                    >
+                      <option value="pending">Pending</option>
+                      <option value="confirmed">Confirmed</option>
+                      <option value="completed">Completed</option>
+                      <option value="cancelled">Cancelled</option>
+                    </select>
+                  </td>
+                </tr>
+              ))}
+            </tbody>
+          </table>
+        </div>
+      )}
+    </div>
+  );
+}
+
+// ============================================================================
+// USERS TAB
+// ============================================================================
+function UsersTab() {
+  const supabase = createClientComponentClient();
+  const [hosts, setHosts] = useState<any[]>([]);
+  const [loading, setLoading] = useState(true);
+  const [error, setError] = useState<string | null>(null);
+  const [showForm, setShowForm] = useState(false);
+  const [saving, setSaving] = useState(false);
+
+  const [form, setForm] = useState({
+    first_name: "",
+    last_name: "",
+    phone: "",
+    city: "",
+    verification_status: "approved",
+  });
+
+  useEffect(() => { fetchHosts(); }, []);
+
+  const fetchHosts = async () => {
+    setLoading(true);
+    setError(null);
+    try {
+      const { data, error: err } = await supabase.from('host_profiles').select('*').order('created_at', { ascending: false });
+      if (err) setError(`Host profiles: ${err.message}`);
+      setHosts(data || []);
+    } catch (err: any) {
+      setError(err.message);
+    }
+    setLoading(false);
+  };
+
+  const handleSave = async () => {
+    if (!form.first_name || !form.last_name) {
+      alert("Please fill first and last name");
+      return;
+    }
+    setSaving(true);
+    await supabase.from('host_profiles').insert(form);
+    setSaving(false);
+    setShowForm(false);
+    setForm({ first_name: "", last_name: "", phone: "", city: "", verification_status: "approved" });
+    fetchHosts();
+  };
+
+  const updateStatus = async (id: string, status: string) => {
+    await supabase.from('host_profiles').update({ verification_status: status }).eq('id', id);
+    fetchHosts();
+  };
+
+  if (loading) return <LoadingSpinner />;
+
+  const pending = hosts.filter(h => h.verification_status === 'pending');
+  const approved = hosts.filter(h => h.verification_status === 'approved');
+
+  return (
+    <div className="space-y-6">
+      {error && (
+        <div className="bg-red-50 border border-red-200 rounded-xl p-4">
+          <p className="text-red-700 font-semibold">Database Error</p>
+          <p className="text-red-600 text-sm">{error}</p>
+          <p className="text-red-500 text-xs mt-2">Run FIX_ADMIN_RLS.sql in Supabase SQL Editor to fix permissions.</p>
+        </div>
+      )}
+      <div className="flex justify-between items-center">
+        <h2 className="text-2xl font-bold">Manage Hosts ({hosts.length})</h2>
+        <button onClick={() => setShowForm(true)} className="flex items-center gap-2 px-6 py-3 bg-sptc-red text-white rounded-xl font-semibold">
+          <Plus className="w-5 h-5" /> Add Host
+        </button>
+      </div>
+
+      {showForm && (
+        <div className="fixed inset-0 bg-black/50 z-50 flex items-center justify-center p-4">
+          <div className="bg-white rounded-2xl max-w-lg w-full p-6">
+            <div className="flex justify-between items-center mb-6">
+              <h3 className="text-xl font-bold">Add New Host</h3>
+              <button onClick={() => setShowForm(false)}><X className="w-6 h-6" /></button>
+            </div>
+            <div className="space-y-4">
+              <div className="grid grid-cols-2 gap-4">
+                <div>
+                  <label className="block text-sm font-semibold mb-1">First Name *</label>
+                  <input type="text" value={form.first_name} onChange={(e) => setForm({ ...form, first_name: e.target.value })} className="w-full px-4 py-2 border rounded-xl" />
+                </div>
+                <div>
+                  <label className="block text-sm font-semibold mb-1">Last Name *</label>
+                  <input type="text" value={form.last_name} onChange={(e) => setForm({ ...form, last_name: e.target.value })} className="w-full px-4 py-2 border rounded-xl" />
+                </div>
+              </div>
+              <div>
+                <label className="block text-sm font-semibold mb-1">Phone</label>
+                <input type="text" value={form.phone} onChange={(e) => setForm({ ...form, phone: e.target.value })} className="w-full px-4 py-2 border rounded-xl" />
+              </div>
+              <div>
+                <label className="block text-sm font-semibold mb-1">City</label>
+                <input type="text" value={form.city} onChange={(e) => setForm({ ...form, city: e.target.value })} className="w-full px-4 py-2 border rounded-xl" />
+              </div>
+              <div>
+                <label className="block text-sm font-semibold mb-1">Status</label>
+                <select value={form.verification_status} onChange={(e) => setForm({ ...form, verification_status: e.target.value })} className="w-full px-4 py-2 border rounded-xl">
+                  <option value="approved">Approved</option>
+                  <option value="pending">Pending</option>
+                  <option value="rejected">Rejected</option>
+                </select>
+              </div>
+            </div>
+            <div className="flex justify-end gap-3 mt-6">
+              <button onClick={() => setShowForm(false)} className="px-6 py-2 bg-gray-200 rounded-xl">Cancel</button>
+              <button onClick={handleSave} disabled={saving} className="px-6 py-2 bg-sptc-red text-white rounded-xl disabled:opacity-50">
+                {saving ? "Saving..." : "Add Host"}
+              </button>
+            </div>
+          </div>
+        </div>
+      )}
+
+      <div className="grid md:grid-cols-2 gap-6">
+        {/* Pending */}
+        <div className="bg-white rounded-xl shadow-lg p-6">
+          <h3 className="text-lg font-bold mb-4 flex items-center gap-2">
+            <Clock className="w-5 h-5 text-yellow-500" /> Pending Verification ({pending.length})
+          </h3>
+          {pending.length === 0 ? (
+            <p className="text-gray-500 text-center py-4">No pending verifications</p>
+          ) : (
+            <div className="space-y-3">
+              {pending.map((h) => (
+                <div key={h.id} className="flex items-center justify-between p-3 bg-yellow-50 rounded-lg">
+                  <div>
+                    <p className="font-semibold">{h.first_name} {h.last_name}</p>
+                    <p className="text-sm text-gray-500">{h.city || "Colombia"}</p>
+                  </div>
+                  <div className="flex gap-2">
+                    <button onClick={() => updateStatus(h.id, 'approved')} className="px-3 py-1 bg-green-500 text-white rounded-lg text-sm">Approve</button>
+                    <button onClick={() => updateStatus(h.id, 'rejected')} className="px-3 py-1 bg-red-500 text-white rounded-lg text-sm">Reject</button>
+                  </div>
+                </div>
+              ))}
+            </div>
+          )}
+        </div>
+
+        {/* Approved */}
+        <div className="bg-white rounded-xl shadow-lg p-6">
+          <h3 className="text-lg font-bold mb-4 flex items-center gap-2">
+            <CheckCircle className="w-5 h-5 text-green-500" /> Verified Hosts ({approved.length})
+          </h3>
+          {approved.length === 0 ? (
+            <p className="text-gray-500 text-center py-4">No verified hosts</p>
+          ) : (
+            <div className="space-y-3 max-h-96 overflow-y-auto">
+              {approved.map((h) => (
+                <div key={h.id} className="flex items-center justify-between p-3 bg-green-50 rounded-lg">
+                  <div>
+                    <p className="font-semibold">{h.first_name} {h.last_name}</p>
+                    <p className="text-sm text-gray-500">{h.city || "Colombia"}</p>
+                  </div>
+                  <span className="px-3 py-1 bg-green-100 text-green-700 rounded-full text-xs font-bold">Verified</span>
+                </div>
+              ))}
+            </div>
+          )}
+        </div>
+      </div>
+    </div>
+  );
+}
+
+// ============================================================================
+// FUNDS TAB
+// ============================================================================
+function FundsTab() {
+  const supabase = createClientComponentClient();
+  const [projects, setProjects] = useState<any[]>([]);
+  const [bookings, setBookings] = useState<any[]>([]);
+  const [loading, setLoading] = useState(true);
+  const [error, setError] = useState<string | null>(null);
+  const [showForm, setShowForm] = useState(false);
+  const [saving, setSaving] = useState(false);
+
+  const [form, setForm] = useState({
+    name: "",
+    description: "",
+    goal_amount: 5000,
+    current_amount: 0,
+    location: "",
+    impact_category: "education",
+    status: "active",
+  });
+
+  useEffect(() => { fetchData(); }, []);
+
+  const fetchData = async () => {
+    setLoading(true);
+    setError(null);
+    try {
+      const [projectsRes, bookingsRes] = await Promise.all([
+        supabase.from('community_projects').select('*').order('created_at', { ascending: false }),
+        supabase.from('bookings').select('total_price').in('status', ['confirmed', 'completed'])
+      ]);
+      if (projectsRes.error) setError(`Projects: ${projectsRes.error.message}`);
+      if (bookingsRes.error) setError(prev => prev ? `${prev}, Bookings: ${bookingsRes.error.message}` : `Bookings: ${bookingsRes.error.message}`);
+      setProjects(projectsRes.data || []);
+      setBookings(bookingsRes.data || []);
+    } catch (err: any) {
+      setError(err.message);
+    }
+    setLoading(false);
+  };
+
+  const handleSave = async () => {
+    if (!form.name) {
+      alert("Please enter project name");
+      return;
+    }
+    setSaving(true);
+    await supabase.from('community_projects').insert(form);
+    setSaving(false);
+    setShowForm(false);
+    setForm({ name: "", description: "", goal_amount: 5000, current_amount: 0, location: "", impact_category: "education", status: "active" });
+    fetchData();
+  };
+
+  const updateProject = async (id: string, updates: any) => {
+    await supabase.from('community_projects').update(updates).eq('id', id);
+    fetchData();
+  };
+
+  if (loading) return <LoadingSpinner />;
+
+  const totalRevenue = bookings.reduce((sum, b) => sum + (parseFloat(b.total_price) || 0), 0);
+  const platformFee = totalRevenue * 0.15;
+  const communityFund = platformFee * 0.60;
+
+  return (
+    <div className="space-y-6">
+      {error && (
+        <div className="bg-red-50 border border-red-200 rounded-xl p-4">
+          <p className="text-red-700 font-semibold">Database Error</p>
+          <p className="text-red-600 text-sm">{error}</p>
+          <p className="text-red-500 text-xs mt-2">Run FIX_ADMIN_RLS.sql in Supabase SQL Editor to fix permissions.</p>
+        </div>
+      )}
+      {/* Stats */}
+      <div className="grid sm:grid-cols-4 gap-4">
+        <StatCard title="Total Revenue" value={`$${totalRevenue.toLocaleString()}`} icon={<DollarSign />} />
+        <StatCard title="Platform Fee (15%)" value={`$${platformFee.toFixed(0)}`} icon={<TrendingUp />} />
+        <StatCard title="Community Fund" value={`$${communityFund.toFixed(0)}`} icon={<Users />} />
+        <StatCard title="Active Projects" value={projects.filter(p => p.status === 'active').length.toString()} icon={<CheckCircle />} />
+      </div>
+
+      {/* Community Projects */}
+      <div className="flex justify-between items-center">
+        <h2 className="text-2xl font-bold">Community Projects</h2>
+        <button onClick={() => setShowForm(true)} className="flex items-center gap-2 px-6 py-3 bg-sptc-red text-white rounded-xl font-semibold">
+          <Plus className="w-5 h-5" /> Add Project
+        </button>
+      </div>
+
+      {showForm && (
+        <div className="fixed inset-0 bg-black/50 z-50 flex items-center justify-center p-4">
+          <div className="bg-white rounded-2xl max-w-lg w-full p-6">
+            <div className="flex justify-between items-center mb-6">
+              <h3 className="text-xl font-bold">Add Community Project</h3>
+              <button onClick={() => setShowForm(false)}><X className="w-6 h-6" /></button>
+            </div>
+            <div className="space-y-4">
+              <div>
+                <label className="block text-sm font-semibold mb-1">Project Name *</label>
+                <input type="text" value={form.name} onChange={(e) => setForm({ ...form, name: e.target.value })} className="w-full px-4 py-2 border rounded-xl" placeholder="School Renovation" />
+              </div>
+              <div>
+                <label className="block text-sm font-semibold mb-1">Description</label>
+                <textarea value={form.description} onChange={(e) => setForm({ ...form, description: e.target.value })} className="w-full px-4 py-2 border rounded-xl" rows={3} />
+              </div>
+              <div className="grid grid-cols-2 gap-4">
+                <div>
+                  <label className="block text-sm font-semibold mb-1">Goal Amount ($)</label>
+                  <input type="number" value={form.goal_amount} onChange={(e) => setForm({ ...form, goal_amount: parseFloat(e.target.value) })} className="w-full px-4 py-2 border rounded-xl" />
+                </div>
+                <div>
+                  <label className="block text-sm font-semibold mb-1">Current Amount ($)</label>
+                  <input type="number" value={form.current_amount} onChange={(e) => setForm({ ...form, current_amount: parseFloat(e.target.value) })} className="w-full px-4 py-2 border rounded-xl" />
+                </div>
+              </div>
+              <div>
+                <label className="block text-sm font-semibold mb-1">Category</label>
+                <select value={form.impact_category} onChange={(e) => setForm({ ...form, impact_category: e.target.value })} className="w-full px-4 py-2 border rounded-xl">
+                  <option value="education">Education</option>
+                  <option value="infrastructure">Infrastructure</option>
+                  <option value="environment">Environment</option>
+                  <option value="health">Health</option>
+                  <option value="other">Other</option>
+                </select>
+              </div>
+              <div>
+                <label className="block text-sm font-semibold mb-1">Location</label>
+                <input type="text" value={form.location} onChange={(e) => setForm({ ...form, location: e.target.value })} className="w-full px-4 py-2 border rounded-xl" placeholder="San Agustin, Huila" />
+              </div>
+            </div>
+            <div className="flex justify-end gap-3 mt-6">
+              <button onClick={() => setShowForm(false)} className="px-6 py-2 bg-gray-200 rounded-xl">Cancel</button>
+              <button onClick={handleSave} disabled={saving} className="px-6 py-2 bg-sptc-red text-white rounded-xl disabled:opacity-50">
+                {saving ? "Saving..." : "Add Project"}
+              </button>
+            </div>
+          </div>
+        </div>
+      )}
+
+      {projects.length === 0 ? (
+        <EmptyState icon={DollarSign} title="No community projects" description="Add your first community project to track funding goals" />
+      ) : (
+        <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-4">
+          {projects.map((p) => (
+            <div key={p.id} className="bg-white rounded-xl shadow-lg p-6">
+              <div className="flex justify-between items-start mb-3">
+                <h3 className="font-bold text-lg">{p.name}</h3>
+                <span className={`px-2 py-1 rounded-full text-xs font-bold ${p.status === 'active' ? 'bg-green-100 text-green-700' : 'bg-gray-100 text-gray-700'}`}>{p.status}</span>
+              </div>
+              <p className="text-sm text-gray-600 mb-3 line-clamp-2">{p.description}</p>
+              <p className="text-xs text-gray-500 mb-3"><MapPin className="w-3 h-3 inline" /> {p.location}</p>
+              <div className="flex justify-between text-sm mb-2">
+                <span>${(p.current_amount || 0).toLocaleString()} raised</span>
+                <span>${(p.goal_amount || 0).toLocaleString()} goal</span>
+              </div>
+              <div className="h-2 bg-gray-200 rounded-full mb-3">
+                <div className="h-full bg-sptc-red rounded-full" style={{ width: `${Math.min(100, ((p.current_amount || 0) / (p.goal_amount || 1)) * 100)}%` }} />
+              </div>
+              <div className="flex gap-2">
+                <input
+                  type="number"
+                  placeholder="Add funds"
+                  className="flex-1 px-3 py-1 border rounded-lg text-sm"
+                  onKeyDown={(e) => {
+                    if (e.key === 'Enter') {
+                      const val = parseFloat((e.target as HTMLInputElement).value);
+                      if (val > 0) {
+                        updateProject(p.id, { current_amount: (p.current_amount || 0) + val });
+                        (e.target as HTMLInputElement).value = '';
+                      }
+                    }
+                  }}
+                />
+                <button
+                  onClick={() => updateProject(p.id, { status: p.status === 'active' ? 'completed' : 'active' })}
+                  className="px-3 py-1 bg-gray-100 rounded-lg text-sm"
+                >
+                  {p.status === 'active' ? 'Complete' : 'Reopen'}
+                </button>
+              </div>
+            </div>
+          ))}
+        </div>
+      )}
+    </div>
+  );
+}
+
+// ============================================================================
+// IMAGES TAB
+// ============================================================================
+function ImagesTab() {
+  const supabase = createClientComponentClient();
+  const [images, setImages] = useState<any[]>([]);
+  const [loading, setLoading] = useState(true);
+  const [uploading, setUploading] = useState(false);
+
+  useEffect(() => { fetchImages(); }, []);
+
+  const fetchImages = async () => {
+    setLoading(true);
+    const { data: listings } = await supabase.from('listings').select('id, title, images');
+    const allImages: any[] = [];
+    listings?.forEach(l => {
+      (l.images || []).forEach((url: string, i: number) => {
+        allImages.push({ id: `${l.id}-${i}`, url, title: `${l.title} - Image ${i + 1}`, listing_id: l.id });
+      });
+    });
+    setImages(allImages);
+    setLoading(false);
+  };
+
+  const handleUpload = async (e: React.ChangeEvent<HTMLInputElement>) => {
+    const files = e.target.files;
+    if (!files) return;
+    setUploading(true);
+
+    for (const file of Array.from(files)) {
+      const fileExt = file.name.split('.').pop();
+      const fileName = `${Date.now()}-${Math.random().toString(36).substring(7)}.${fileExt}`;
+      const { error } = await supabase.storage.from('images').upload(`uploads/${fileName}`, file);
+      if (error) console.error('Upload error:', error);
+    }
+
+    setUploading(false);
+    alert('Images uploaded to storage. Add them to listings via the Listings tab.');
+  };
+
+  if (loading) return <LoadingSpinner />;
+
+  return (
+    <div className="space-y-6">
+      <div className="flex justify-between items-center">
+        <h2 className="text-2xl font-bold">Image Gallery ({images.length})</h2>
+      </div>
+
+      {/* Upload Section */}
+      <div className="bg-purple-50 rounded-xl p-6 border-2 border-dashed border-purple-200">
+        <div className="flex items-center gap-4">
+          <div className="w-14 h-14 bg-purple-500 rounded-xl flex items-center justify-center">
+            <Upload className="w-7 h-7 text-white" />
+          </div>
+          <div className="flex-1">
+            <h3 className="font-bold text-lg">Upload Images</h3>
+            <p className="text-sm text-gray-600">Upload images to Supabase storage</p>
+          </div>
+          <label className={`px-6 py-3 bg-purple-500 text-white rounded-xl font-semibold cursor-pointer ${uploading ? 'opacity-50' : 'hover:bg-purple-600'}`}>
+            {uploading ? 'Uploading...' : 'Choose Files'}
+            <input type="file" multiple accept="image/*" onChange={handleUpload} className="hidden" disabled={uploading} />
+          </label>
+        </div>
+      </div>
+
+      {images.length === 0 ? (
+        <EmptyState icon={ImageIcon} title="No images yet" description="Images from listings will appear here. Add images when creating or editing listings." />
+      ) : (
+        <div className="grid sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-4">
+          {images.map((img) => (
+            <div key={img.id} className="bg-white rounded-xl shadow overflow-hidden">
+              <div className="aspect-[4/3] bg-gray-100">
+                <img src={img.url} alt={img.title} className="w-full h-full object-cover" />
+              </div>
+              <div className="p-3">
+                <p className="text-sm font-medium truncate">{img.title}</p>
+              </div>
+            </div>
+          ))}
+        </div>
+      )}
+    </div>
+  );
+}
+
+// ============================================================================
+// HOMEPAGE CONTENT TAB
+// ============================================================================
 function HomepageContentTab() {
   const { language } = useLanguage();
   const supabase = createClientComponentClient();
   const [sections, setSections] = useState<any[]>([]);
   const [loading, setLoading] = useState(true);
-  const [editingSection, setEditingSection] = useState<any>(null);
-  const [editingItem, setEditingItem] = useState<any>(null);
+  const [editingSection, setEditingSection] = useState<string | null>(null);
   const [saving, setSaving] = useState(false);
 
-  // Default sections if database is empty
   const defaultSections = [
     {
-      id: 'community_projects',
       section_key: 'community_projects',
       title_en: 'Current community projects',
       title_es: 'Proyectos comunitarios actuales',
       description_en: 'Help us reach our goals and make a lasting difference in rural Colombia',
       description_es: 'Ayúdanos a alcanzar nuestras metas y hacer una diferencia duradera en la Colombia rural',
       items: [
-        {
-          id: '1',
-          image_url: 'https://images.unsplash.com/photo-1509316975850-ff9c5deb0cd9?w=800&q=80',
-          title_en: 'School Renovation',
-          title_es: 'Renovación de Escuela',
-          description_en: 'Improving educational facilities in rural areas',
-          description_es: 'Mejorando las instalaciones educativas en áreas rurales',
-          goal: 5000,
-          raised: 3200
-        },
-        {
-          id: '2',
-          image_url: 'https://images.unsplash.com/photo-1594708767771-a7502f38b0ff?w=800&q=80',
-          title_en: 'Clean Water Initiative',
-          title_es: 'Iniciativa de Agua Limpia',
-          description_en: 'Bringing clean water to remote communities',
-          description_es: 'Llevando agua limpia a comunidades remotas',
-          goal: 8000,
-          raised: 6500
-        },
-        {
-          id: '3',
-          image_url: 'https://images.unsplash.com/photo-1488521787991-ed7bbaae773c?w=800&q=80',
-          title_en: "Women Artisan Collective",
-          title_es: 'Colectivo de Artesanas',
-          description_en: 'Supporting local crafts and traditions',
-          description_es: 'Apoyando artesanías y tradiciones locales',
-          goal: 3000,
-          raised: 2800
-        }
+        { id: '1', image_url: 'https://images.unsplash.com/photo-1509316975850-ff9c5deb0cd9?w=800', title_en: 'School Renovation', title_es: 'Renovación de Escuela', description_en: 'Improving educational facilities', description_es: 'Mejorando instalaciones educativas', goal: 5000, raised: 3200 },
+        { id: '2', image_url: 'https://images.unsplash.com/photo-1594708767771-a7502f38b0ff?w=800', title_en: 'Clean Water Initiative', title_es: 'Iniciativa de Agua Limpia', description_en: 'Bringing clean water to communities', description_es: 'Llevando agua limpia a comunidades', goal: 8000, raised: 6500 },
       ],
       is_active: true
     },
     {
-      id: 'destinations',
       section_key: 'destinations',
       title_en: 'Explore Colombian destinations',
       title_es: 'Explora destinos colombianos',
       description_en: 'Authentic rural experiences across Colombia',
       description_es: 'Experiencias rurales auténticas en toda Colombia',
       items: [
-        {
-          id: '1',
-          image_url: 'https://images.unsplash.com/photo-1596422846543-75c6fc197f07?w=800&q=80',
-          title_en: 'Coffee Region',
-          title_es: 'Región Cafetera',
-          description_en: 'Experience authentic coffee culture',
-          description_es: 'Experimenta la auténtica cultura cafetera',
-          link: '/search?region=Coffee%20Region'
-        },
-        {
-          id: '2',
-          image_url: 'https://images.unsplash.com/photo-1518509562904-e7ef99cdcc86?w=800&q=80',
-          title_en: 'Andean Mountains',
-          title_es: 'Montañas Andinas',
-          description_en: 'Breathtaking mountain landscapes',
-          description_es: 'Paisajes montañosos impresionantes',
-          link: '/search?region=Andean%20Mountains'
-        },
-        {
-          id: '3',
-          image_url: 'https://images.unsplash.com/photo-1506905925346-21bda4d32df4?w=800&q=80',
-          title_en: 'Caribbean Coast',
-          title_es: 'Costa Caribe',
-          description_en: 'Tropical paradise and rich culture',
-          description_es: 'Paraíso tropical y rica cultura',
-          link: '/search?region=Caribbean%20Coast'
-        },
-        {
-          id: '4',
-          image_url: 'https://images.unsplash.com/photo-1559128010-7c1ad6e1b6a5?w=800&q=80',
-          title_en: 'Amazon Rainforest',
-          title_es: 'Selva Amazónica',
-          description_en: 'Explore the worlds largest rainforest',
-          description_es: 'Explora la selva más grande del mundo',
-          link: '/search?region=Amazon'
-        }
+        { id: '1', image_url: 'https://images.unsplash.com/photo-1596422846543-75c6fc197f07?w=800', title_en: 'Coffee Region', title_es: 'Región Cafetera', description_en: 'Experience authentic coffee culture', description_es: 'Experimenta la cultura cafetera', link: '/search?region=Coffee' },
+        { id: '2', image_url: 'https://images.unsplash.com/photo-1518509562904-e7ef99cdcc86?w=800', title_en: 'Andean Mountains', title_es: 'Montañas Andinas', description_en: 'Breathtaking mountain landscapes', description_es: 'Paisajes montañosos impresionantes', link: '/search?region=Andean' },
       ],
       is_active: true
     }
   ];
 
-  useEffect(() => {
-    fetchSections();
-  }, []);
+  useEffect(() => { fetchSections(); }, []);
 
   const fetchSections = async () => {
     setLoading(true);
-    try {
-      const { data, error } = await supabase
-        .from('homepage_content')
-        .select('*')
-        .order('display_order');
-
-      if (error) {
-        console.log('Using default sections (table may not exist yet)');
-        setSections(defaultSections);
-      } else if (data && data.length > 0) {
-        setSections(data);
-      } else {
-        setSections(defaultSections);
-      }
-    } catch (e) {
-      console.log('Using default sections');
+    const { data, error } = await supabase.from('homepage_content').select('*').order('display_order');
+    if (error || !data?.length) {
       setSections(defaultSections);
+    } else {
+      setSections(data);
     }
     setLoading(false);
   };
 
   const saveSection = async (section: any) => {
     setSaving(true);
-    try {
-      const { error } = await supabase
-        .from('homepage_content')
-        .upsert({
-          ...section,
-          updated_at: new Date().toISOString()
-        }, { onConflict: 'section_key' });
-
-      if (error) {
-        console.error('Error saving:', error);
-        alert('Error saving. Please run the SQL migration first.');
-      } else {
-        alert('Saved successfully!');
-        fetchSections();
-      }
-    } catch (e) {
-      console.error('Save error:', e);
-      alert('Error saving. Database table may not exist yet.');
-    }
+    const { error } = await supabase.from('homepage_content').upsert({ ...section, updated_at: new Date().toISOString() }, { onConflict: 'section_key' });
+    if (error) alert('Error saving. Make sure the homepage_content table exists.');
+    else alert('Saved!');
     setSaving(false);
     setEditingSection(null);
+    fetchSections();
   };
 
   const updateItem = (sectionKey: string, itemId: string, field: string, value: any) => {
-    setSections(prev => prev.map(section => {
-      if (section.section_key === sectionKey) {
-        return {
-          ...section,
-          items: section.items.map((item: any) =>
-            item.id === itemId ? { ...item, [field]: value } : item
-          )
-        };
-      }
-      return section;
-    }));
+    setSections(prev => prev.map(s => s.section_key === sectionKey ? {
+      ...s, items: s.items.map((item: any) => item.id === itemId ? { ...item, [field]: value } : item)
+    } : s));
   };
 
   const addItem = (sectionKey: string) => {
     const newItem = {
       id: Date.now().toString(),
-      image_url: 'https://images.unsplash.com/photo-1500835556837-99ac94a94552?w=800&q=80',
-      title_en: 'New Item',
-      title_es: 'Nuevo Elemento',
-      description_en: 'Description here',
-      description_es: 'Descripción aquí',
+      image_url: 'https://images.unsplash.com/photo-1500835556837-99ac94a94552?w=800',
+      title_en: 'New Item', title_es: 'Nuevo Elemento',
+      description_en: 'Description here', description_es: 'Descripción aquí',
       ...(sectionKey === 'community_projects' ? { goal: 1000, raised: 0 } : { link: '/search' })
     };
-
-    setSections(prev => prev.map(section => {
-      if (section.section_key === sectionKey) {
-        return {
-          ...section,
-          items: [...section.items, newItem]
-        };
-      }
-      return section;
-    }));
+    setSections(prev => prev.map(s => s.section_key === sectionKey ? { ...s, items: [...s.items, newItem] } : s));
   };
 
   const removeItem = (sectionKey: string, itemId: string) => {
-    if (!confirm('Are you sure you want to remove this item?')) return;
-
-    setSections(prev => prev.map(section => {
-      if (section.section_key === sectionKey) {
-        return {
-          ...section,
-          items: section.items.filter((item: any) => item.id !== itemId)
-        };
-      }
-      return section;
-    }));
+    if (!confirm('Remove this item?')) return;
+    setSections(prev => prev.map(s => s.section_key === sectionKey ? { ...s, items: s.items.filter((i: any) => i.id !== itemId) } : s));
   };
 
-  if (loading) {
-    return (
-      <div className="flex items-center justify-center py-20">
-        <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-sptc-red"></div>
-      </div>
-    );
-  }
+  if (loading) return <LoadingSpinner />;
 
   return (
     <div className="space-y-6">
-      {/* Header Info */}
-      <div className="bg-gradient-to-br from-blue-50 to-indigo-50 rounded-2xl shadow-lg p-6 border border-blue-200">
-        <div className="flex items-start space-x-4">
-          <div className="w-12 h-12 bg-gradient-to-br from-blue-500 to-blue-600 rounded-xl flex items-center justify-center shadow-md flex-shrink-0">
-            <FileEdit className="w-6 h-6 text-white" />
-          </div>
-          <div>
-            <h3 className="text-xl font-bold text-gray-900 mb-2">Homepage Content Manager</h3>
-            <p className="text-gray-700">
-              Edit the images and text for homepage sections like Community Projects and Destinations.
-              Changes will appear on the homepage after saving.
-            </p>
-          </div>
-        </div>
+      <div className="bg-blue-50 rounded-xl p-4 border border-blue-200">
+        <h3 className="font-bold text-lg mb-2">Homepage Content Manager</h3>
+        <p className="text-sm text-gray-600">Edit the Community Projects and Destinations sections that appear on the homepage. Click "Edit Section" to modify content.</p>
       </div>
 
-      {/* Sections */}
       {sections.map((section) => (
-        <div key={section.section_key} className="bg-white rounded-2xl shadow-lg border border-gray-100 overflow-hidden">
-          {/* Section Header */}
-          <div className="bg-gradient-to-r from-gray-50 to-white p-6 border-b border-gray-100">
-            <div className="flex items-center justify-between">
-              <div className="flex-1">
-                <div className="flex items-center gap-3 mb-2">
-                  <span className="px-3 py-1 bg-sptc-red text-white rounded-full text-xs font-bold uppercase">
-                    {section.section_key.replace('_', ' ')}
-                  </span>
-                  <span className={`px-3 py-1 rounded-full text-xs font-bold ${section.is_active ? 'bg-green-100 text-green-700' : 'bg-gray-100 text-gray-500'}`}>
-                    {section.is_active ? 'Active' : 'Inactive'}
-                  </span>
-                </div>
-                {editingSection === section.section_key ? (
-                  <div className="space-y-3">
-                    <div className="grid md:grid-cols-2 gap-4">
-                      <div>
-                        <label className="block text-xs font-semibold text-gray-500 mb-1">Title (English)</label>
-                        <input
-                          type="text"
-                          value={section.title_en}
-                          onChange={(e) => setSections(prev => prev.map(s => s.section_key === section.section_key ? { ...s, title_en: e.target.value } : s))}
-                          className="w-full px-4 py-2 border border-gray-200 rounded-xl focus:ring-2 focus:ring-sptc-red focus:border-transparent"
-                        />
-                      </div>
-                      <div>
-                        <label className="block text-xs font-semibold text-gray-500 mb-1">Title (Spanish)</label>
-                        <input
-                          type="text"
-                          value={section.title_es}
-                          onChange={(e) => setSections(prev => prev.map(s => s.section_key === section.section_key ? { ...s, title_es: e.target.value } : s))}
-                          className="w-full px-4 py-2 border border-gray-200 rounded-xl focus:ring-2 focus:ring-sptc-red focus:border-transparent"
-                        />
-                      </div>
-                    </div>
-                    <div className="grid md:grid-cols-2 gap-4">
-                      <div>
-                        <label className="block text-xs font-semibold text-gray-500 mb-1">Description (English)</label>
-                        <textarea
-                          value={section.description_en}
-                          onChange={(e) => setSections(prev => prev.map(s => s.section_key === section.section_key ? { ...s, description_en: e.target.value } : s))}
-                          className="w-full px-4 py-2 border border-gray-200 rounded-xl focus:ring-2 focus:ring-sptc-red focus:border-transparent"
-                          rows={2}
-                        />
-                      </div>
-                      <div>
-                        <label className="block text-xs font-semibold text-gray-500 mb-1">Description (Spanish)</label>
-                        <textarea
-                          value={section.description_es}
-                          onChange={(e) => setSections(prev => prev.map(s => s.section_key === section.section_key ? { ...s, description_es: e.target.value } : s))}
-                          className="w-full px-4 py-2 border border-gray-200 rounded-xl focus:ring-2 focus:ring-sptc-red focus:border-transparent"
-                          rows={2}
-                        />
-                      </div>
-                    </div>
-                  </div>
-                ) : (
-                  <>
-                    <h3 className="text-2xl font-bold text-gray-900">{language === 'es' ? section.title_es : section.title_en}</h3>
-                    <p className="text-gray-600 mt-1">{language === 'es' ? section.description_es : section.description_en}</p>
-                  </>
-                )}
-              </div>
-              <div className="flex items-center gap-2 ml-4">
-                {editingSection === section.section_key ? (
-                  <>
-                    <button
-                      onClick={() => saveSection(section)}
-                      disabled={saving}
-                      className="flex items-center gap-2 px-4 py-2 bg-gradient-to-r from-green-500 to-green-600 text-white rounded-xl font-semibold hover:shadow-lg transition-all disabled:opacity-50"
-                    >
-                      <Save className="w-4 h-4" />
-                      {saving ? 'Saving...' : 'Save'}
-                    </button>
-                    <button
-                      onClick={() => { setEditingSection(null); fetchSections(); }}
-                      className="flex items-center gap-2 px-4 py-2 bg-gray-200 text-gray-700 rounded-xl font-semibold hover:bg-gray-300 transition-all"
-                    >
-                      <X className="w-4 h-4" />
-                      Cancel
-                    </button>
-                  </>
-                ) : (
-                  <button
-                    onClick={() => setEditingSection(section.section_key)}
-                    className="flex items-center gap-2 px-4 py-2 bg-gradient-to-r from-sptc-red to-red-600 text-white rounded-xl font-semibold hover:shadow-lg transition-all"
-                  >
-                    <FileEdit className="w-4 h-4" />
-                    Edit Section
-                  </button>
-                )}
-              </div>
+        <div key={section.section_key} className="bg-white rounded-xl shadow-lg overflow-hidden">
+          <div className="bg-gray-50 p-4 border-b flex justify-between items-center">
+            <div>
+              <span className="px-2 py-1 bg-sptc-red text-white text-xs rounded-full font-bold mr-2">{section.section_key.replace('_', ' ')}</span>
+              <span className="font-bold text-lg">{language === 'es' ? section.title_es : section.title_en}</span>
             </div>
+            {editingSection === section.section_key ? (
+              <div className="flex gap-2">
+                <button onClick={() => saveSection(section)} disabled={saving} className="px-4 py-2 bg-green-500 text-white rounded-lg text-sm font-semibold disabled:opacity-50">
+                  {saving ? 'Saving...' : 'Save Changes'}
+                </button>
+                <button onClick={() => { setEditingSection(null); fetchSections(); }} className="px-4 py-2 bg-gray-200 rounded-lg text-sm">Cancel</button>
+              </div>
+            ) : (
+              <button onClick={() => setEditingSection(section.section_key)} className="px-4 py-2 bg-sptc-red text-white rounded-lg text-sm font-semibold flex items-center gap-1">
+                <Edit className="w-4 h-4" /> Edit Section
+              </button>
+            )}
           </div>
 
-          {/* Items Grid */}
-          <div className="p-6">
-            <div className="flex items-center justify-between mb-4">
-              <h4 className="text-lg font-semibold text-gray-800">Items ({section.items?.length || 0})</h4>
+          <div className="p-4">
+            {editingSection === section.section_key && (
+              <div className="mb-4 grid md:grid-cols-2 gap-4 p-4 bg-gray-50 rounded-lg">
+                <div>
+                  <label className="block text-xs font-semibold mb-1">Title (EN)</label>
+                  <input type="text" value={section.title_en} onChange={(e) => setSections(prev => prev.map(s => s.section_key === section.section_key ? { ...s, title_en: e.target.value } : s))} className="w-full px-3 py-2 border rounded-lg" />
+                </div>
+                <div>
+                  <label className="block text-xs font-semibold mb-1">Title (ES)</label>
+                  <input type="text" value={section.title_es} onChange={(e) => setSections(prev => prev.map(s => s.section_key === section.section_key ? { ...s, title_es: e.target.value } : s))} className="w-full px-3 py-2 border rounded-lg" />
+                </div>
+                <div>
+                  <label className="block text-xs font-semibold mb-1">Description (EN)</label>
+                  <textarea value={section.description_en} onChange={(e) => setSections(prev => prev.map(s => s.section_key === section.section_key ? { ...s, description_en: e.target.value } : s))} className="w-full px-3 py-2 border rounded-lg" rows={2} />
+                </div>
+                <div>
+                  <label className="block text-xs font-semibold mb-1">Description (ES)</label>
+                  <textarea value={section.description_es} onChange={(e) => setSections(prev => prev.map(s => s.section_key === section.section_key ? { ...s, description_es: e.target.value } : s))} className="w-full px-3 py-2 border rounded-lg" rows={2} />
+                </div>
+              </div>
+            )}
+
+            <div className="flex justify-between items-center mb-3">
+              <h4 className="font-semibold">Items ({section.items?.length || 0})</h4>
               {editingSection === section.section_key && (
-                <button
-                  onClick={() => addItem(section.section_key)}
-                  className="flex items-center gap-2 px-3 py-1.5 bg-blue-500 text-white rounded-lg text-sm font-semibold hover:bg-blue-600 transition-all"
-                >
-                  <Plus className="w-4 h-4" />
-                  Add Item
+                <button onClick={() => addItem(section.section_key)} className="px-3 py-1 bg-blue-500 text-white rounded-lg text-sm flex items-center gap-1">
+                  <Plus className="w-4 h-4" /> Add Item
                 </button>
               )}
             </div>
 
             <div className="grid sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-4">
-              {section.items?.map((item: any, index: number) => (
-                <div key={item.id} className="group relative bg-gray-50 rounded-xl overflow-hidden border border-gray-200 hover:border-sptc-red transition-all">
-                  {/* Image */}
-                  <div className="aspect-[4/3] relative overflow-hidden bg-gray-200">
-                    <img
-                      src={item.image_url}
-                      alt={item.title_en}
-                      className="absolute inset-0 w-full h-full object-cover"
-                      onError={(e) => {
-                        (e.target as HTMLImageElement).src = 'https://images.unsplash.com/photo-1500835556837-99ac94a94552?w=800&q=80';
-                      }}
-                    />
+              {section.items?.map((item: any) => (
+                <div key={item.id} className="border rounded-lg overflow-hidden">
+                  <div className="aspect-video bg-gray-100 relative">
+                    <img src={item.image_url} alt="" className="w-full h-full object-cover" onError={(e) => (e.target as HTMLImageElement).src = 'https://via.placeholder.com/400x300'} />
                     {editingSection === section.section_key && (
-                      <button
-                        onClick={() => removeItem(section.section_key, item.id)}
-                        className="absolute top-2 right-2 p-2 bg-red-500 text-white rounded-lg opacity-0 group-hover:opacity-100 transition-opacity"
-                      >
-                        <Trash2 className="w-4 h-4" />
+                      <button onClick={() => removeItem(section.section_key, item.id)} className="absolute top-1 right-1 p-1 bg-red-500 text-white rounded">
+                        <X className="w-4 h-4" />
                       </button>
                     )}
                   </div>
-
-                  {/* Content */}
-                  <div className="p-4">
+                  <div className="p-3">
                     {editingSection === section.section_key ? (
-                      <div className="space-y-3">
-                        <div>
-                          <label className="block text-xs font-semibold text-gray-500 mb-1">Image URL</label>
-                          <input
-                            type="text"
-                            value={item.image_url}
-                            onChange={(e) => updateItem(section.section_key, item.id, 'image_url', e.target.value)}
-                            className="w-full px-3 py-1.5 text-sm border border-gray-200 rounded-lg focus:ring-2 focus:ring-sptc-red focus:border-transparent"
-                            placeholder="https://..."
-                          />
-                        </div>
-                        <div>
-                          <label className="block text-xs font-semibold text-gray-500 mb-1">Title (EN)</label>
-                          <input
-                            type="text"
-                            value={item.title_en}
-                            onChange={(e) => updateItem(section.section_key, item.id, 'title_en', e.target.value)}
-                            className="w-full px-3 py-1.5 text-sm border border-gray-200 rounded-lg focus:ring-2 focus:ring-sptc-red focus:border-transparent"
-                          />
-                        </div>
-                        <div>
-                          <label className="block text-xs font-semibold text-gray-500 mb-1">Title (ES)</label>
-                          <input
-                            type="text"
-                            value={item.title_es}
-                            onChange={(e) => updateItem(section.section_key, item.id, 'title_es', e.target.value)}
-                            className="w-full px-3 py-1.5 text-sm border border-gray-200 rounded-lg focus:ring-2 focus:ring-sptc-red focus:border-transparent"
-                          />
-                        </div>
-                        <div>
-                          <label className="block text-xs font-semibold text-gray-500 mb-1">Description (EN)</label>
-                          <textarea
-                            value={item.description_en}
-                            onChange={(e) => updateItem(section.section_key, item.id, 'description_en', e.target.value)}
-                            className="w-full px-3 py-1.5 text-sm border border-gray-200 rounded-lg focus:ring-2 focus:ring-sptc-red focus:border-transparent"
-                            rows={2}
-                          />
-                        </div>
-                        <div>
-                          <label className="block text-xs font-semibold text-gray-500 mb-1">Description (ES)</label>
-                          <textarea
-                            value={item.description_es}
-                            onChange={(e) => updateItem(section.section_key, item.id, 'description_es', e.target.value)}
-                            className="w-full px-3 py-1.5 text-sm border border-gray-200 rounded-lg focus:ring-2 focus:ring-sptc-red focus:border-transparent"
-                            rows={2}
-                          />
-                        </div>
+                      <div className="space-y-2">
+                        <input type="text" value={item.image_url} onChange={(e) => updateItem(section.section_key, item.id, 'image_url', e.target.value)} className="w-full px-2 py-1 border rounded text-xs" placeholder="Image URL" />
+                        <input type="text" value={item.title_en} onChange={(e) => updateItem(section.section_key, item.id, 'title_en', e.target.value)} className="w-full px-2 py-1 border rounded text-sm" placeholder="Title (EN)" />
+                        <input type="text" value={item.title_es} onChange={(e) => updateItem(section.section_key, item.id, 'title_es', e.target.value)} className="w-full px-2 py-1 border rounded text-sm" placeholder="Title (ES)" />
+                        <textarea value={item.description_en} onChange={(e) => updateItem(section.section_key, item.id, 'description_en', e.target.value)} className="w-full px-2 py-1 border rounded text-xs" rows={2} placeholder="Description (EN)" />
                         {section.section_key === 'community_projects' && (
                           <div className="grid grid-cols-2 gap-2">
-                            <div>
-                              <label className="block text-xs font-semibold text-gray-500 mb-1">Goal ($)</label>
-                              <input
-                                type="number"
-                                value={item.goal || 0}
-                                onChange={(e) => updateItem(section.section_key, item.id, 'goal', parseInt(e.target.value) || 0)}
-                                className="w-full px-3 py-1.5 text-sm border border-gray-200 rounded-lg focus:ring-2 focus:ring-sptc-red focus:border-transparent"
-                              />
-                            </div>
-                            <div>
-                              <label className="block text-xs font-semibold text-gray-500 mb-1">Raised ($)</label>
-                              <input
-                                type="number"
-                                value={item.raised || 0}
-                                onChange={(e) => updateItem(section.section_key, item.id, 'raised', parseInt(e.target.value) || 0)}
-                                className="w-full px-3 py-1.5 text-sm border border-gray-200 rounded-lg focus:ring-2 focus:ring-sptc-red focus:border-transparent"
-                              />
-                            </div>
+                            <input type="number" value={item.goal || 0} onChange={(e) => updateItem(section.section_key, item.id, 'goal', parseInt(e.target.value))} className="px-2 py-1 border rounded text-xs" placeholder="Goal" />
+                            <input type="number" value={item.raised || 0} onChange={(e) => updateItem(section.section_key, item.id, 'raised', parseInt(e.target.value))} className="px-2 py-1 border rounded text-xs" placeholder="Raised" />
                           </div>
                         )}
                         {section.section_key === 'destinations' && (
-                          <div>
-                            <label className="block text-xs font-semibold text-gray-500 mb-1">Link</label>
-                            <input
-                              type="text"
-                              value={item.link || ''}
-                              onChange={(e) => updateItem(section.section_key, item.id, 'link', e.target.value)}
-                              className="w-full px-3 py-1.5 text-sm border border-gray-200 rounded-lg focus:ring-2 focus:ring-sptc-red focus:border-transparent"
-                              placeholder="/search?region=..."
-                            />
-                          </div>
+                          <input type="text" value={item.link || ''} onChange={(e) => updateItem(section.section_key, item.id, 'link', e.target.value)} className="w-full px-2 py-1 border rounded text-xs" placeholder="Link URL" />
                         )}
                       </div>
                     ) : (
                       <>
-                        <h5 className="font-semibold text-gray-900 mb-1">{language === 'es' ? item.title_es : item.title_en}</h5>
-                        <p className="text-sm text-gray-600 line-clamp-2">{language === 'es' ? item.description_es : item.description_en}</p>
+                        <h5 className="font-semibold text-sm">{language === 'es' ? item.title_es : item.title_en}</h5>
+                        <p className="text-xs text-gray-500 line-clamp-2">{language === 'es' ? item.description_es : item.description_en}</p>
                         {section.section_key === 'community_projects' && item.goal && (
-                          <div className="mt-3">
-                            <div className="flex justify-between text-xs text-gray-500 mb-1">
-                              <span>${item.raised?.toLocaleString()} raised</span>
-                              <span>${item.goal?.toLocaleString()} goal</span>
-                            </div>
-                            <div className="h-2 bg-gray-200 rounded-full overflow-hidden">
-                              <div
-                                className="h-full bg-gradient-to-r from-sptc-red to-red-500 rounded-full"
-                                style={{ width: `${Math.min(100, (item.raised / item.goal) * 100)}%` }}
-                              />
-                            </div>
+                          <div className="mt-2">
+                            <div className="h-1.5 bg-gray-200 rounded-full"><div className="h-full bg-sptc-red rounded-full" style={{ width: `${Math.min(100, (item.raised / item.goal) * 100)}%` }} /></div>
+                            <p className="text-xs text-gray-400 mt-1">${item.raised} / ${item.goal}</p>
                           </div>
                         )}
                       </>
@@ -1387,6 +1240,41 @@ function HomepageContentTab() {
           </div>
         </div>
       ))}
+    </div>
+  );
+}
+
+// ============================================================================
+// HELPER COMPONENTS
+// ============================================================================
+function LoadingSpinner() {
+  return (
+    <div className="flex items-center justify-center py-20">
+      <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-sptc-red"></div>
+    </div>
+  );
+}
+
+function EmptyState({ icon: Icon, title, description }: { icon: any; title: string; description: string }) {
+  return (
+    <div className="text-center py-16 bg-white rounded-xl shadow-lg">
+      <Icon className="w-16 h-16 mx-auto mb-4 text-gray-300" />
+      <h3 className="text-xl font-semibold text-gray-700 mb-2">{title}</h3>
+      <p className="text-gray-500">{description}</p>
+    </div>
+  );
+}
+
+function StatCard({ title, value, icon }: { title: string; value: string; icon: React.ReactNode }) {
+  return (
+    <div className="bg-white rounded-xl shadow-lg p-5">
+      <div className="flex items-center justify-between">
+        <div>
+          <p className="text-sm text-gray-500 font-medium">{title}</p>
+          <p className="text-2xl font-bold text-gray-900">{value}</p>
+        </div>
+        <div className="p-3 bg-sptc-red/10 rounded-xl text-sptc-red">{icon}</div>
+      </div>
     </div>
   );
 }

@@ -26,6 +26,8 @@ export default function MobilePhotoUpload() {
   const [permissionsRequested, setPermissionsRequested] = useState(false);
   const [useNativeCamera, setUseNativeCamera] = useState(true); // Use native camera by default
   const [useFakeLocation, setUseFakeLocation] = useState(false); // For development
+  const [locationRetrying, setLocationRetrying] = useState(false);
+  const [locationAttempts, setLocationAttempts] = useState(0);
   const fileInputRef = useRef<HTMLInputElement>(null);
 
   // Detect if we're on local IP (development mode)
@@ -42,36 +44,79 @@ export default function MobilePhotoUpload() {
     requestPermissions();
   }, []);
 
-  // Request permissions function
-  const requestPermissions = async () => {
+  // Request permissions function with retry logic
+  const requestPermissions = async (isRetry = false) => {
     setPermissionsRequested(true);
+    setLocationError(null);
+
+    if (isRetry) {
+      setLocationRetrying(true);
+      setLocationAttempts(prev => prev + 1);
+    }
 
     // Request location
     if (navigator.geolocation) {
+      // First try with high accuracy (GPS)
       navigator.geolocation.getCurrentPosition(
         (position) => {
           setLocation(position);
+          setLocationRetrying(false);
+          setLocationError(null);
           console.log('✓ Location obtained:', position.coords.latitude, position.coords.longitude);
         },
         (error) => {
-          console.error('Geolocation error:', error);
-          if (error.code === 1) {
-            setLocationError(t("mobileUpload.locationDenied"));
-          } else if (error.code === 2) {
-            setLocationError(t("mobileUpload.locationUnavailable"));
+          console.error('Geolocation error (high accuracy):', error);
+
+          // If high accuracy fails, try with low accuracy (cell tower/wifi)
+          if (error.code !== 1) { // Not permission denied
+            console.log('Trying low accuracy fallback...');
+            navigator.geolocation.getCurrentPosition(
+              (position) => {
+                setLocation(position);
+                setLocationRetrying(false);
+                setLocationError(null);
+                console.log('✓ Location obtained (low accuracy):', position.coords.latitude, position.coords.longitude);
+              },
+              (fallbackError) => {
+                console.error('Geolocation error (low accuracy):', fallbackError);
+                setLocationRetrying(false);
+                handleLocationError(fallbackError);
+              },
+              {
+                enableHighAccuracy: false,
+                timeout: 15000,
+                maximumAge: 60000, // Accept cached location up to 1 minute old
+              }
+            );
           } else {
-            setLocationError(t("mobileUpload.locationTimeout"));
+            setLocationRetrying(false);
+            handleLocationError(error);
           }
         },
         {
           enableHighAccuracy: true,
-          timeout: 10000,
+          timeout: 15000,
           maximumAge: 0,
         }
       );
     } else {
+      setLocationRetrying(false);
       setLocationError(t("mobileUpload.geolocationNotSupported"));
     }
+  };
+
+  const handleLocationError = (error: GeolocationPositionError) => {
+    if (error.code === 1) {
+      setLocationError(t("mobileUpload.locationDenied"));
+    } else if (error.code === 2) {
+      setLocationError(t("mobileUpload.locationUnavailable"));
+    } else {
+      setLocationError(t("mobileUpload.locationTimeout"));
+    }
+  };
+
+  const retryLocation = () => {
+    requestPermissions(true);
   };
 
   const startCamera = async () => {
@@ -263,15 +308,37 @@ export default function MobilePhotoUpload() {
           <h1 className="text-2xl font-bold text-gray-900 mb-2">{t("mobileUpload.propertyPhotos")}</h1>
           <p className="text-gray-600">{t("mobileUpload.takePhotosWithGps")}</p>
 
-          {/* Permission Status */}
+          {/* Permission Status - Getting location */}
           {permissionsRequested && !location && !locationError && (
             <div className="mt-4 p-4 bg-blue-50 border-2 border-blue-200 rounded-xl">
-              <p className="text-blue-900 text-sm font-semibold">
-                📍 {t("mobileUpload.requestingLocation")}
-              </p>
-              <p className="text-blue-700 text-xs mt-1">
-                {t("mobileUpload.allowLocationAccess")}
-              </p>
+              <div className="flex items-center gap-3">
+                <div className="w-6 h-6 border-3 border-blue-600 border-t-transparent rounded-full animate-spin"></div>
+                <div>
+                  <p className="text-blue-900 text-sm font-semibold">
+                    {t("mobileUpload.requestingLocation")}
+                  </p>
+                  <p className="text-blue-700 text-xs mt-1">
+                    {t("mobileUpload.allowLocationAccess")}
+                  </p>
+                </div>
+              </div>
+            </div>
+          )}
+
+          {/* Location Success */}
+          {location && (
+            <div className="mt-4 p-4 bg-green-50 border-2 border-green-200 rounded-xl">
+              <div className="flex items-center gap-3">
+                <CheckCircle className="w-6 h-6 text-green-600" />
+                <div>
+                  <p className="text-green-900 text-sm font-semibold">
+                    Location Ready!
+                  </p>
+                  <p className="text-green-700 text-xs">
+                    GPS: {location.coords.latitude.toFixed(4)}, {location.coords.longitude.toFixed(4)}
+                  </p>
+                </div>
+              </div>
             </div>
           )}
 
@@ -304,14 +371,46 @@ export default function MobilePhotoUpload() {
                 <p className="text-red-700 text-sm mb-3">
                   {t("mobileUpload.enableLocation")}
                 </p>
-                {isDevelopment && !useFakeLocation && (
+
+                {/* Troubleshooting tips */}
+                <div className="bg-white rounded-lg p-3 mb-4 text-xs text-gray-700">
+                  <p className="font-semibold mb-2">Tips to enable location:</p>
+                  <ul className="list-disc list-inside space-y-1">
+                    <li>Make sure GPS/Location is ON in your phone settings</li>
+                    <li>Allow location permission when browser asks</li>
+                    <li>Try refreshing this page</li>
+                    <li>Try opening in Chrome or Safari</li>
+                  </ul>
+                </div>
+
+                <div className="flex flex-wrap gap-2">
                   <button
-                    onClick={useFakeLocationForDev}
-                    className="px-4 py-2 bg-yellow-600 text-white font-semibold rounded-xl hover:bg-yellow-700 transition-all text-sm"
+                    onClick={retryLocation}
+                    disabled={locationRetrying}
+                    className="px-4 py-2 bg-blue-600 text-white font-semibold rounded-xl hover:bg-blue-700 transition-all text-sm disabled:opacity-50 flex items-center gap-2"
                   >
-                    {t("mobileUpload.useFakeLocation")}
+                    {locationRetrying ? (
+                      <>
+                        <div className="w-4 h-4 border-2 border-white border-t-transparent rounded-full animate-spin"></div>
+                        Trying...
+                      </>
+                    ) : (
+                      <>
+                        <MapPin className="w-4 h-4" />
+                        Try Again {locationAttempts > 0 && `(${locationAttempts})`}
+                      </>
+                    )}
                   </button>
-                )}
+
+                  {isDevelopment && !useFakeLocation && (
+                    <button
+                      onClick={useFakeLocationForDev}
+                      className="px-4 py-2 bg-yellow-600 text-white font-semibold rounded-xl hover:bg-yellow-700 transition-all text-sm"
+                    >
+                      {t("mobileUpload.useFakeLocation")}
+                    </button>
+                  )}
+                </div>
               </div>
             </div>
           </div>
