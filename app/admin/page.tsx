@@ -23,12 +23,20 @@ import {
   Bed,
   Bath,
   User,
+  CreditCard,
+  ExternalLink,
+  ArrowUpRight,
+  ArrowDownLeft,
+  Building2,
+  RefreshCw,
+  AlertCircle,
+  Banknote,
 } from "lucide-react";
 import { getText } from "@/lib/text";
 import { useLanguage } from "@/contexts/LanguageContext";
 import { createClientComponentClient } from "@supabase/auth-helpers-nextjs";
 
-type Tab = "listings" | "bookings" | "users" | "funds" | "images" | "content";
+type Tab = "listings" | "bookings" | "users" | "funds" | "payments" | "images" | "content";
 
 export default function AdminDashboard() {
   const { language } = useLanguage();
@@ -37,7 +45,7 @@ export default function AdminDashboard() {
   return (
     <div className="min-h-screen" style={{ background: 'linear-gradient(135deg, #f5f7fa 0%, #e9ecef 100%)' }}>
       {/* Header Section */}
-      <div className="bg-gradient-to-r from-sptc-red to-red-600 shadow-xl">
+      <div className="bg-gradient-to-r from-red-600 to-red-700 shadow-xl">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
           <div className="flex items-center justify-between">
             <div>
@@ -45,7 +53,7 @@ export default function AdminDashboard() {
                 {getText("admin.title", language)}
               </h1>
               <p className="text-red-100 mt-2 text-lg">
-                Manage listings, bookings, users, and content
+                {getText("admin.subtitle", language)}
               </p>
             </div>
           </div>
@@ -57,24 +65,25 @@ export default function AdminDashboard() {
         <div className="bg-white rounded-2xl shadow-lg mb-8 p-1.5 border border-gray-100">
           <div className="flex space-x-1 overflow-x-auto">
             {[
-              { key: "listings", icon: Home, label: "Listings" },
-              { key: "bookings", icon: Calendar, label: "Bookings" },
-              { key: "users", icon: Users, label: "Users & Hosts" },
-              { key: "funds", icon: DollarSign, label: "Funds" },
-              { key: "images", icon: ImageIcon, label: "Images" },
-              { key: "content", icon: FileEdit, label: "Homepage" },
+              { key: "listings", icon: Home, labelKey: "admin.listings" },
+              { key: "bookings", icon: Calendar, labelKey: "admin.bookings" },
+              { key: "users", icon: Users, labelKey: "admin.users" },
+              { key: "funds", icon: DollarSign, labelKey: "admin.funds" },
+              { key: "payments", icon: CreditCard, labelKey: "admin.payments" },
+              { key: "images", icon: ImageIcon, labelKey: "admin.images" },
+              { key: "content", icon: FileEdit, labelKey: "admin.homepage" },
             ].map((tab) => (
               <button
                 key={tab.key}
                 onClick={() => setActiveTab(tab.key as Tab)}
                 className={`flex items-center space-x-2 px-6 py-3.5 rounded-xl font-semibold transition-all whitespace-nowrap ${
                   activeTab === tab.key
-                    ? "bg-gradient-to-r from-sptc-red to-red-600 text-white shadow-lg"
+                    ? "bg-gradient-to-r from-red-600 to-red-700 text-white shadow-lg"
                     : "text-gray-600 hover:bg-gray-50"
                 }`}
               >
                 <tab.icon className="w-4 h-4" />
-                <span>{tab.label}</span>
+                <span>{getText(tab.labelKey, language)}</span>
               </button>
             ))}
           </div>
@@ -84,6 +93,7 @@ export default function AdminDashboard() {
         {activeTab === "bookings" && <BookingsTab />}
         {activeTab === "users" && <UsersTab />}
         {activeTab === "funds" && <FundsTab />}
+        {activeTab === "payments" && <PaymentsTab />}
         {activeTab === "images" && <ImagesTab />}
         {activeTab === "content" && <HomepageContentTab />}
       </div>
@@ -130,8 +140,9 @@ function ListingsTab() {
     setLoading(true);
     setError(null);
     try {
+      // Fetch listings and hosts separately (no joins to avoid relationship errors)
       const [listingsRes, hostsRes] = await Promise.all([
-        supabase.from('listings').select('*, host_profiles(first_name, last_name)').order('created_at', { ascending: false }),
+        supabase.from('listings').select('*').order('created_at', { ascending: false }),
         supabase.from('host_profiles').select('id, first_name, last_name')
       ]);
 
@@ -144,7 +155,14 @@ function ListingsTab() {
         setError(prev => prev ? `${prev}, Hosts: ${hostsRes.error.message}` : `Hosts: ${hostsRes.error.message}`);
       }
 
-      setListings(listingsRes.data || []);
+      // Manually attach host info to listings
+      const hostsMap = new Map((hostsRes.data || []).map(h => [h.id, h]));
+      const listingsWithHosts = (listingsRes.data || []).map(listing => ({
+        ...listing,
+        host_profiles: hostsMap.get(listing.host_profile_id) || null
+      }));
+
+      setListings(listingsWithHosts);
       setHosts(hostsRes.data || []);
     } catch (err: any) {
       setError(err.message);
@@ -237,7 +255,7 @@ function ListingsTab() {
         <h2 className="text-2xl font-bold text-gray-900">Manage Listings ({listings.length})</h2>
         <button
           onClick={() => { resetForm(); setShowForm(true); }}
-          className="flex items-center gap-2 px-6 py-3 bg-gradient-to-r from-sptc-red to-red-600 text-white rounded-xl font-semibold hover:shadow-lg"
+          className="flex items-center gap-2 px-6 py-3 bg-gradient-to-r from-red-600 to-red-700 text-white rounded-xl font-semibold hover:shadow-lg"
         >
           <Plus className="w-5 h-5" />
           Add New Listing
@@ -379,7 +397,7 @@ function ListingsTab() {
 
             <div className="flex justify-end gap-3 mt-6">
               <button onClick={() => { setShowForm(false); resetForm(); }} className="px-6 py-2 bg-gray-200 rounded-xl font-semibold">Cancel</button>
-              <button onClick={handleSave} disabled={saving} className="px-6 py-2 bg-sptc-red text-white rounded-xl font-semibold disabled:opacity-50">
+              <button onClick={handleSave} disabled={saving} className="px-6 py-2 bg-red-600 text-white rounded-xl font-semibold disabled:opacity-50">
                 {saving ? "Saving..." : editingListing ? "Update Listing" : "Create Listing"}
               </button>
             </div>
@@ -412,7 +430,7 @@ function ListingsTab() {
                   <span className="flex items-center gap-1"><Bath className="w-4 h-4" />{listing.bathrooms}</span>
                   <span className="flex items-center gap-1"><User className="w-4 h-4" />{listing.max_guests}</span>
                 </div>
-                <p className="text-xl font-bold text-sptc-red mt-2">${listing.price_per_night}<span className="text-sm font-normal text-gray-500">/night</span></p>
+                <p className="text-xl font-bold text-red-600 mt-2">${listing.price_per_night}<span className="text-sm font-normal text-gray-500">/night</span></p>
                 <p className="text-xs text-gray-400 mt-1">Host: {listing.host_profiles?.first_name} {listing.host_profiles?.last_name}</p>
                 <div className="flex gap-2 mt-3">
                   <button onClick={() => handleEdit(listing)} className="flex-1 px-3 py-2 bg-blue-500 text-white rounded-lg text-sm font-semibold flex items-center justify-center gap-1">
@@ -458,13 +476,22 @@ function BookingsTab() {
     setLoading(true);
     setError(null);
     try {
+      // Fetch bookings and listings separately (no joins to avoid relationship errors)
       const [bookingsRes, listingsRes] = await Promise.all([
-        supabase.from('bookings').select('*, listings(title, price_per_night)').order('created_at', { ascending: false }),
+        supabase.from('bookings').select('*').order('created_at', { ascending: false }),
         supabase.from('listings').select('id, title, price_per_night')
       ]);
       if (bookingsRes.error) setError(`Bookings: ${bookingsRes.error.message}`);
       if (listingsRes.error) setError(prev => prev ? `${prev}, Listings: ${listingsRes.error.message}` : `Listings: ${listingsRes.error.message}`);
-      setBookings(bookingsRes.data || []);
+
+      // Manually attach listing info to bookings
+      const listingsMap = new Map((listingsRes.data || []).map(l => [l.id, l]));
+      const bookingsWithListings = (bookingsRes.data || []).map(booking => ({
+        ...booking,
+        listings: listingsMap.get(booking.listing_id) || null
+      }));
+
+      setBookings(bookingsWithListings);
       setListings(listingsRes.data || []);
     } catch (err: any) {
       setError(err.message);
@@ -505,7 +532,7 @@ function BookingsTab() {
       )}
       <div className="flex justify-between items-center">
         <h2 className="text-2xl font-bold">Manage Bookings ({bookings.length})</h2>
-        <button onClick={() => setShowForm(true)} className="flex items-center gap-2 px-6 py-3 bg-sptc-red text-white rounded-xl font-semibold">
+        <button onClick={() => setShowForm(true)} className="flex items-center gap-2 px-6 py-3 bg-red-600 text-white rounded-xl font-semibold">
           <Plus className="w-5 h-5" /> Add Booking
         </button>
       </div>
@@ -548,7 +575,7 @@ function BookingsTab() {
             </div>
             <div className="flex justify-end gap-3 mt-6">
               <button onClick={() => setShowForm(false)} className="px-6 py-2 bg-gray-200 rounded-xl">Cancel</button>
-              <button onClick={handleSave} disabled={saving} className="px-6 py-2 bg-sptc-red text-white rounded-xl disabled:opacity-50">
+              <button onClick={handleSave} disabled={saving} className="px-6 py-2 bg-red-600 text-white rounded-xl disabled:opacity-50">
                 {saving ? "Saving..." : "Create Booking"}
               </button>
             </div>
@@ -671,7 +698,7 @@ function UsersTab() {
       )}
       <div className="flex justify-between items-center">
         <h2 className="text-2xl font-bold">Manage Hosts ({hosts.length})</h2>
-        <button onClick={() => setShowForm(true)} className="flex items-center gap-2 px-6 py-3 bg-sptc-red text-white rounded-xl font-semibold">
+        <button onClick={() => setShowForm(true)} className="flex items-center gap-2 px-6 py-3 bg-red-600 text-white rounded-xl font-semibold">
           <Plus className="w-5 h-5" /> Add Host
         </button>
       </div>
@@ -713,7 +740,7 @@ function UsersTab() {
             </div>
             <div className="flex justify-end gap-3 mt-6">
               <button onClick={() => setShowForm(false)} className="px-6 py-2 bg-gray-200 rounded-xl">Cancel</button>
-              <button onClick={handleSave} disabled={saving} className="px-6 py-2 bg-sptc-red text-white rounded-xl disabled:opacity-50">
+              <button onClick={handleSave} disabled={saving} className="px-6 py-2 bg-red-600 text-white rounded-xl disabled:opacity-50">
                 {saving ? "Saving..." : "Add Host"}
               </button>
             </div>
@@ -859,7 +886,7 @@ function FundsTab() {
       {/* Community Projects */}
       <div className="flex justify-between items-center">
         <h2 className="text-2xl font-bold">Community Projects</h2>
-        <button onClick={() => setShowForm(true)} className="flex items-center gap-2 px-6 py-3 bg-sptc-red text-white rounded-xl font-semibold">
+        <button onClick={() => setShowForm(true)} className="flex items-center gap-2 px-6 py-3 bg-red-600 text-white rounded-xl font-semibold">
           <Plus className="w-5 h-5" /> Add Project
         </button>
       </div>
@@ -907,7 +934,7 @@ function FundsTab() {
             </div>
             <div className="flex justify-end gap-3 mt-6">
               <button onClick={() => setShowForm(false)} className="px-6 py-2 bg-gray-200 rounded-xl">Cancel</button>
-              <button onClick={handleSave} disabled={saving} className="px-6 py-2 bg-sptc-red text-white rounded-xl disabled:opacity-50">
+              <button onClick={handleSave} disabled={saving} className="px-6 py-2 bg-red-600 text-white rounded-xl disabled:opacity-50">
                 {saving ? "Saving..." : "Add Project"}
               </button>
             </div>
@@ -932,7 +959,7 @@ function FundsTab() {
                 <span>${(p.goal_amount || 0).toLocaleString()} goal</span>
               </div>
               <div className="h-2 bg-gray-200 rounded-full mb-3">
-                <div className="h-full bg-sptc-red rounded-full" style={{ width: `${Math.min(100, ((p.current_amount || 0) / (p.goal_amount || 1)) * 100)}%` }} />
+                <div className="h-full bg-red-600 rounded-full" style={{ width: `${Math.min(100, ((p.current_amount || 0) / (p.goal_amount || 1)) * 100)}%` }} />
               </div>
               <div className="flex gap-2">
                 <input
@@ -960,6 +987,379 @@ function FundsTab() {
           ))}
         </div>
       )}
+    </div>
+  );
+}
+
+// ============================================================================
+// PAYMENTS TAB - Stripe & Revolut Integration
+// ============================================================================
+function PaymentsTab() {
+  const { language } = useLanguage();
+  const t = (key: string) => getText(key, language);
+  const supabase = createClientComponentClient();
+  const [payments, setPayments] = useState<any[]>([]);
+  const [loading, setLoading] = useState(true);
+  const [error, setError] = useState<string | null>(null);
+  const [stripeBalance, setStripeBalance] = useState({ available: 0, pending: 0 });
+  const [recentTransactions, setRecentTransactions] = useState<any[]>([]);
+
+  // Stripe Dashboard URL - replace with your actual Stripe account
+  const STRIPE_DASHBOARD_URL = "https://dashboard.stripe.com";
+  const STRIPE_PAYMENTS_URL = "https://dashboard.stripe.com/payments";
+  const STRIPE_BALANCE_URL = "https://dashboard.stripe.com/balance/overview";
+  const STRIPE_SETTINGS_URL = "https://dashboard.stripe.com/settings";
+
+  // Revolut Business URL
+  const REVOLUT_DASHBOARD_URL = "https://business.revolut.com";
+  const REVOLUT_TRANSACTIONS_URL = "https://business.revolut.com/transactions";
+
+  useEffect(() => {
+    fetchPaymentData();
+  }, []);
+
+  const fetchPaymentData = async () => {
+    setLoading(true);
+    setError(null);
+    try {
+      // Fetch bookings with payment info from Supabase
+      const { data: bookingsData, error: bookingsError } = await supabase
+        .from('bookings')
+        .select('*')
+        .order('created_at', { ascending: false })
+        .limit(50);
+
+      if (bookingsError) {
+        setError(`Bookings: ${bookingsError.message}`);
+      }
+
+      // Calculate payment stats from bookings
+      const confirmedBookings = (bookingsData || []).filter(b =>
+        b.status === 'confirmed' || b.status === 'completed'
+      );
+
+      const totalRevenue = confirmedBookings.reduce((sum, b) => sum + (parseFloat(b.total_price) || 0), 0);
+      const pendingPayments = (bookingsData || []).filter(b => b.status === 'pending')
+        .reduce((sum, b) => sum + (parseFloat(b.total_price) || 0), 0);
+
+      setStripeBalance({
+        available: totalRevenue * 0.85, // After 15% platform fee
+        pending: pendingPayments
+      });
+
+      // Create transaction list from bookings
+      const transactions = (bookingsData || []).map(b => ({
+        id: b.id,
+        type: 'payment',
+        amount: parseFloat(b.total_price) || 0,
+        status: b.status,
+        created_at: b.created_at,
+        description: `Booking #${b.id?.slice(0, 8)}...`
+      }));
+
+      setRecentTransactions(transactions);
+      setPayments(bookingsData || []);
+    } catch (err: any) {
+      setError(err.message);
+    }
+    setLoading(false);
+  };
+
+  const formatCurrency = (amount: number) => {
+    return new Intl.NumberFormat('en-GB', { style: 'currency', currency: 'GBP' }).format(amount);
+  };
+
+  const formatDate = (dateStr: string) => {
+    return new Date(dateStr).toLocaleDateString('en-GB', {
+      day: 'numeric',
+      month: 'short',
+      year: 'numeric',
+      hour: '2-digit',
+      minute: '2-digit'
+    });
+  };
+
+  if (loading) return <LoadingSpinner />;
+
+  return (
+    <div className="space-y-6">
+      {error && (
+        <div className="bg-red-50 border border-red-200 rounded-xl p-4">
+          <p className="text-red-700 font-semibold">{t("admin.paymentsTab.errorLoading")}</p>
+          <p className="text-red-600 text-sm">{error}</p>
+        </div>
+      )}
+
+      {/* Quick Links Section */}
+      <div className="grid md:grid-cols-2 gap-6">
+        {/* Stripe Card */}
+        <div className="bg-gradient-to-br from-indigo-600 to-purple-700 rounded-2xl p-6 text-white shadow-xl">
+          <div className="flex items-center justify-between mb-4">
+            <div className="flex items-center gap-3">
+              <div className="p-3 bg-white/20 rounded-xl">
+                <CreditCard className="w-8 h-8" />
+              </div>
+              <div>
+                <h3 className="text-xl font-bold">{t("admin.paymentsTab.stripe")}</h3>
+                <p className="text-indigo-200 text-sm">{t("admin.paymentsTab.paymentProcessing")}</p>
+              </div>
+            </div>
+            <a
+              href={STRIPE_DASHBOARD_URL}
+              target="_blank"
+              rel="noopener noreferrer"
+              className="p-2 bg-white/20 rounded-lg hover:bg-white/30 transition-colors"
+            >
+              <ExternalLink className="w-5 h-5" />
+            </a>
+          </div>
+
+          <div className="grid grid-cols-2 gap-4 mb-4">
+            <div className="bg-white/10 rounded-xl p-3">
+              <p className="text-indigo-200 text-xs uppercase tracking-wide">{t("admin.paymentsTab.available")}</p>
+              <p className="text-2xl font-bold">{formatCurrency(stripeBalance.available)}</p>
+            </div>
+            <div className="bg-white/10 rounded-xl p-3">
+              <p className="text-indigo-200 text-xs uppercase tracking-wide">{t("admin.paymentsTab.pending")}</p>
+              <p className="text-2xl font-bold">{formatCurrency(stripeBalance.pending)}</p>
+            </div>
+          </div>
+
+          <div className="flex flex-wrap gap-2">
+            <a
+              href={STRIPE_PAYMENTS_URL}
+              target="_blank"
+              rel="noopener noreferrer"
+              className="flex items-center gap-1 px-3 py-2 bg-white/20 rounded-lg text-sm font-medium hover:bg-white/30 transition-colors"
+            >
+              <DollarSign className="w-4 h-4" /> {t("admin.paymentsTab.paymentsButton")}
+            </a>
+            <a
+              href={STRIPE_BALANCE_URL}
+              target="_blank"
+              rel="noopener noreferrer"
+              className="flex items-center gap-1 px-3 py-2 bg-white/20 rounded-lg text-sm font-medium hover:bg-white/30 transition-colors"
+            >
+              <TrendingUp className="w-4 h-4" /> {t("admin.paymentsTab.balance")}
+            </a>
+            <a
+              href={STRIPE_SETTINGS_URL}
+              target="_blank"
+              rel="noopener noreferrer"
+              className="flex items-center gap-1 px-3 py-2 bg-white/20 rounded-lg text-sm font-medium hover:bg-white/30 transition-colors"
+            >
+              <Edit className="w-4 h-4" /> {t("admin.paymentsTab.settings")}
+            </a>
+          </div>
+        </div>
+
+        {/* Revolut Card */}
+        <div className="bg-gradient-to-br from-gray-800 to-gray-900 rounded-2xl p-6 text-white shadow-xl">
+          <div className="flex items-center justify-between mb-4">
+            <div className="flex items-center gap-3">
+              <div className="p-3 bg-white/20 rounded-xl">
+                <Building2 className="w-8 h-8" />
+              </div>
+              <div>
+                <h3 className="text-xl font-bold">{t("admin.paymentsTab.revolut")}</h3>
+                <p className="text-gray-400 text-sm">{t("admin.paymentsTab.bankAccount")}</p>
+              </div>
+            </div>
+            <a
+              href={REVOLUT_DASHBOARD_URL}
+              target="_blank"
+              rel="noopener noreferrer"
+              className="p-2 bg-white/20 rounded-lg hover:bg-white/30 transition-colors"
+            >
+              <ExternalLink className="w-5 h-5" />
+            </a>
+          </div>
+
+          <div className="bg-white/10 rounded-xl p-4 mb-4">
+            <div className="flex items-center gap-3">
+              <Banknote className="w-6 h-6 text-green-400" />
+              <div>
+                <p className="text-gray-400 text-xs uppercase tracking-wide">{t("admin.paymentsTab.connectedAccount")}</p>
+                <p className="font-semibold">{t("admin.paymentsTab.revolutBusinessAccount")}</p>
+              </div>
+            </div>
+          </div>
+
+          <div className="flex flex-wrap gap-2">
+            <a
+              href={REVOLUT_DASHBOARD_URL}
+              target="_blank"
+              rel="noopener noreferrer"
+              className="flex items-center gap-1 px-3 py-2 bg-white/20 rounded-lg text-sm font-medium hover:bg-white/30 transition-colors"
+            >
+              <Building2 className="w-4 h-4" /> {t("admin.paymentsTab.dashboard")}
+            </a>
+            <a
+              href={REVOLUT_TRANSACTIONS_URL}
+              target="_blank"
+              rel="noopener noreferrer"
+              className="flex items-center gap-1 px-3 py-2 bg-white/20 rounded-lg text-sm font-medium hover:bg-white/30 transition-colors"
+            >
+              <ArrowUpRight className="w-4 h-4" /> {t("admin.paymentsTab.transactions")}
+            </a>
+          </div>
+        </div>
+      </div>
+
+      {/* Payment Stats */}
+      <div className="grid sm:grid-cols-4 gap-4">
+        <div className="bg-white rounded-xl shadow-lg p-5">
+          <div className="flex items-center justify-between">
+            <div>
+              <p className="text-sm text-gray-500 font-medium">{t("admin.paymentsTab.totalPayments")}</p>
+              <p className="text-2xl font-bold text-gray-900">{payments.length}</p>
+            </div>
+            <div className="p-3 bg-blue-100 rounded-xl text-blue-600">
+              <CreditCard className="w-6 h-6" />
+            </div>
+          </div>
+        </div>
+        <div className="bg-white rounded-xl shadow-lg p-5">
+          <div className="flex items-center justify-between">
+            <div>
+              <p className="text-sm text-gray-500 font-medium">{t("admin.paymentsTab.completed")}</p>
+              <p className="text-2xl font-bold text-green-600">
+                {payments.filter(p => p.status === 'completed' || p.status === 'confirmed').length}
+              </p>
+            </div>
+            <div className="p-3 bg-green-100 rounded-xl text-green-600">
+              <CheckCircle className="w-6 h-6" />
+            </div>
+          </div>
+        </div>
+        <div className="bg-white rounded-xl shadow-lg p-5">
+          <div className="flex items-center justify-between">
+            <div>
+              <p className="text-sm text-gray-500 font-medium">{t("admin.paymentsTab.pending")}</p>
+              <p className="text-2xl font-bold text-yellow-600">
+                {payments.filter(p => p.status === 'pending').length}
+              </p>
+            </div>
+            <div className="p-3 bg-yellow-100 rounded-xl text-yellow-600">
+              <Clock className="w-6 h-6" />
+            </div>
+          </div>
+        </div>
+        <div className="bg-white rounded-xl shadow-lg p-5">
+          <div className="flex items-center justify-between">
+            <div>
+              <p className="text-sm text-gray-500 font-medium">{t("admin.paymentsTab.cancelled")}</p>
+              <p className="text-2xl font-bold text-red-600">
+                {payments.filter(p => p.status === 'cancelled').length}
+              </p>
+            </div>
+            <div className="p-3 bg-red-100 rounded-xl text-red-600">
+              <AlertCircle className="w-6 h-6" />
+            </div>
+          </div>
+        </div>
+      </div>
+
+      {/* Recent Transactions */}
+      <div className="bg-white rounded-2xl shadow-lg overflow-hidden">
+        <div className="p-6 border-b border-gray-100 flex items-center justify-between">
+          <h3 className="text-xl font-bold text-gray-900">{t("admin.paymentsTab.recentTransactions")}</h3>
+          <button
+            onClick={fetchPaymentData}
+            className="flex items-center gap-2 px-4 py-2 bg-gray-100 rounded-lg text-sm font-medium hover:bg-gray-200 transition-colors"
+          >
+            <RefreshCw className="w-4 h-4" /> {t("admin.paymentsTab.refresh")}
+          </button>
+        </div>
+
+        {recentTransactions.length === 0 ? (
+          <div className="p-12 text-center">
+            <CreditCard className="w-16 h-16 mx-auto mb-4 text-gray-300" />
+            <h4 className="text-xl font-semibold text-gray-700 mb-2">{t("admin.paymentsTab.noTransactions")}</h4>
+            <p className="text-gray-500">{t("admin.paymentsTab.transactionsWillAppear")}</p>
+          </div>
+        ) : (
+          <div className="divide-y divide-gray-100">
+            {recentTransactions.slice(0, 20).map((tx) => (
+              <div key={tx.id} className="p-4 hover:bg-gray-50 flex items-center justify-between">
+                <div className="flex items-center gap-4">
+                  <div className={`p-2 rounded-xl ${
+                    tx.status === 'completed' || tx.status === 'confirmed'
+                      ? 'bg-green-100 text-green-600'
+                      : tx.status === 'pending'
+                        ? 'bg-yellow-100 text-yellow-600'
+                        : 'bg-red-100 text-red-600'
+                  }`}>
+                    {tx.status === 'completed' || tx.status === 'confirmed' ? (
+                      <ArrowDownLeft className="w-5 h-5" />
+                    ) : tx.status === 'pending' ? (
+                      <Clock className="w-5 h-5" />
+                    ) : (
+                      <AlertCircle className="w-5 h-5" />
+                    )}
+                  </div>
+                  <div>
+                    <p className="font-semibold text-gray-900">{tx.description}</p>
+                    <p className="text-sm text-gray-500">{formatDate(tx.created_at)}</p>
+                  </div>
+                </div>
+                <div className="text-right">
+                  <p className={`text-lg font-bold ${
+                    tx.status === 'completed' || tx.status === 'confirmed'
+                      ? 'text-green-600'
+                      : tx.status === 'pending'
+                        ? 'text-yellow-600'
+                        : 'text-red-600'
+                  }`}>
+                    {tx.status === 'cancelled' ? '-' : '+'}{formatCurrency(tx.amount)}
+                  </p>
+                  <span className={`inline-block px-2 py-0.5 rounded-full text-xs font-medium ${
+                    tx.status === 'completed' ? 'bg-green-100 text-green-700' :
+                    tx.status === 'confirmed' ? 'bg-blue-100 text-blue-700' :
+                    tx.status === 'pending' ? 'bg-yellow-100 text-yellow-700' :
+                    'bg-red-100 text-red-700'
+                  }`}>
+                    {tx.status}
+                  </span>
+                </div>
+              </div>
+            ))}
+          </div>
+        )}
+      </div>
+
+      {/* Setup Instructions */}
+      <div className="bg-blue-50 rounded-xl p-6 border border-blue-200">
+        <h3 className="font-bold text-lg text-blue-900 mb-3 flex items-center gap-2">
+          <AlertCircle className="w-5 h-5" /> {t("admin.paymentsTab.setupInstructions")}
+        </h3>
+        <div className="space-y-3 text-sm text-blue-800">
+          <p><strong>{t("admin.paymentsTab.stripeIntegration")}</strong> {t("admin.paymentsTab.toEnableLive")}</p>
+          <code className="block bg-blue-100 p-3 rounded-lg font-mono text-xs">
+            NEXT_PUBLIC_STRIPE_PUBLISHABLE_KEY=pk_live_...<br/>
+            STRIPE_SECRET_KEY=sk_live_...
+          </code>
+          <p><strong>{t("admin.paymentsTab.revolutLink")}</strong> {t("admin.paymentsTab.linkRevolut")}</p>
+          <div className="flex gap-3 mt-4">
+            <a
+              href="https://dashboard.stripe.com/apikeys"
+              target="_blank"
+              rel="noopener noreferrer"
+              className="inline-flex items-center gap-1 px-4 py-2 bg-indigo-600 text-white rounded-lg font-medium hover:bg-indigo-700 transition-colors"
+            >
+              {t("admin.paymentsTab.getStripeKeys")} <ExternalLink className="w-4 h-4" />
+            </a>
+            <a
+              href="https://dashboard.stripe.com/settings/payouts"
+              target="_blank"
+              rel="noopener noreferrer"
+              className="inline-flex items-center gap-1 px-4 py-2 bg-gray-800 text-white rounded-lg font-medium hover:bg-gray-900 transition-colors"
+            >
+              {t("admin.paymentsTab.configurePayouts")} <ExternalLink className="w-4 h-4" />
+            </a>
+          </div>
+        </div>
+      </div>
     </div>
   );
 }
@@ -1145,7 +1545,7 @@ function HomepageContentTab() {
         <div key={section.section_key} className="bg-white rounded-xl shadow-lg overflow-hidden">
           <div className="bg-gray-50 p-4 border-b flex justify-between items-center">
             <div>
-              <span className="px-2 py-1 bg-sptc-red text-white text-xs rounded-full font-bold mr-2">{section.section_key.replace('_', ' ')}</span>
+              <span className="px-2 py-1 bg-red-600 text-white text-xs rounded-full font-bold mr-2">{section.section_key.replace('_', ' ')}</span>
               <span className="font-bold text-lg">{language === 'es' ? section.title_es : section.title_en}</span>
             </div>
             {editingSection === section.section_key ? (
@@ -1156,7 +1556,7 @@ function HomepageContentTab() {
                 <button onClick={() => { setEditingSection(null); fetchSections(); }} className="px-4 py-2 bg-gray-200 rounded-lg text-sm">Cancel</button>
               </div>
             ) : (
-              <button onClick={() => setEditingSection(section.section_key)} className="px-4 py-2 bg-sptc-red text-white rounded-lg text-sm font-semibold flex items-center gap-1">
+              <button onClick={() => setEditingSection(section.section_key)} className="px-4 py-2 bg-red-600 text-white rounded-lg text-sm font-semibold flex items-center gap-1">
                 <Edit className="w-4 h-4" /> Edit Section
               </button>
             )}
@@ -1227,7 +1627,7 @@ function HomepageContentTab() {
                         <p className="text-xs text-gray-500 line-clamp-2">{language === 'es' ? item.description_es : item.description_en}</p>
                         {section.section_key === 'community_projects' && item.goal && (
                           <div className="mt-2">
-                            <div className="h-1.5 bg-gray-200 rounded-full"><div className="h-full bg-sptc-red rounded-full" style={{ width: `${Math.min(100, (item.raised / item.goal) * 100)}%` }} /></div>
+                            <div className="h-1.5 bg-gray-200 rounded-full"><div className="h-full bg-red-600 rounded-full" style={{ width: `${Math.min(100, (item.raised / item.goal) * 100)}%` }} /></div>
                             <p className="text-xs text-gray-400 mt-1">${item.raised} / ${item.goal}</p>
                           </div>
                         )}
@@ -1250,7 +1650,7 @@ function HomepageContentTab() {
 function LoadingSpinner() {
   return (
     <div className="flex items-center justify-center py-20">
-      <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-sptc-red"></div>
+      <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-red-600"></div>
     </div>
   );
 }
@@ -1273,7 +1673,7 @@ function StatCard({ title, value, icon }: { title: string; value: string; icon: 
           <p className="text-sm text-gray-500 font-medium">{title}</p>
           <p className="text-2xl font-bold text-gray-900">{value}</p>
         </div>
-        <div className="p-3 bg-sptc-red/10 rounded-xl text-sptc-red">{icon}</div>
+        <div className="p-3 bg-red-100 rounded-xl text-red-600">{icon}</div>
       </div>
     </div>
   );
