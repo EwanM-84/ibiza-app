@@ -27,13 +27,13 @@ This key is not currently used in the application and is causing issues.
 Make sure you have these environment variables (and ONLY these):
 
 1. `NEXT_PUBLIC_SUPABASE_URL`
-   - Your value: `https://ywfhrqgjiudngpdarfzy.supabase.co`
+   - Your Supabase project URL (from Supabase dashboard)
 
 2. `NEXT_PUBLIC_SUPABASE_ANON_KEY`
-   - Your value: `eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6Inl3ZmhycWdqaXVkbmdwZGFyZnp5Iiwicm9sZSI6ImFub24iLCJpYXQiOjE3NjMxMzM1ODAsImV4cCI6MjA3ODcwOTU4MH0.uzFNJUB-X9DspC-vBLqFVr6LmqryzVTN1rYexh0tA10`
+   - Your Supabase anon/public key (from Supabase dashboard)
 
 3. `NEXT_PUBLIC_GOOGLE_MAPS_API_KEY`
-   - Your value: `AIzaSyDG4cppsWwBUIxVqbRZMTdkQgHbygM1xUU`
+   - Your Google Maps API key (from Google Cloud Console)
 
 ## Step 4: Clear Build Cache and Deploy
 
