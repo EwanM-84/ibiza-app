@@ -74,37 +74,37 @@ export default function Navigation() {
   return (
     <>
       <nav
-        className={`fixed top-0 left-0 right-0 z-50 transition-all duration-500 ${
+        className={`fixed top-0 left-0 right-0 z-50 transition-all duration-500 safe-top ${
           scrolled
-            ? 'py-2'
-            : 'py-4'
+            ? 'py-1 sm:py-2'
+            : 'py-2 sm:py-4'
         }`}
       >
         {/* Glassmorphic background */}
         <div
           className={`absolute inset-0 transition-all duration-500 ${
             scrolled
-              ? 'bg-ibiza-night-500/80 backdrop-blur-2xl border-b border-white/10'
-              : 'bg-transparent'
+              ? 'bg-ibiza-night-500/90 backdrop-blur-2xl border-b border-white/10'
+              : 'bg-gradient-to-b from-ibiza-night-900/80 to-transparent'
           }`}
         />
 
-        <div className="relative max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-          <div className="flex items-center justify-between h-16">
+        <div className="relative max-w-7xl mx-auto px-3 sm:px-6 lg:px-8">
+          <div className="flex items-center justify-between h-14 sm:h-16">
             {/* Logo */}
-            <Link href="/" className="flex items-center space-x-3 group">
+            <Link href="/" className="flex items-center space-x-2 sm:space-x-3 group">
               <div className="relative">
                 {/* Glow effect behind logo */}
-                <div className="absolute inset-0 bg-ibiza-blue-500 rounded-2xl blur-xl opacity-50 group-hover:opacity-75 transition-opacity duration-300" />
-                <div className="relative w-12 h-12 bg-gradient-to-br from-ibiza-blue-400 to-ibiza-cyan-500 rounded-2xl flex items-center justify-center shadow-glow-blue group-hover:scale-110 transition-transform duration-300">
-                  <span className="text-white font-bold text-xl">IU</span>
+                <div className="absolute inset-0 bg-ibiza-blue-500 rounded-xl sm:rounded-2xl blur-xl opacity-50 group-hover:opacity-75 transition-opacity duration-300" />
+                <div className="relative w-10 h-10 sm:w-12 sm:h-12 bg-gradient-to-br from-ibiza-blue-400 to-ibiza-cyan-500 rounded-xl sm:rounded-2xl flex items-center justify-center shadow-glow-blue group-hover:scale-110 transition-transform duration-300">
+                  <span className="text-white font-bold text-lg sm:text-xl">IU</span>
                 </div>
               </div>
               <div className="flex flex-col leading-none">
-                <span className="font-display text-xl sm:text-2xl font-bold text-white tracking-tight">
+                <span className="font-display text-lg sm:text-2xl font-bold text-white tracking-tight">
                   Ibiza
                 </span>
-                <span className="font-sans text-xs font-medium text-ibiza-blue-400 tracking-widest uppercase">
+                <span className="font-sans text-[10px] sm:text-xs font-medium text-ibiza-blue-400 tracking-widest uppercase">
                   Unlocked
                 </span>
               </div>
@@ -289,8 +289,8 @@ export default function Navigation() {
         initialMode={loginMode}
       />
 
-      {/* Spacer for fixed nav */}
-      <div className="h-24" />
+      {/* Spacer for fixed nav - responsive */}
+      <div className="h-[72px] sm:h-24" />
     </>
   );
 }

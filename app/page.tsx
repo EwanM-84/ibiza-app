@@ -102,7 +102,7 @@ export default function Home() {
   return (
     <div className="min-h-screen bg-ibiza-night-500">
       {/* HERO SECTION */}
-      <section className="relative min-h-[90vh] flex items-center overflow-hidden">
+      <section className="relative min-h-[100dvh] sm:min-h-[90vh] flex items-center overflow-hidden pt-0">
         {/* Animated Background */}
         <div className="absolute inset-0">
           {/* Video/Image Background */}
@@ -134,43 +134,45 @@ export default function Home() {
               <span className="text-sm font-medium text-white/90">Season 2025 Now Live</span>
             </div>
 
-            {/* Main Headline */}
-            <h1 className="text-5xl sm:text-6xl md:text-7xl lg:text-8xl font-bold leading-[0.95] mb-6 animate-slide-up">
+            {/* Main Headline - Mobile optimized */}
+            <h1 className="text-4xl xs:text-5xl sm:text-6xl md:text-7xl lg:text-8xl font-bold leading-[0.95] mb-4 sm:mb-6 animate-slide-up">
               <span className="text-white">Unlock the</span>
               <br />
               <span className="text-gradient-party">Magic of Ibiza</span>
             </h1>
 
-            {/* Subtitle */}
-            <p className="text-xl sm:text-2xl text-white/70 max-w-2xl mb-10 leading-relaxed animate-slide-up font-light">
+            {/* Subtitle - Mobile optimized */}
+            <p className="text-lg sm:text-xl md:text-2xl text-white/70 max-w-2xl mb-8 sm:mb-10 leading-relaxed animate-slide-up font-light">
               Discover world-famous clubs, stunning beach parties, and unforgettable
               experiences on the White Isle.
             </p>
 
-            {/* Search Bar */}
+            {/* Search Bar - Mobile Optimized */}
             <div className="max-w-2xl animate-slide-up">
-              <div className="search-bar p-2">
-                <div className="flex items-center gap-3">
-                  <div className="flex-1 flex items-center gap-3 px-4">
-                    <Search className="w-5 h-5 text-ibiza-blue-400" />
+              <div className="search-bar p-2 sm:p-3">
+                {/* Mobile: Stacked layout, Desktop: Inline */}
+                <div className="flex flex-col sm:flex-row sm:items-center gap-2 sm:gap-3">
+                  <div className="flex-1 flex items-center gap-3 px-3 sm:px-4">
+                    <Search className="w-5 h-5 text-ibiza-blue-400 flex-shrink-0" />
                     <input
                       type="text"
-                      placeholder="Search clubs, events, experiences..."
+                      placeholder="Search clubs, events..."
                       value={searchQuery}
                       onChange={(e) => setSearchQuery(e.target.value)}
-                      className="flex-1 bg-transparent border-none outline-none text-white placeholder:text-white/40 text-lg py-4"
+                      className="flex-1 bg-transparent border-none outline-none text-white placeholder:text-white/40 text-base sm:text-lg py-3 sm:py-4 min-w-0"
+                      style={{ fontSize: '16px' }} // Prevent iOS zoom
                     />
                   </div>
-                  <button className="btn-primary flex items-center gap-2 px-6">
+                  <button className="btn-primary flex items-center justify-center gap-2 px-4 sm:px-6 py-3 sm:py-4 w-full sm:w-auto">
                     <span>Explore</span>
                     <ArrowRight className="w-4 h-4" />
                   </button>
                 </div>
               </div>
 
-              {/* Quick Links */}
-              <div className="flex flex-wrap gap-2 mt-4">
-                <span className="text-white/40 text-sm">Popular:</span>
+              {/* Quick Links - Horizontal scroll on mobile */}
+              <div className="flex items-center gap-2 mt-4 overflow-x-auto no-scrollbar pb-2 -mx-4 px-4 sm:mx-0 sm:px-0 sm:flex-wrap">
+                <span className="text-white/40 text-sm whitespace-nowrap flex-shrink-0">Popular:</span>
                 <QuickLink>Ushuaïa</QuickLink>
                 <QuickLink>Pacha</QuickLink>
                 <QuickLink>Sunset Ashram</QuickLink>
@@ -179,8 +181,8 @@ export default function Home() {
             </div>
           </div>
 
-          {/* Scroll Indicator */}
-          <div className="absolute bottom-10 left-1/2 -translate-x-1/2 flex flex-col items-center gap-2 animate-bounce-soft">
+          {/* Scroll Indicator - Hidden on mobile */}
+          <div className="hidden sm:flex absolute bottom-10 left-1/2 -translate-x-1/2 flex-col items-center gap-2 animate-bounce-soft">
             <span className="text-white/40 text-sm">Scroll to explore</span>
             <div className="w-6 h-10 rounded-full border-2 border-white/20 flex items-start justify-center p-2">
               <div className="w-1 h-2 bg-ibiza-blue-400 rounded-full animate-bounce" />
@@ -189,18 +191,18 @@ export default function Home() {
         </div>
       </section>
 
-      {/* CATEGORY TABS */}
-      <section className="sticky top-20 z-30 bg-ibiza-night-500/80 backdrop-blur-2xl border-b border-white/10">
-        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-          <div className="flex items-center gap-2 py-4 overflow-x-auto no-scrollbar">
+      {/* CATEGORY TABS - Mobile optimized with scroll snap */}
+      <section className="sticky top-16 sm:top-20 z-30 bg-ibiza-night-500/80 backdrop-blur-2xl border-b border-white/10">
+        <div className="max-w-7xl mx-auto px-3 sm:px-6 lg:px-8">
+          <div className="flex items-center gap-2 py-3 sm:py-4 overflow-x-auto no-scrollbar scroll-snap-x -mx-3 px-3 sm:mx-0 sm:px-0">
             {categories.map((cat) => (
               <button
                 key={cat.id}
                 onClick={() => setActiveCategory(cat.id)}
-                className={`flex items-center gap-2 px-5 py-2.5 rounded-full text-sm font-medium whitespace-nowrap transition-all duration-300 ${
+                className={`flex items-center gap-2 px-4 sm:px-5 py-2.5 sm:py-2.5 rounded-full text-sm font-medium whitespace-nowrap transition-all duration-300 scroll-snap-start touch-target haptic-tap ${
                   activeCategory === cat.id
                     ? "bg-ibiza-blue-500 text-white shadow-glow-blue"
-                    : "bg-white/5 text-white/70 hover:bg-white/10 hover:text-white"
+                    : "bg-white/5 text-white/70 hover:bg-white/10 hover:text-white active:bg-white/15"
                 }`}
               >
                 <cat.icon className="w-4 h-4" />
