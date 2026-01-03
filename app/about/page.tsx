@@ -1,6 +1,6 @@
 "use client";
 
-import { Users, Star, PartyPopper, Music } from "lucide-react";
+import { Star, PartyPopper, Music, Crown } from "lucide-react";
 
 export default function AboutPage() {
   return (
@@ -40,75 +40,49 @@ export default function AboutPage() {
 
       {/* Mark Section */}
       <section className="py-16 px-4">
-        <div className="max-w-6xl mx-auto">
-          <div className="grid md:grid-cols-2 gap-8 items-center">
-            <div className="relative">
-              <div className="aspect-square rounded-3xl overflow-hidden">
-                <img
-                  src="https://images.unsplash.com/photo-1507003211169-0a1dd7228f2d?w=800&q=80"
-                  alt="Mark"
-                  className="w-full h-full object-cover"
-                />
+        <div className="max-w-4xl mx-auto">
+          <div className="glass-card rounded-3xl p-8 sm:p-12">
+            <div className="flex items-center gap-4 mb-8">
+              <div className="w-16 h-16 bg-gradient-to-br from-ibiza-pink-500 to-ibiza-pink-600 rounded-2xl flex items-center justify-center">
+                <Music className="w-8 h-8 text-white" />
               </div>
-              <div className="absolute -bottom-4 -right-4 w-24 h-24 bg-ibiza-pink-500 rounded-2xl flex items-center justify-center">
-                <span className="text-4xl font-bold text-white">20+</span>
-              </div>
-              <p className="absolute -bottom-4 -right-4 mt-28 text-ibiza-pink-400 text-sm font-semibold">Years on the island</p>
-            </div>
-
-            <div className="glass-card rounded-3xl p-8">
-              <div className="flex items-center gap-3 mb-6">
-                <div className="w-12 h-12 bg-ibiza-blue-500/20 rounded-xl flex items-center justify-center">
-                  <Music className="w-6 h-6 text-ibiza-blue-400" />
-                </div>
+              <div>
                 <h2 className="text-3xl sm:text-4xl font-bold text-white">Meet Mark</h2>
+                <p className="text-ibiza-pink-400 font-semibold">20+ Years on the Island</p>
               </div>
-              <p className="text-white/70 text-lg leading-relaxed">
-                Mark is the guy who's been on this island for over 20 years. He's owned bars, run clubs, and basically done everything that makes Ibiza the legendary party capital it is.
-              </p>
-              <p className="text-white/70 text-lg leading-relaxed mt-4">
-                He lives it, breathes it, and yeah, he <span className="text-ibiza-pink-400 font-semibold">shits Ibiza</span>. Without people like Mark, Ibiza just wouldn't be Ibiza.
-              </p>
             </div>
+            <p className="text-white/70 text-lg leading-relaxed mb-4">
+              Mark is the guy who's been on this island for over 20 years. He's owned bars, run clubs, and basically done everything that makes Ibiza the legendary party capital it is.
+            </p>
+            <p className="text-white/70 text-lg leading-relaxed">
+              He lives it, breathes it, and yeah, he <span className="text-ibiza-pink-400 font-semibold">shits Ibiza</span>. Without people like Mark, Ibiza just wouldn't be Ibiza.
+            </p>
           </div>
         </div>
       </section>
 
       {/* Jas Section */}
       <section className="py-16 px-4">
-        <div className="max-w-6xl mx-auto">
-          <div className="grid md:grid-cols-2 gap-8 items-center">
-            <div className="glass-card rounded-3xl p-8 order-2 md:order-1">
-              <div className="flex items-center gap-3 mb-6">
-                <div className="w-12 h-12 bg-ibiza-purple-500/20 rounded-xl flex items-center justify-center">
-                  <Star className="w-6 h-6 text-ibiza-purple-400" />
-                </div>
+        <div className="max-w-4xl mx-auto">
+          <div className="glass-card rounded-3xl p-8 sm:p-12">
+            <div className="flex items-center gap-4 mb-8">
+              <div className="w-16 h-16 bg-gradient-to-br from-ibiza-cyan-500 to-ibiza-cyan-600 rounded-2xl flex items-center justify-center">
+                <Crown className="w-8 h-8 text-white" />
+              </div>
+              <div>
                 <h2 className="text-3xl sm:text-4xl font-bold text-white">Meet Jas</h2>
+                <p className="text-ibiza-cyan-400 font-semibold">20 Years of Ibiza Knowledge</p>
               </div>
-              <p className="text-white/70 text-lg leading-relaxed">
-                Jas is another total fucking legend. He's been part of the Ibiza scene for the last two decades and knows every damn thing about the island.
-              </p>
-              <p className="text-white/70 text-lg leading-relaxed mt-4">
-                He's been that kid outside the clubs putting wristbands on people, and now he's the entrepreneur who's turning all that insane knowledge into your ultimate Ibiza guide.
-              </p>
-              <p className="text-white/70 text-lg leading-relaxed mt-4">
-                He <span className="text-ibiza-cyan-400 font-semibold">personifies everything</span> about the island—every club, every bar, every hidden gem.
-              </p>
             </div>
-
-            <div className="relative order-1 md:order-2">
-              <div className="aspect-square rounded-3xl overflow-hidden">
-                <img
-                  src="https://images.unsplash.com/photo-1500648767791-00dcc994a43e?w=800&q=80"
-                  alt="Jas"
-                  className="w-full h-full object-cover"
-                />
-              </div>
-              <div className="absolute -bottom-4 -left-4 w-24 h-24 bg-ibiza-cyan-500 rounded-2xl flex items-center justify-center">
-                <span className="text-4xl font-bold text-white">20</span>
-              </div>
-              <p className="absolute -bottom-4 -left-4 mt-28 text-ibiza-cyan-400 text-sm font-semibold">Years of Ibiza knowledge</p>
-            </div>
+            <p className="text-white/70 text-lg leading-relaxed mb-4">
+              Jas is another total fucking legend. He's been part of the Ibiza scene for the last two decades and knows every damn thing about the island.
+            </p>
+            <p className="text-white/70 text-lg leading-relaxed mb-4">
+              He's been that kid outside the clubs putting wristbands on people, and now he's the entrepreneur who's turning all that insane knowledge into your ultimate Ibiza guide.
+            </p>
+            <p className="text-white/70 text-lg leading-relaxed">
+              He <span className="text-ibiza-cyan-400 font-semibold">personifies everything</span> about the island—every club, every bar, every hidden gem.
+            </p>
           </div>
         </div>
       </section>
