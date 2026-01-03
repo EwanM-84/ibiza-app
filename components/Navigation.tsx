@@ -149,7 +149,7 @@ export default function Navigation() {
                 </button>
 
                 {showLangMenu && (
-                  <div className="absolute right-0 mt-2 w-44 glass-card rounded-2xl overflow-hidden z-50 animate-slide-down">
+                  <div className="absolute right-0 mt-2 w-40 sm:w-44 glass-card rounded-2xl overflow-hidden z-50 animate-slide-down">
                     <div className="p-2">
                       <button
                         onClick={() => {

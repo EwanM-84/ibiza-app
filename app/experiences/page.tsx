@@ -144,7 +144,7 @@ export default function ExperiencesPage() {
             <Sparkles className="w-4 h-4 text-ibiza-cyan-400" />
             <span className="text-sm font-medium text-white/90">Beyond the Clubs</span>
           </div>
-          <h1 className="text-4xl sm:text-5xl md:text-6xl lg:text-7xl font-bold text-white mb-6">
+          <h1 className="text-3xl sm:text-4xl md:text-5xl lg:text-6xl font-bold text-white mb-4">
             Unforgettable <span className="text-gradient">Experiences</span>
           </h1>
           <p className="text-xl text-white/70 max-w-2xl mx-auto">
@@ -185,7 +185,7 @@ export default function ExperiencesPage() {
             <p className="text-white/60">Led by verified Ibiza experts</p>
           </div>
 
-          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4 sm:gap-6">
             {filteredExperiences.map((experience) => {
               const CategoryIcon = categories.find(c => c.id === experience.category)?.icon || Sparkles;
               return (
@@ -194,7 +194,7 @@ export default function ExperiencesPage() {
                   key={experience.id}
                   className="group relative overflow-hidden rounded-2xl bg-ibiza-night-400 border border-white/10 hover:border-ibiza-cyan-500/50 transition-all duration-500 block"
                 >
-                  <div className="relative h-56 overflow-hidden">
+                  <div className="relative h-44 sm:h-56 overflow-hidden">
                     <img
                       src={experience.image}
                       alt={experience.title}
@@ -219,7 +219,7 @@ export default function ExperiencesPage() {
                   </div>
 
                   <div className="p-5">
-                    <div className="flex items-center gap-3 mb-3">
+                    <div className="flex flex-wrap items-center gap-2 sm:gap-3 mb-3">
                       <img
                         src={experience.host.image}
                         alt={experience.host.name}

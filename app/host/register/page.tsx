@@ -1,32 +1,26 @@
 "use client";
 
 import { useState, useEffect } from "react";
-import { useLanguage } from "@/contexts/LanguageContext";
-import { getText } from "@/lib/text";
 import {
   Mail, Lock, User, Phone, MapPin, Eye, EyeOff, Shield,
-  CheckCircle, AlertCircle, ArrowRight, FileText, Camera
+  CheckCircle, AlertCircle, ArrowRight, FileText, Camera, Crown
 } from "lucide-react";
 import { useRouter } from "next/navigation";
 import { supabase } from "@/lib/supabaseClient";
 
 export default function HostRegister() {
-  const { language } = useLanguage();
-  const t = (key: string) => getText(key, language);
   const router = useRouter();
 
-  // Scroll to top on mount
   useEffect(() => {
     window.scrollTo({ top: 0, behavior: 'smooth' });
   }, []);
 
-  const [step, setStep] = useState(1); // 1: Basic Info, 2: Contact Details, 3: Agreement
+  const [step, setStep] = useState(1);
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [errors, setErrors] = useState<Record<string, string>>({});
   const [showPassword, setShowPassword] = useState(false);
   const [showConfirmPassword, setShowConfirmPassword] = useState(false);
 
-  // Form data
   const [formData, setFormData] = useState({
     firstName: "",
     lastName: "",
@@ -51,7 +45,6 @@ export default function HostRegister() {
       [name]: type === "checkbox" ? checked : value
     }));
 
-    // Clear error for this field
     if (errors[name]) {
       setErrors(prev => ({ ...prev, [name]: "" }));
     }
@@ -59,66 +52,35 @@ export default function HostRegister() {
 
   const validateStep1 = () => {
     const newErrors: Record<string, string> = {};
-
-    if (!formData.firstName.trim()) {
-      newErrors.firstName = t("hostRegister.firstNameRequired");
-    }
-    if (!formData.lastName.trim()) {
-      newErrors.lastName = t("hostRegister.lastNameRequired");
-    }
-    if (!formData.email.trim()) {
-      newErrors.email = t("hostRegister.emailRequired");
-    } else if (!/\S+@\S+\.\S+/.test(formData.email)) {
-      newErrors.email = t("hostRegister.emailInvalid");
-    }
-    if (!formData.password) {
-      newErrors.password = t("hostRegister.passwordRequired");
-    } else if (formData.password.length < 8) {
-      newErrors.password = t("hostRegister.passwordMinLength");
-    }
-    if (formData.password !== formData.confirmPassword) {
-      newErrors.confirmPassword = t("hostRegister.passwordsNoMatch");
-    }
-
+    if (!formData.firstName.trim()) newErrors.firstName = "First name is required";
+    if (!formData.lastName.trim()) newErrors.lastName = "Last name is required";
+    if (!formData.email.trim()) newErrors.email = "Email is required";
+    else if (!/\S+@\S+\.\S+/.test(formData.email)) newErrors.email = "Email is invalid";
+    if (!formData.password) newErrors.password = "Password is required";
+    else if (formData.password.length < 8) newErrors.password = "Password must be at least 8 characters";
+    if (formData.password !== formData.confirmPassword) newErrors.confirmPassword = "Passwords do not match";
     setErrors(newErrors);
     return Object.keys(newErrors).length === 0;
   };
 
   const validateStep2 = () => {
     const newErrors: Record<string, string> = {};
-
-    if (!formData.phone.trim()) {
-      newErrors.phone = t("hostRegister.phoneRequired");
-    }
-    if (!formData.city.trim()) {
-      newErrors.city = t("hostRegister.cityRequired");
-    }
-    if (!formData.dateOfBirth) {
-      newErrors.dateOfBirth = t("hostRegister.dobRequired");
-    } else {
+    if (!formData.phone.trim()) newErrors.phone = "Phone number is required";
+    if (!formData.city.trim()) newErrors.city = "City is required";
+    if (!formData.dateOfBirth) newErrors.dateOfBirth = "Date of birth is required";
+    else {
       const age = new Date().getFullYear() - new Date(formData.dateOfBirth).getFullYear();
-      if (age < 18) {
-        newErrors.dateOfBirth = t("hostRegister.mustBe18");
-      }
+      if (age < 18) newErrors.dateOfBirth = "You must be at least 18 years old";
     }
-
     setErrors(newErrors);
     return Object.keys(newErrors).length === 0;
   };
 
   const validateStep3 = () => {
     const newErrors: Record<string, string> = {};
-
-    if (!formData.agreeTerms) {
-      newErrors.agreeTerms = t("hostRegister.mustAgreeTerms");
-    }
-    if (!formData.agreeBackgroundCheck) {
-      newErrors.agreeBackgroundCheck = t("hostRegister.mustAgreeBackground");
-    }
-    if (!formData.agreeDataProcessing) {
-      newErrors.agreeDataProcessing = t("hostRegister.mustAgreeData");
-    }
-
+    if (!formData.agreeTerms) newErrors.agreeTerms = "You must agree to the Terms & Conditions";
+    if (!formData.agreeBackgroundCheck) newErrors.agreeBackgroundCheck = "Background check consent is required";
+    if (!formData.agreeDataProcessing) newErrors.agreeDataProcessing = "Data processing consent is required";
     setErrors(newErrors);
     return Object.keys(newErrors).length === 0;
   };
@@ -135,18 +97,13 @@ export default function HostRegister() {
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
-
     if (!validateStep3()) return;
-
     setIsSubmitting(true);
 
     try {
-      // Call API route to create user and profile
       const response = await fetch('/api/host/register', {
         method: 'POST',
-        headers: {
-          'Content-Type': 'application/json',
-        },
+        headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({
           email: formData.email,
           password: formData.password,
@@ -160,17 +117,11 @@ export default function HostRegister() {
       });
 
       const data = await response.json();
-
-      if (!response.ok) {
-        throw new Error(data.error || 'Registration failed');
-      }
-
-      // Redirect to onboarding for identity verification
+      if (!response.ok) throw new Error(data.error || 'Registration failed');
       router.push('/host/onboarding');
-
     } catch (error: any) {
       console.error('Registration error:', error);
-      setErrors({ submit: error.message || t("hostRegister.registrationFailed") });
+      setErrors({ submit: error.message || "Registration failed. Please try again." });
       setIsSubmitting(false);
     }
   };
@@ -178,7 +129,6 @@ export default function HostRegister() {
   const passwordStrength = () => {
     const password = formData.password;
     if (!password) return { strength: 0, label: '', color: '' };
-
     let strength = 0;
     if (password.length >= 8) strength++;
     if (password.length >= 12) strength++;
@@ -186,46 +136,46 @@ export default function HostRegister() {
     if (/\d/.test(password)) strength++;
     if (/[^a-zA-Z0-9]/.test(password)) strength++;
 
-    if (strength <= 2) return { strength, label: t("hostRegister.weak"), color: 'text-red-600 bg-red-100' };
-    if (strength <= 3) return { strength, label: t("hostRegister.fair"), color: 'text-yellow-600 bg-yellow-100' };
-    if (strength <= 4) return { strength, label: t("hostRegister.good"), color: 'text-blue-600 bg-blue-100' };
-    return { strength, label: t("hostRegister.strong"), color: 'text-green-600 bg-green-100' };
+    if (strength <= 2) return { strength, label: 'Weak', color: 'text-red-400 bg-red-500/20' };
+    if (strength <= 3) return { strength, label: 'Fair', color: 'text-yellow-400 bg-yellow-500/20' };
+    if (strength <= 4) return { strength, label: 'Good', color: 'text-blue-400 bg-blue-500/20' };
+    return { strength, label: 'Strong', color: 'text-green-400 bg-green-500/20' };
   };
 
   const pwdStrength = passwordStrength();
 
   return (
-    <div className="min-h-screen bg-gradient-to-br from-gray-50 via-white to-gray-100 py-12 px-4">
-      <div className="max-w-3xl mx-auto">
+    <div className="min-h-screen bg-ibiza-night-500 py-8 sm:py-12 px-4">
+      <div className="max-w-2xl mx-auto">
         {/* Header */}
-        <div className="text-center mb-10">
-          <div className="w-16 h-16 bg-gradient-to-br from-sptc-red-600 to-sptc-red-700 rounded-2xl flex items-center justify-center mx-auto mb-4 shadow-xl">
-            <Shield className="w-8 h-8 text-white" />
+        <div className="text-center mb-8">
+          <div className="w-14 h-14 sm:w-16 sm:h-16 bg-gradient-to-br from-ibiza-pink-500 to-ibiza-purple-500 rounded-2xl flex items-center justify-center mx-auto mb-4">
+            <Crown className="w-7 h-7 sm:w-8 sm:h-8 text-white" />
           </div>
-          <h1 className="text-4xl md:text-5xl font-bold text-gray-900 mb-3" style={{ fontFamily: '"DM Serif Display", serif' }}>
-            {t("hostRegister.title")}
+          <h1 className="text-2xl sm:text-3xl md:text-4xl font-bold text-white mb-2">
+            Become a <span className="text-gradient-party">Host</span>
           </h1>
-          <p className="text-lg md:text-xl text-gray-600 max-w-2xl mx-auto">
-            {t("hostRegister.subtitle")}
+          <p className="text-base sm:text-lg text-white/60">
+            Join the Ibiza legends and share unforgettable experiences
           </p>
         </div>
 
-        {/* Progress Indicator */}
-        <div className="flex items-center justify-center gap-3 mb-10">
+        {/* Progress */}
+        <div className="flex items-center justify-center gap-2 sm:gap-3 mb-8">
           {[1, 2, 3].map((num) => (
             <div key={num} className="flex items-center">
-              <div className={`w-10 h-10 rounded-full flex items-center justify-center font-bold transition-all ${
+              <div className={`w-9 h-9 sm:w-10 sm:h-10 rounded-full flex items-center justify-center font-bold text-sm transition-all ${
                 num === step
-                  ? 'bg-gradient-to-br from-sptc-red-600 to-sptc-red-700 text-white scale-110 shadow-lg'
+                  ? 'bg-gradient-to-br from-ibiza-pink-500 to-ibiza-purple-500 text-white scale-110'
                   : num < step
                     ? 'bg-green-500 text-white'
-                    : 'bg-gray-200 text-gray-500'
+                    : 'bg-white/10 text-white/50'
               }`}>
                 {num < step ? <CheckCircle className="w-5 h-5" /> : num}
               </div>
               {num < 3 && (
-                <div className={`w-12 h-1 mx-2 rounded-full transition-all ${
-                  num < step ? 'bg-green-500' : 'bg-gray-200'
+                <div className={`w-8 sm:w-12 h-1 mx-1 sm:mx-2 rounded-full transition-all ${
+                  num < step ? 'bg-green-500' : 'bg-white/10'
                 }`} />
               )}
             </div>
@@ -233,429 +183,311 @@ export default function HostRegister() {
         </div>
 
         {/* Form Card */}
-        <div className="bg-white rounded-3xl shadow-2xl p-6 md:p-10 border border-gray-100">
+        <div className="glass-card rounded-2xl sm:rounded-3xl p-5 sm:p-8">
           <form onSubmit={handleSubmit}>
-            {/* Step 1: Basic Information */}
+            {/* Step 1 */}
             {step === 1 && (
-              <div className="space-y-6">
+              <div className="space-y-5">
                 <div>
-                  <h2 className="text-3xl font-bold text-gray-900 mb-2" style={{ fontFamily: '"DM Serif Display", serif' }}>
-                    {t("hostRegister.basicInformation")}
-                  </h2>
-                  <p className="text-gray-600">{t("hostRegister.letsStart")}</p>
+                  <h2 className="text-xl sm:text-2xl font-bold text-white mb-1">Basic Information</h2>
+                  <p className="text-white/50 text-sm">Let's start with the basics</p>
                 </div>
 
-                <div className="grid md:grid-cols-2 gap-5">
+                <div className="grid grid-cols-2 gap-3 sm:gap-4">
                   <div>
-                    <label className="block text-sm font-bold text-gray-700 mb-2">
-                      {t("hostRegister.firstName")} *
-                    </label>
-                    <div className="relative">
-                      <input
-                        type="text"
-                        name="firstName"
-                        value={formData.firstName}
-                        onChange={handleChange}
-                        className={`w-full px-4 py-3 border-2 rounded-xl focus:outline-none focus:ring-2 focus:ring-sptc-red-500 transition-all ${
-                          errors.firstName ? 'border-red-500' : 'border-gray-200'
-                        }`}
-                        placeholder="John"
-                      />
-                    </div>
-                    {errors.firstName && (
-                      <p className="text-red-600 text-sm mt-1 flex items-center gap-1">
-                        <AlertCircle className="w-4 h-4" />
-                        {errors.firstName}
-                      </p>
-                    )}
-                  </div>
-
-                  <div>
-                    <label className="block text-sm font-bold text-gray-700 mb-2">
-                      {t("hostRegister.lastName")} *
-                    </label>
-                    <div className="relative">
-                      <input
-                        type="text"
-                        name="lastName"
-                        value={formData.lastName}
-                        onChange={handleChange}
-                        className={`w-full px-4 py-3 border-2 rounded-xl focus:outline-none focus:ring-2 focus:ring-sptc-red-500 transition-all ${
-                          errors.lastName ? 'border-red-500' : 'border-gray-200'
-                        }`}
-                        placeholder="Doe"
-                      />
-                    </div>
-                    {errors.lastName && (
-                      <p className="text-red-600 text-sm mt-1 flex items-center gap-1">
-                        <AlertCircle className="w-4 h-4" />
-                        {errors.lastName}
-                      </p>
-                    )}
-                  </div>
-                </div>
-
-                <div>
-                  <label className="block text-sm font-bold text-gray-700 mb-2">
-                    {t("hostRegister.emailAddress")} *
-                  </label>
-                  <div className="relative">
+                    <label className="block text-sm font-medium text-white/70 mb-2">First Name *</label>
                     <input
-                      type="email"
-                      name="email"
-                      value={formData.email}
+                      type="text"
+                      name="firstName"
+                      value={formData.firstName}
                       onChange={handleChange}
-                      className={`w-full px-4 py-3 border-2 rounded-xl focus:outline-none focus:ring-2 focus:ring-sptc-red-500 transition-all ${
-                        errors.email ? 'border-red-500' : 'border-gray-200'
+                      className={`w-full px-4 py-3 bg-white/5 border rounded-xl text-white placeholder-white/30 focus:outline-none focus:ring-2 focus:ring-ibiza-pink-500 transition-all ${
+                        errors.firstName ? 'border-red-500' : 'border-white/10'
                       }`}
-                      placeholder="john.doe@example.com"
+                      placeholder="John"
                     />
+                    {errors.firstName && <p className="text-red-400 text-xs mt-1">{errors.firstName}</p>}
                   </div>
-                  {errors.email && (
-                    <p className="text-red-600 text-sm mt-1 flex items-center gap-1">
-                      <AlertCircle className="w-4 h-4" />
-                      {errors.email}
-                    </p>
-                  )}
+                  <div>
+                    <label className="block text-sm font-medium text-white/70 mb-2">Last Name *</label>
+                    <input
+                      type="text"
+                      name="lastName"
+                      value={formData.lastName}
+                      onChange={handleChange}
+                      className={`w-full px-4 py-3 bg-white/5 border rounded-xl text-white placeholder-white/30 focus:outline-none focus:ring-2 focus:ring-ibiza-pink-500 transition-all ${
+                        errors.lastName ? 'border-red-500' : 'border-white/10'
+                      }`}
+                      placeholder="Doe"
+                    />
+                    {errors.lastName && <p className="text-red-400 text-xs mt-1">{errors.lastName}</p>}
+                  </div>
                 </div>
 
                 <div>
-                  <label className="block text-sm font-bold text-gray-700 mb-2">
-                    {t("hostRegister.password")} *
-                  </label>
+                  <label className="block text-sm font-medium text-white/70 mb-2">Email Address *</label>
+                  <input
+                    type="email"
+                    name="email"
+                    value={formData.email}
+                    onChange={handleChange}
+                    className={`w-full px-4 py-3 bg-white/5 border rounded-xl text-white placeholder-white/30 focus:outline-none focus:ring-2 focus:ring-ibiza-pink-500 transition-all ${
+                      errors.email ? 'border-red-500' : 'border-white/10'
+                    }`}
+                    placeholder="john@example.com"
+                  />
+                  {errors.email && <p className="text-red-400 text-xs mt-1">{errors.email}</p>}
+                </div>
+
+                <div>
+                  <label className="block text-sm font-medium text-white/70 mb-2">Password *</label>
                   <div className="relative">
-                    <Lock className="absolute left-4 top-1/2 -translate-y-1/2 w-5 h-5 text-gray-400" />
                     <input
                       type={showPassword ? "text" : "password"}
                       name="password"
                       value={formData.password}
                       onChange={handleChange}
-                      className={`w-full pl-12 pr-12 py-3 border-2 rounded-xl focus:outline-none focus:ring-2 focus:ring-sptc-red-500 transition-all ${
-                        errors.password ? 'border-red-500' : 'border-gray-200'
+                      className={`w-full px-4 py-3 pr-12 bg-white/5 border rounded-xl text-white placeholder-white/30 focus:outline-none focus:ring-2 focus:ring-ibiza-pink-500 transition-all ${
+                        errors.password ? 'border-red-500' : 'border-white/10'
                       }`}
                       placeholder="••••••••"
                     />
                     <button
                       type="button"
                       onClick={() => setShowPassword(!showPassword)}
-                      className="absolute right-4 top-1/2 -translate-y-1/2 text-gray-400 hover:text-gray-600 p-1"
+                      className="absolute right-4 top-1/2 -translate-y-1/2 text-white/50 hover:text-white"
                     >
                       {showPassword ? <EyeOff className="w-5 h-5" /> : <Eye className="w-5 h-5" />}
                     </button>
                   </div>
                   {formData.password && (
-                    <div className="mt-2">
-                      <div className="flex items-center gap-2">
-                        <div className="flex-1 h-2 bg-gray-200 rounded-full overflow-hidden">
-                          <div
-                            className={`h-full transition-all ${
-                              pwdStrength.strength <= 2 ? 'bg-red-500' :
-                              pwdStrength.strength <= 3 ? 'bg-yellow-500' :
-                              pwdStrength.strength <= 4 ? 'bg-blue-500' : 'bg-green-500'
-                            }`}
-                            style={{ width: `${(pwdStrength.strength / 5) * 100}%` }}
-                          />
-                        </div>
-                        <span className={`text-xs font-bold px-2 py-1 rounded ${pwdStrength.color}`}>
-                          {pwdStrength.label}
-                        </span>
+                    <div className="flex items-center gap-2 mt-2">
+                      <div className="flex-1 h-1.5 bg-white/10 rounded-full overflow-hidden">
+                        <div
+                          className={`h-full transition-all ${
+                            pwdStrength.strength <= 2 ? 'bg-red-500' :
+                            pwdStrength.strength <= 3 ? 'bg-yellow-500' :
+                            pwdStrength.strength <= 4 ? 'bg-blue-500' : 'bg-green-500'
+                          }`}
+                          style={{ width: `${(pwdStrength.strength / 5) * 100}%` }}
+                        />
                       </div>
+                      <span className={`text-xs font-medium px-2 py-0.5 rounded ${pwdStrength.color}`}>
+                        {pwdStrength.label}
+                      </span>
                     </div>
                   )}
-                  {errors.password && (
-                    <p className="text-red-600 text-sm mt-1 flex items-center gap-1">
-                      <AlertCircle className="w-4 h-4" />
-                      {errors.password}
-                    </p>
-                  )}
+                  {errors.password && <p className="text-red-400 text-xs mt-1">{errors.password}</p>}
                 </div>
 
                 <div>
-                  <label className="block text-sm font-bold text-gray-700 mb-2">
-                    {t("hostRegister.confirmPassword")} *
-                  </label>
+                  <label className="block text-sm font-medium text-white/70 mb-2">Confirm Password *</label>
                   <div className="relative">
-                    <Lock className="absolute left-4 top-1/2 -translate-y-1/2 w-5 h-5 text-gray-400" />
                     <input
                       type={showConfirmPassword ? "text" : "password"}
                       name="confirmPassword"
                       value={formData.confirmPassword}
                       onChange={handleChange}
-                      className={`w-full pl-12 pr-12 py-3 border-2 rounded-xl focus:outline-none focus:ring-2 focus:ring-sptc-red-500 transition-all ${
-                        errors.confirmPassword ? 'border-red-500' : 'border-gray-200'
+                      className={`w-full px-4 py-3 pr-12 bg-white/5 border rounded-xl text-white placeholder-white/30 focus:outline-none focus:ring-2 focus:ring-ibiza-pink-500 transition-all ${
+                        errors.confirmPassword ? 'border-red-500' : 'border-white/10'
                       }`}
                       placeholder="••••••••"
                     />
                     <button
                       type="button"
                       onClick={() => setShowConfirmPassword(!showConfirmPassword)}
-                      className="absolute right-4 top-1/2 -translate-y-1/2 text-gray-400 hover:text-gray-600 p-1"
+                      className="absolute right-4 top-1/2 -translate-y-1/2 text-white/50 hover:text-white"
                     >
                       {showConfirmPassword ? <EyeOff className="w-5 h-5" /> : <Eye className="w-5 h-5" />}
                     </button>
                   </div>
-                  {errors.confirmPassword && (
-                    <p className="text-red-600 text-sm mt-1 flex items-center gap-1">
-                      <AlertCircle className="w-4 h-4" />
-                      {errors.confirmPassword}
-                    </p>
-                  )}
+                  {errors.confirmPassword && <p className="text-red-400 text-xs mt-1">{errors.confirmPassword}</p>}
                 </div>
 
-                <div className="bg-blue-50 border border-blue-200 rounded-xl p-4 flex gap-3">
-                  <Shield className="w-5 h-5 text-blue-600 flex-shrink-0 mt-0.5" />
-                  <p className="text-sm text-blue-800">
-                    {t("hostRegister.passwordTip")}
+                <div className="bg-ibiza-blue-500/10 border border-ibiza-blue-500/20 rounded-xl p-4 flex gap-3">
+                  <Shield className="w-5 h-5 text-ibiza-blue-400 flex-shrink-0" />
+                  <p className="text-sm text-white/60">
+                    Password should be at least 8 characters with uppercase, lowercase, numbers, and special characters.
                   </p>
                 </div>
               </div>
             )}
 
-            {/* Step 2: Contact Details */}
+            {/* Step 2 */}
             {step === 2 && (
-              <div className="space-y-6">
+              <div className="space-y-5">
                 <div>
-                  <h2 className="text-3xl font-bold text-gray-900 mb-2" style={{ fontFamily: '"DM Serif Display", serif' }}>
-                    {t("hostRegister.contactDetails")}
-                  </h2>
-                  <p className="text-gray-600">{t("hostRegister.howCanWeReach")}</p>
+                  <h2 className="text-xl sm:text-2xl font-bold text-white mb-1">Contact Details</h2>
+                  <p className="text-white/50 text-sm">How can we reach you?</p>
                 </div>
 
                 <div>
-                  <label className="block text-sm font-bold text-gray-700 mb-2">
-                    {t("hostRegister.phoneNumber")} *
-                  </label>
-                  <div className="relative">
-                    <Phone className="absolute left-4 top-1/2 -translate-y-1/2 w-5 h-5 text-gray-400" />
-                    <input
-                      type="tel"
-                      name="phone"
-                      value={formData.phone}
+                  <label className="block text-sm font-medium text-white/70 mb-2">Phone Number *</label>
+                  <input
+                    type="tel"
+                    name="phone"
+                    value={formData.phone}
+                    onChange={handleChange}
+                    className={`w-full px-4 py-3 bg-white/5 border rounded-xl text-white placeholder-white/30 focus:outline-none focus:ring-2 focus:ring-ibiza-pink-500 transition-all ${
+                      errors.phone ? 'border-red-500' : 'border-white/10'
+                    }`}
+                    placeholder="+34 600 123 456"
+                  />
+                  {errors.phone && <p className="text-red-400 text-xs mt-1">{errors.phone}</p>}
+                </div>
+
+                <div className="grid grid-cols-2 gap-3 sm:gap-4">
+                  <div>
+                    <label className="block text-sm font-medium text-white/70 mb-2">Country *</label>
+                    <select
+                      name="country"
+                      value={formData.country}
                       onChange={handleChange}
-                      className={`w-full pl-12 pr-4 py-3 border-2 rounded-xl focus:outline-none focus:ring-2 focus:ring-sptc-red-500 transition-all ${
-                        errors.phone ? 'border-red-500' : 'border-gray-200'
-                      }`}
-                      placeholder="+34 600 123 456"
-                    />
+                      className="w-full px-4 py-3 bg-white/5 border border-white/10 rounded-xl text-white focus:outline-none focus:ring-2 focus:ring-ibiza-pink-500 transition-all appearance-none"
+                    >
+                      <option value="Spain">Spain</option>
+                      <option value="UK">United Kingdom</option>
+                      <option value="Germany">Germany</option>
+                      <option value="Other">Other</option>
+                    </select>
                   </div>
-                  {errors.phone && (
-                    <p className="text-red-600 text-sm mt-1 flex items-center gap-1">
-                      <AlertCircle className="w-4 h-4" />
-                      {errors.phone}
-                    </p>
-                  )}
-                </div>
-
-                <div className="grid md:grid-cols-2 gap-5">
                   <div>
-                    <label className="block text-sm font-bold text-gray-700 mb-2">
-                      {t("hostRegister.country")} *
-                    </label>
-                    <div className="relative">
-                      <MapPin className="absolute left-4 top-1/2 -translate-y-1/2 w-5 h-5 text-gray-400" />
-                      <select
-                        name="country"
-                        value={formData.country}
-                        onChange={handleChange}
-                        className="w-full pl-12 pr-4 py-3 border-2 border-gray-200 rounded-xl focus:outline-none focus:ring-2 focus:ring-sptc-red-500 transition-all appearance-none bg-white"
-                      >
-                        <option value="Spain">Spain</option>
-                        <option value="UK">United Kingdom</option>
-                        <option value="Germany">Germany</option>
-                        <option value="Other">Other</option>
-                      </select>
-                    </div>
-                  </div>
-
-                  <div>
-                    <label className="block text-sm font-bold text-gray-700 mb-2">
-                      {t("hostRegister.city")} *
-                    </label>
+                    <label className="block text-sm font-medium text-white/70 mb-2">City *</label>
                     <input
                       type="text"
                       name="city"
                       value={formData.city}
                       onChange={handleChange}
-                      className={`w-full px-4 py-3 border-2 rounded-xl focus:outline-none focus:ring-2 focus:ring-sptc-red-500 transition-all ${
-                        errors.city ? 'border-red-500' : 'border-gray-200'
+                      className={`w-full px-4 py-3 bg-white/5 border rounded-xl text-white placeholder-white/30 focus:outline-none focus:ring-2 focus:ring-ibiza-pink-500 transition-all ${
+                        errors.city ? 'border-red-500' : 'border-white/10'
                       }`}
                       placeholder="Ibiza Town"
                     />
-                    {errors.city && (
-                      <p className="text-red-600 text-sm mt-1 flex items-center gap-1">
-                        <AlertCircle className="w-4 h-4" />
-                        {errors.city}
-                      </p>
-                    )}
+                    {errors.city && <p className="text-red-400 text-xs mt-1">{errors.city}</p>}
                   </div>
                 </div>
 
                 <div>
-                  <label className="block text-sm font-bold text-gray-700 mb-2">
-                    {t("hostRegister.dateOfBirth")} *
-                  </label>
+                  <label className="block text-sm font-medium text-white/70 mb-2">Date of Birth *</label>
                   <input
                     type="date"
                     name="dateOfBirth"
                     value={formData.dateOfBirth}
                     onChange={handleChange}
                     max={new Date(new Date().setFullYear(new Date().getFullYear() - 18)).toISOString().split('T')[0]}
-                    className={`w-full px-4 py-3 border-2 rounded-xl focus:outline-none focus:ring-2 focus:ring-sptc-red-500 transition-all ${
-                      errors.dateOfBirth ? 'border-red-500' : 'border-gray-200'
+                    className={`w-full px-4 py-3 bg-white/5 border rounded-xl text-white focus:outline-none focus:ring-2 focus:ring-ibiza-pink-500 transition-all ${
+                      errors.dateOfBirth ? 'border-red-500' : 'border-white/10'
                     }`}
                   />
-                  {errors.dateOfBirth && (
-                    <p className="text-red-600 text-sm mt-1 flex items-center gap-1">
-                      <AlertCircle className="w-4 h-4" />
-                      {errors.dateOfBirth}
-                    </p>
-                  )}
+                  {errors.dateOfBirth && <p className="text-red-400 text-xs mt-1">{errors.dateOfBirth}</p>}
                 </div>
 
-                <div className="bg-purple-50 border border-purple-200 rounded-xl p-4 flex gap-3">
-                  <Shield className="w-5 h-5 text-purple-600 flex-shrink-0 mt-0.5" />
-                  <p className="text-sm text-purple-800">
-                    {t("hostRegister.ageTip")}
+                <div className="bg-ibiza-purple-500/10 border border-ibiza-purple-500/20 rounded-xl p-4 flex gap-3">
+                  <Shield className="w-5 h-5 text-ibiza-purple-400 flex-shrink-0" />
+                  <p className="text-sm text-white/60">
+                    You must be at least 18 years old to become a host.
                   </p>
                 </div>
               </div>
             )}
 
-            {/* Step 3: Agreements */}
+            {/* Step 3 */}
             {step === 3 && (
-              <div className="space-y-6">
+              <div className="space-y-5">
                 <div>
-                  <h2 className="text-3xl font-bold text-gray-900 mb-2" style={{ fontFamily: '"DM Serif Display", serif' }}>
-                    {t("hostRegister.termsVerification")}
-                  </h2>
-                  <p className="text-gray-600">{t("hostRegister.pleaseReviewAccept")}</p>
+                  <h2 className="text-xl sm:text-2xl font-bold text-white mb-1">Terms & Verification</h2>
+                  <p className="text-white/50 text-sm">Please review and accept</p>
                 </div>
 
-                <div className="space-y-4">
-                  <div className={`border-2 rounded-xl p-5 transition-all ${
-                    errors.agreeTerms ? 'border-red-500 bg-red-50' : 'border-gray-200'
+                <div className="space-y-3">
+                  <label className={`flex items-start gap-3 p-4 rounded-xl border cursor-pointer transition-all ${
+                    errors.agreeTerms ? 'border-red-500 bg-red-500/10' : 'border-white/10 bg-white/5 hover:bg-white/10'
                   }`}>
-                    <label className="flex items-start gap-4 cursor-pointer">
-                      <input
-                        type="checkbox"
-                        name="agreeTerms"
-                        checked={formData.agreeTerms}
-                        onChange={handleChange}
-                        className="w-5 h-5 mt-0.5 text-sptc-red-600 border-gray-300 rounded focus:ring-sptc-red-500"
-                      />
-                      <div className="flex-1">
-                        <div className="flex items-center gap-2 mb-1">
-                          <FileText className="w-5 h-5 text-gray-600" />
-                          <span className="font-bold text-gray-900">{t("hostRegister.termsConditions")} *</span>
-                        </div>
-                        <p className="text-sm text-gray-600">
-                          {t("hostRegister.agreeToTerms")}
-                        </p>
-                      </div>
-                    </label>
-                  </div>
+                    <input
+                      type="checkbox"
+                      name="agreeTerms"
+                      checked={formData.agreeTerms}
+                      onChange={handleChange}
+                      className="w-5 h-5 mt-0.5 rounded border-white/30 bg-white/10 text-ibiza-pink-500 focus:ring-ibiza-pink-500"
+                    />
+                    <div>
+                      <span className="font-medium text-white text-sm">Terms & Conditions *</span>
+                      <p className="text-white/50 text-xs mt-1">I agree to Ibiza Unlocked's Terms of Service and Privacy Policy</p>
+                    </div>
+                  </label>
 
-                  <div className={`border-2 rounded-xl p-5 transition-all ${
-                    errors.agreeBackgroundCheck ? 'border-red-500 bg-red-50' : 'border-gray-200'
+                  <label className={`flex items-start gap-3 p-4 rounded-xl border cursor-pointer transition-all ${
+                    errors.agreeBackgroundCheck ? 'border-red-500 bg-red-500/10' : 'border-white/10 bg-white/5 hover:bg-white/10'
                   }`}>
-                    <label className="flex items-start gap-4 cursor-pointer">
-                      <input
-                        type="checkbox"
-                        name="agreeBackgroundCheck"
-                        checked={formData.agreeBackgroundCheck}
-                        onChange={handleChange}
-                        className="w-5 h-5 mt-0.5 text-sptc-red-600 border-gray-300 rounded focus:ring-sptc-red-500"
-                      />
-                      <div className="flex-1">
-                        <div className="flex items-center gap-2 mb-1">
-                          <Shield className="w-5 h-5 text-gray-600" />
-                          <span className="font-bold text-gray-900">{t("hostRegister.backgroundCheckConsent")} *</span>
-                        </div>
-                        <p className="text-sm text-gray-600">
-                          {t("hostRegister.backgroundCheckText")}
-                        </p>
-                      </div>
-                    </label>
-                  </div>
+                    <input
+                      type="checkbox"
+                      name="agreeBackgroundCheck"
+                      checked={formData.agreeBackgroundCheck}
+                      onChange={handleChange}
+                      className="w-5 h-5 mt-0.5 rounded border-white/30 bg-white/10 text-ibiza-pink-500 focus:ring-ibiza-pink-500"
+                    />
+                    <div>
+                      <span className="font-medium text-white text-sm">Background Check Consent *</span>
+                      <p className="text-white/50 text-xs mt-1">I consent to identity verification and property ownership verification</p>
+                    </div>
+                  </label>
 
-                  <div className={`border-2 rounded-xl p-5 transition-all ${
-                    errors.agreeDataProcessing ? 'border-red-500 bg-red-50' : 'border-gray-200'
+                  <label className={`flex items-start gap-3 p-4 rounded-xl border cursor-pointer transition-all ${
+                    errors.agreeDataProcessing ? 'border-red-500 bg-red-500/10' : 'border-white/10 bg-white/5 hover:bg-white/10'
                   }`}>
-                    <label className="flex items-start gap-4 cursor-pointer">
-                      <input
-                        type="checkbox"
-                        name="agreeDataProcessing"
-                        checked={formData.agreeDataProcessing}
-                        onChange={handleChange}
-                        className="w-5 h-5 mt-0.5 text-sptc-red-600 border-gray-300 rounded focus:ring-sptc-red-500"
-                      />
-                      <div className="flex-1">
-                        <div className="flex items-center gap-2 mb-1">
-                          <Camera className="w-5 h-5 text-gray-600" />
-                          <span className="font-bold text-gray-900">{t("hostRegister.biometricDataProcessing")} *</span>
-                        </div>
-                        <p className="text-sm text-gray-600">
-                          {t("hostRegister.biometricDataText")}
-                        </p>
-                      </div>
-                    </label>
-                  </div>
+                    <input
+                      type="checkbox"
+                      name="agreeDataProcessing"
+                      checked={formData.agreeDataProcessing}
+                      onChange={handleChange}
+                      className="w-5 h-5 mt-0.5 rounded border-white/30 bg-white/10 text-ibiza-pink-500 focus:ring-ibiza-pink-500"
+                    />
+                    <div>
+                      <span className="font-medium text-white text-sm">Biometric Data Processing *</span>
+                      <p className="text-white/50 text-xs mt-1">I consent to facial recognition and ID document scanning for verification</p>
+                    </div>
+                  </label>
                 </div>
 
                 {errors.submit && (
-                  <div className="bg-red-50 border border-red-200 rounded-xl p-4 flex gap-3">
-                    <AlertCircle className="w-5 h-5 text-red-600 flex-shrink-0" />
-                    <p className="text-sm text-red-800">{errors.submit}</p>
+                  <div className="bg-red-500/10 border border-red-500/20 rounded-xl p-4 flex gap-3">
+                    <AlertCircle className="w-5 h-5 text-red-400 flex-shrink-0" />
+                    <p className="text-sm text-red-400">{errors.submit}</p>
                   </div>
                 )}
 
-                <div className="bg-gradient-to-r from-green-50 to-teal-50 border border-green-200 rounded-xl p-5">
-                  <h4 className="font-bold text-gray-900 mb-3 flex items-center gap-2">
-                    <CheckCircle className="w-5 h-5 text-green-600" />
-                    {t("hostRegister.nextStepsTitle")}
+                <div className="bg-green-500/10 border border-green-500/20 rounded-xl p-4">
+                  <h4 className="font-medium text-white text-sm mb-2 flex items-center gap-2">
+                    <CheckCircle className="w-4 h-4 text-green-400" />
+                    Next Steps After Registration
                   </h4>
-                  <ul className="space-y-2 text-sm text-gray-700">
-                    <li className="flex items-center gap-2">
-                      <div className="w-1.5 h-1.5 bg-green-600 rounded-full" />
-                      {t("hostRegister.nextStep1")}
-                    </li>
-                    <li className="flex items-center gap-2">
-                      <div className="w-1.5 h-1.5 bg-green-600 rounded-full" />
-                      {t("hostRegister.nextStep2")}
-                    </li>
-                    <li className="flex items-center gap-2">
-                      <div className="w-1.5 h-1.5 bg-green-600 rounded-full" />
-                      {t("hostRegister.nextStep3")}
-                    </li>
-                    <li className="flex items-center gap-2">
-                      <div className="w-1.5 h-1.5 bg-green-600 rounded-full" />
-                      {t("hostRegister.nextStep4")}
-                    </li>
+                  <ul className="space-y-1 text-xs text-white/50">
+                    <li>• Upload your government-issued ID</li>
+                    <li>• Complete facial recognition verification</li>
+                    <li>• Upload property photos with GPS verification</li>
+                    <li>• Wait 24-48 hours for approval</li>
                   </ul>
                 </div>
               </div>
             )}
 
-            {/* Navigation Buttons */}
-            <div className="flex items-center justify-between mt-10 pt-6 border-t-2 border-gray-200">
+            {/* Buttons */}
+            <div className="flex items-center justify-between mt-8 pt-6 border-t border-white/10">
               {step > 1 ? (
                 <button
                   type="button"
-                  onClick={() => {
-                    setStep(step - 1);
-                    window.scrollTo({ top: 0, behavior: 'smooth' });
-                  }}
-                  className="px-6 py-3 border-2 border-gray-300 text-gray-700 font-bold rounded-xl hover:border-gray-400 hover:bg-gray-50 transition-all"
+                  onClick={() => { setStep(step - 1); window.scrollTo({ top: 0, behavior: 'smooth' }); }}
+                  className="px-5 py-2.5 border border-white/20 text-white/70 font-medium rounded-xl hover:bg-white/10 transition-all text-sm"
                 >
-                  {t("hostRegister.back")}
+                  Back
                 </button>
               ) : (
                 <button
                   type="button"
                   onClick={() => router.push('/')}
-                  className="px-6 py-3 border-2 border-gray-300 text-gray-700 font-bold rounded-xl hover:border-gray-400 hover:bg-gray-50 transition-all"
+                  className="px-5 py-2.5 border border-white/20 text-white/70 font-medium rounded-xl hover:bg-white/10 transition-all text-sm"
                 >
-                  {t("hostRegister.cancel")}
+                  Cancel
                 </button>
               )}
 
@@ -663,26 +495,26 @@ export default function HostRegister() {
                 <button
                   type="button"
                   onClick={handleNext}
-                  className="flex items-center gap-2 px-8 py-3 bg-gradient-to-r from-sptc-red-600 to-sptc-red-700 text-white font-bold rounded-xl hover:from-sptc-red-700 hover:to-sptc-red-800 transition-all shadow-lg transform hover:scale-105"
+                  className="flex items-center gap-2 px-6 py-2.5 bg-gradient-to-r from-ibiza-pink-500 to-ibiza-purple-500 text-white font-medium rounded-xl hover:opacity-90 transition-all text-sm"
                 >
-                  {t("hostRegister.continue")}
-                  <ArrowRight className="w-5 h-5" />
+                  Continue
+                  <ArrowRight className="w-4 h-4" />
                 </button>
               ) : (
                 <button
                   type="submit"
                   disabled={isSubmitting}
-                  className="flex items-center gap-2 px-8 py-3 bg-gradient-to-r from-green-600 to-green-700 text-white font-bold rounded-xl hover:from-green-700 hover:to-green-800 transition-all shadow-lg transform hover:scale-105 disabled:opacity-50 disabled:cursor-not-allowed disabled:transform-none"
+                  className="flex items-center gap-2 px-6 py-2.5 bg-gradient-to-r from-green-500 to-green-600 text-white font-medium rounded-xl hover:opacity-90 transition-all disabled:opacity-50 text-sm"
                 >
                   {isSubmitting ? (
                     <>
-                      <div className="w-5 h-5 border-2 border-white border-t-transparent rounded-full animate-spin" />
-                      {t("hostRegister.creatingAccount")}
+                      <div className="w-4 h-4 border-2 border-white border-t-transparent rounded-full animate-spin" />
+                      Creating...
                     </>
                   ) : (
                     <>
-                      {t("hostRegister.createAccount")}
-                      <CheckCircle className="w-5 h-5" />
+                      Create Account
+                      <CheckCircle className="w-4 h-4" />
                     </>
                   )}
                 </button>
@@ -691,19 +523,19 @@ export default function HostRegister() {
           </form>
         </div>
 
-        {/* Trust Indicators */}
-        <div className="mt-8 flex items-center justify-center gap-8 text-sm text-gray-500">
-          <div className="flex items-center gap-2">
-            <Shield className="w-5 h-5" />
-            <span>{t("hostRegister.encryption")}</span>
+        {/* Trust */}
+        <div className="mt-6 flex flex-wrap items-center justify-center gap-4 sm:gap-6 text-xs text-white/40">
+          <div className="flex items-center gap-1.5">
+            <Shield className="w-4 h-4" />
+            <span>256-bit encryption</span>
           </div>
-          <div className="flex items-center gap-2">
-            <CheckCircle className="w-5 h-5" />
-            <span>{t("hostRegister.idVerified")}</span>
+          <div className="flex items-center gap-1.5">
+            <CheckCircle className="w-4 h-4" />
+            <span>ID verified</span>
           </div>
-          <div className="flex items-center gap-2">
-            <Camera className="w-5 h-5" />
-            <span>{t("hostRegister.biometricSecurity")}</span>
+          <div className="flex items-center gap-1.5">
+            <Camera className="w-4 h-4" />
+            <span>Biometric security</span>
           </div>
         </div>
       </div>

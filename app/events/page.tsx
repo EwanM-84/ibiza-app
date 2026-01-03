@@ -160,7 +160,7 @@ export default function EventsPage() {
             <PartyPopper className="w-4 h-4 text-ibiza-pink-400" />
             <span className="text-sm font-medium text-white/90">Season 2026</span>
           </div>
-          <h1 className="text-4xl sm:text-5xl md:text-6xl lg:text-7xl font-bold text-white mb-6">
+          <h1 className="text-3xl sm:text-4xl md:text-5xl lg:text-6xl font-bold text-white mb-4">
             Upcoming <span className="text-gradient-party">Events</span>
           </h1>
           <p className="text-xl text-white/70 max-w-2xl mx-auto">
@@ -200,13 +200,13 @@ export default function EventsPage() {
             <p className="text-white/60">The best parties in Ibiza</p>
           </div>
 
-          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4 sm:gap-6">
             {filteredEvents.map((event) => (
               <div
                 key={event.id}
                 className="group relative overflow-hidden rounded-2xl glass-card hover:border-ibiza-pink-500/50 transition-all duration-500"
               >
-                <div className="relative h-48 overflow-hidden">
+                <div className="relative h-40 sm:h-48 overflow-hidden">
                   <img
                     src={event.image}
                     alt={event.title}
@@ -237,7 +237,7 @@ export default function EventsPage() {
                   </h3>
                   <p className="text-white/50 text-sm mb-4">{event.venue}</p>
 
-                  <div className="flex items-center gap-4 text-white/60 text-sm mb-4">
+                  <div className="flex flex-wrap items-center gap-2 sm:gap-4 text-white/60 text-xs sm:text-sm mb-4">
                     <div className="flex items-center gap-2">
                       <Calendar className="w-4 h-4 text-ibiza-pink-400" />
                       <span>{event.date}</span>
