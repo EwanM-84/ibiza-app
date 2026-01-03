@@ -1,14 +1,14 @@
-import type { Metadata } from "next";
-import { DM_Serif_Display, Inter } from "next/font/google";
+import type { Metadata, Viewport } from "next";
+import { Inter, Outfit } from "next/font/google";
 import "./globals.css";
 import Navigation from "@/components/Navigation";
 import { LanguageProvider } from "@/contexts/LanguageContext";
 
-const dmSerifDisplay = DM_Serif_Display({
-  weight: ["400"],
+const outfit = Outfit({
   subsets: ["latin"],
-  variable: "--font-dm-serif",
+  variable: "--font-outfit",
   display: "swap",
+  weight: ["300", "400", "500", "600", "700", "800", "900"],
 });
 
 const inter = Inter({
@@ -17,26 +17,38 @@ const inter = Inter({
   display: "swap",
 });
 
+export const viewport: Viewport = {
+  width: "device-width",
+  initialScale: 1,
+  maximumScale: 5,
+  userScalable: true,
+  viewportFit: "cover",
+  themeColor: "#0EA5E9",
+};
+
 export const metadata: Metadata = {
-  title: "sptc.rural - Stay local. Support the community.",
+  title: "Ibiza Unlocked - Your Gateway to the Island's Best Experiences",
   description:
-    "Book authentic stays in Colombia and nearby rural areas. Part of every booking supports local community projects.",
+    "Discover the ultimate Ibiza experience. Beach clubs, world-famous nightlife, hidden gems, and exclusive events. Your adventure starts here.",
   icons: {
-    icon: "/images/icons/sptc-logo.jpg",
-    apple: "/images/icons/sptc-logo.jpg",
+    icon: "/images/icons/ibiza-logo.png",
+    apple: "/images/icons/ibiza-logo.png",
   },
-  viewport: {
-    width: "device-width",
-    initialScale: 1,
-    maximumScale: 5,
-    userScalable: true,
-    viewportFit: "cover", // iOS Safari safe area for notched devices
-  },
-  themeColor: "#DC2626", // sptc-red-600
   appleWebApp: {
     capable: true,
-    statusBarStyle: "default",
-    title: "SPTC Rural",
+    statusBarStyle: "black-translucent",
+    title: "Ibiza Unlocked",
+  },
+  openGraph: {
+    title: "Ibiza Unlocked - Your Gateway to Paradise",
+    description: "Discover the ultimate Ibiza experience. Beach clubs, world-famous nightlife, hidden gems, and exclusive events.",
+    siteName: "Ibiza Unlocked",
+    type: "website",
+  },
+  twitter: {
+    card: "summary_large_image",
+    title: "Ibiza Unlocked - Your Gateway to Paradise",
+    description: "Discover the ultimate Ibiza experience. Beach clubs, world-famous nightlife, hidden gems, and exclusive events.",
   },
 };
 
@@ -46,8 +58,8 @@ export default function RootLayout({
   children: React.ReactNode;
 }>) {
   return (
-    <html lang="en" className={`${dmSerifDisplay.variable} ${inter.variable}`}>
-      <body className="antialiased bg-gray-100 font-sans">
+    <html lang="en" className={`${outfit.variable} ${inter.variable}`}>
+      <body className="antialiased font-sans">
         <LanguageProvider>
           <Navigation />
           <main>{children}</main>
