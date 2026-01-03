@@ -1,7 +1,7 @@
 "use client";
 
 import { useState } from "react";
-import { Search, SlidersHorizontal, MapPin, Star, Heart, Users, Bed, Bath, Wifi, Coffee, UtensilsCrossed, Car } from "lucide-react";
+import { Search, SlidersHorizontal, MapPin, Star, Heart, Users, Bed, Bath, Wifi, Waves, UtensilsCrossed, Car } from "lucide-react";
 import Link from "next/link";
 import { useLanguage } from "@/contexts/LanguageContext";
 import { getText } from "@/lib/text";
@@ -14,26 +14,26 @@ export default function HomesPage() {
   const [showFilters, setShowFilters] = useState(false);
 
   const amenities = [
-    { id: "wifi", label: getText("homesPage.wifi", language), icon: Wifi },
-    { id: "kitchen", label: getText("homesPage.kitchen", language), icon: UtensilsCrossed },
-    { id: "parking", label: getText("homesPage.parking", language), icon: Car },
-    { id: "coffee", label: getText("homesPage.coffeeFarm", language), icon: Coffee },
+    { id: "wifi", label: "WiFi", icon: Wifi },
+    { id: "kitchen", label: "Kitchen", icon: UtensilsCrossed },
+    { id: "parking", label: "Parking", icon: Car },
+    { id: "pool", label: "Pool", icon: Waves },
   ];
 
   const properties = [
     {
       id: 1,
       image: "https://images.unsplash.com/photo-1602391833977-358a52198938?w=800&q=80",
-      title: "Coffee Farm Cottage",
-      location: "Coffee Region, Quindío",
-      price: 45,
+      title: "Luxury Villa with Pool",
+      location: "Cala Jondal, Ibiza",
+      price: 450,
       rating: 4.9,
       reviews: 127,
-      beds: 2,
-      baths: 1,
-      guests: 4,
-      type: "cottage",
-      amenities: ["wifi", "kitchen", "coffee"],
+      beds: 4,
+      baths: 3,
+      guests: 8,
+      type: "villa",
+      amenities: ["wifi", "kitchen", "pool", "parking"],
       host: {
         name: "María",
         image: "https://images.unsplash.com/photo-1438761681033-6461ffad8d80?w=100&q=80",
@@ -43,16 +43,16 @@ export default function HomesPage() {
     {
       id: 2,
       image: "https://images.unsplash.com/photo-1542314831-068cd1dbfeeb?w=800&q=80",
-      title: "Mountain View Villa",
-      location: "Andean Hills, Cundinamarca",
-      price: 65,
+      title: "Ibiza Town Penthouse",
+      location: "Ibiza Town, Ibiza",
+      price: 280,
       rating: 4.8,
       reviews: 89,
-      beds: 3,
+      beds: 2,
       baths: 2,
-      guests: 6,
-      type: "villa",
-      amenities: ["wifi", "kitchen", "parking"],
+      guests: 4,
+      type: "apartment",
+      amenities: ["wifi", "kitchen"],
       host: {
         name: "Carlos",
         image: "https://images.unsplash.com/photo-1500648767791-00dcc994a43e?w=100&q=80",
@@ -63,15 +63,15 @@ export default function HomesPage() {
       id: 3,
       image: "https://images.unsplash.com/photo-1571896349842-33c89424de2d?w=800&q=80",
       title: "Traditional Finca",
-      location: "Near Silvania, Cundinamarca",
-      price: 55,
+      location: "Santa Gertrudis, Ibiza",
+      price: 320,
       rating: 5.0,
       reviews: 203,
-      beds: 4,
-      baths: 2,
-      guests: 8,
+      beds: 5,
+      baths: 3,
+      guests: 10,
       type: "finca",
-      amenities: ["wifi", "kitchen", "parking", "coffee"],
+      amenities: ["wifi", "kitchen", "parking", "pool"],
       host: {
         name: "Ana",
         image: "https://images.unsplash.com/photo-1494790108377-be9c29b29330?w=100&q=80",
@@ -81,15 +81,15 @@ export default function HomesPage() {
     {
       id: 4,
       image: "https://images.unsplash.com/photo-1566073771259-6a8506099945?w=800&q=80",
-      title: "Boutique Eco Lodge",
-      location: "Coffee Region, Quindío",
-      price: 85,
+      title: "Beachfront Apartment",
+      location: "Playa d'en Bossa, Ibiza",
+      price: 195,
       rating: 4.9,
       reviews: 156,
       beds: 2,
-      baths: 2,
+      baths: 1,
       guests: 4,
-      type: "lodge",
+      type: "apartment",
       amenities: ["wifi", "kitchen"],
       host: {
         name: "Diego",
@@ -100,15 +100,15 @@ export default function HomesPage() {
     {
       id: 5,
       image: "https://images.unsplash.com/photo-1582268611958-ebfd161ef9cf?w=800&q=80",
-      title: "Riverside Cabin",
-      location: "Magdalena River, Tolima",
-      price: 50,
+      title: "San Antonio Party Pad",
+      location: "San Antonio, Ibiza",
+      price: 150,
       rating: 4.7,
       reviews: 64,
-      beds: 1,
-      baths: 1,
-      guests: 2,
-      type: "cabin",
+      beds: 3,
+      baths: 2,
+      guests: 6,
+      type: "apartment",
       amenities: ["wifi", "kitchen", "parking"],
       host: {
         name: "Laura",
@@ -119,16 +119,16 @@ export default function HomesPage() {
     {
       id: 6,
       image: "https://images.unsplash.com/photo-1587061949409-02df41d5e562?w=800&q=80",
-      title: "Colonial Hacienda",
-      location: "Villa de Leyva, Boyacá",
-      price: 95,
+      title: "Es Cubells Cliff House",
+      location: "Es Cubells, Ibiza",
+      price: 550,
       rating: 5.0,
       reviews: 178,
-      beds: 5,
-      baths: 3,
-      guests: 10,
-      type: "hacienda",
-      amenities: ["wifi", "kitchen", "parking"],
+      beds: 6,
+      baths: 4,
+      guests: 12,
+      type: "villa",
+      amenities: ["wifi", "kitchen", "parking", "pool"],
       host: {
         name: "Pedro",
         image: "https://images.unsplash.com/photo-1506794778202-cad84cf45f1d?w=100&q=80",

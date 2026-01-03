@@ -34,7 +34,7 @@ export default function HostRegister() {
     password: "",
     confirmPassword: "",
     phone: "",
-    country: "Colombia",
+    country: "Spain",
     city: "",
     dateOfBirth: "",
     agreeTerms: false,
@@ -435,7 +435,7 @@ export default function HostRegister() {
                       className={`w-full pl-12 pr-4 py-3 border-2 rounded-xl focus:outline-none focus:ring-2 focus:ring-sptc-red-500 transition-all ${
                         errors.phone ? 'border-red-500' : 'border-gray-200'
                       }`}
-                      placeholder="+57 300 123 4567"
+                      placeholder="+34 600 123 456"
                     />
                   </div>
                   {errors.phone && (
@@ -459,7 +459,9 @@ export default function HostRegister() {
                         onChange={handleChange}
                         className="w-full pl-12 pr-4 py-3 border-2 border-gray-200 rounded-xl focus:outline-none focus:ring-2 focus:ring-sptc-red-500 transition-all appearance-none bg-white"
                       >
-                        <option value="Colombia">Colombia</option>
+                        <option value="Spain">Spain</option>
+                        <option value="UK">United Kingdom</option>
+                        <option value="Germany">Germany</option>
                         <option value="Other">Other</option>
                       </select>
                     </div>
@@ -477,7 +479,7 @@ export default function HostRegister() {
                       className={`w-full px-4 py-3 border-2 rounded-xl focus:outline-none focus:ring-2 focus:ring-sptc-red-500 transition-all ${
                         errors.city ? 'border-red-500' : 'border-gray-200'
                       }`}
-                      placeholder="Fusagasugá"
+                      placeholder="Ibiza Town"
                     />
                     {errors.city && (
                       <p className="text-red-600 text-sm mt-1 flex items-center gap-1">
